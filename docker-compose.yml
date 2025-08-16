@@ -6,9 +6,10 @@ services:
             context: .
             dockerfile: Dockerfile
         container_name: link.se
-        image: web-followers-dev:0.0.1
+        image: web-followers-dev:0.0.2
         restart: always
         ports:
             - 3111:3000
         environment:
             NUXT_PUBLIC_WEB_URI: https://dev.followersbicara.com
+            NUXT_PUBLIC_API_URI: https://dev-api.followersbicara.com

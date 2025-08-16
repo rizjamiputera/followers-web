@@ -8,8 +8,10 @@
 
         <div class="drawer">
             <div class="drawer-content min-h-screen w-screen max-w-screen overflow-hidden pt-16">
+                <div class="mt-10">
+                    <slot />
+                </div>
                 <!-- Page content here -->
-                <slot />
             </div>
         </div>
         <DefaultFooter />

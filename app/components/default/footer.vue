@@ -12,7 +12,6 @@
                     <div class="w-px h-4 bg-border-main"></div>
                 </div>
             </div>
-            <DefaultRequestTrial class="md:hidden mt-4" />
 
             <div class="footer-section">
                 <h6>Site Map</h6>
@@ -21,6 +20,7 @@
 
 
             </div>
+
             <div class="footer-section">
                 <h6>Social Media</h6>
                 <a href="https://www.instagram.com/thefollowersid" target="_blank" class="flex items-center gap-2">

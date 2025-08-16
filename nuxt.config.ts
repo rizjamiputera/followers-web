@@ -12,7 +12,9 @@ export default defineNuxtConfig({
     },
     runtimeConfig: {
         public: {
+            apiUri: "",
             webUri: ""
         },
     },
+    modules: ['@pinia/nuxt'],
 })

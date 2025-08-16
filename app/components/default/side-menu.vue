@@ -6,7 +6,7 @@
                 <img src="/logo-putih.webp" alt="Followers Logo" class="h-10">
             </NuxtLink>
             <div class="flex gap-5 items-center">
-                <ButtonLink to="/login" prefetch-on="interaction" @click="$emit('close')" class="font-medium h-9">
+                <ButtonLink to="#" prefetch-on="interaction" @click="$emit('close')" class="font-medium h-9">
                     Login
                 </ButtonLink>
                 <button @click="$emit('close')"
