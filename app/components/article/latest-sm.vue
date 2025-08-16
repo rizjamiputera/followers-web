@@ -43,6 +43,8 @@ const { get } = LatestArticleStore;
 const { data, isLoading, latest_articles, page, last_page, parameters, authorId } = storeToRefs(LatestArticleStore);
 onMounted(() => {
     if (page.value != 1 || !data?.value || authorId?.value != props.authorId) {
+        LatestArticleStore.parameters.page = 1;
+        LatestArticleStore.parameters.limit = 6;
         if (props.authorId) {
             LatestArticleStore.authorId = props.authorId;
             get()
