@@ -1,9 +1,9 @@
 <template>
     <aside :class="show ? 'md:translate-x-0' : 'translate-x-full'"
-        class="fixed top-0 right-0 h-screen w-lg max-w-screen overflow-hidden bg-default/90 backdrop-blur-md text-base-content transition duration-500 ease-out z-[9999] flex flex-col gap-4 p-4">
+        class="fixed top-0 right-0 h-screen w-lg max-w-screen overflow-hidden bg-default/90 backdrop-blur-md text-base-content transition duration-500 ease-out z-[9999] flex flex-col gap-4 p-3">
         <div class="w-full flex items-center justify-between">
             <NuxtLink to="/" prefetch-on="interaction">
-                <img src="/logo-putih.webp" alt="Followers Logo" class="h-6">
+                <img src="/logo-putih.webp" alt="Followers Logo" class="h-10">
             </NuxtLink>
             <div class="flex gap-5 items-center">
                 <ButtonLink to="/login" prefetch-on="interaction" @click="$emit('close')" class="font-medium h-9">
@@ -15,7 +15,8 @@
                 </button>
             </div>
         </div>
-        <div class="side-menu menu flex-1 max-h-full w-full overflow-y-auto border-1 border-white-main rounded-2xl p-4">
+        <div
+            class="side-menu menu flex-1 max-h-full w-full overflow-y-auto border-1 border-white-main/40 rounded-2xl p-4">
             <ul>
                 <li>
                     <NuxtLink to="/" prefetch-on="interaction" class="text-nowrap text-white-main"
