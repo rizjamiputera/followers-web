@@ -41,14 +41,16 @@ const LatestArticleStore = useLatestArticleStore();
 const { get } = LatestArticleStore;
 
 const { data, isLoading, latest_articles, page, last_page, parameters, authorId } = storeToRefs(LatestArticleStore);
-if (page.value != 1 && !data?.value) {
-    if (props.authorId && authorId?.value != props.authorId) {
-        LatestArticleStore.authorId = props.authorId;
-        get()
-    } else {
-        get()
+onMounted(() => {
+    if (page.value != 1 || !data?.value || authorId?.value != props.authorId) {
+        if (props.authorId) {
+            LatestArticleStore.authorId = props.authorId;
+            get()
+        } else {
+            get()
+        }
     }
-}
+})
 
 const latestData = computed(() => {
     if (!props.exclude_slug) return latest_articles.value;

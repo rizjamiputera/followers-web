@@ -39,6 +39,7 @@ const { data, tags } = storeToRefs(ReadArticleStore);
 const { get } = ReadArticleStore;
 ReadArticleStore.slug = route.params.slug as string;
 
+ReadArticleStore.data = undefined;
 get()
 </script>
 

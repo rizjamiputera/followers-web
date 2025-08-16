@@ -7,6 +7,8 @@
 </template>
 
 <script lang="ts" setup>
+import { LucideUser2 } from 'lucide-vue-next';
+
 withDefaults(
     defineProps<{
         avatar?: string

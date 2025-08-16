@@ -14,7 +14,7 @@
     --color-border-main: #BDBDBD;
 }
 
-@source inline("w-12 h-12");
+@source inline("w-5 h-5 w-12 h-12");
 
 html,
 body {
@@ -78,4 +78,9 @@ hr {
 section,
 .section {
     @apply w-full max-w-6xl mx-auto max-md:px-5 max-2xl:px-9 px-11;
+}
+
+/* WYSISYG */
+.prose img {
+    @apply rounded-xl
 }
