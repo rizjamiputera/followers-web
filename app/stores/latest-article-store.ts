@@ -5,8 +5,9 @@ interface User {
     id: string
     name: string
     email: string
-    avatar: string
-    avatar_md: string
+    avatar?: string
+    avatar_md?: string
+    avatar_xs?: string
 }
 
 export interface Paginate<T> {
@@ -19,6 +20,7 @@ export interface Paginate<T> {
 export interface PaginationParameters {
     limit: number
     page: number
+    includes: string[]
 }
 
 interface Article {
@@ -33,8 +35,8 @@ interface Article {
     // versions    ArticleContentVersion[]
     // isFeatured  Boolean                 @default(false)
     // status      ArticleStatus           @default(DRAFT)
-    // publishedAt DateTime? // actual publish time
-    author: User
+    publishedAt?: string // actual publish time
+    author?: User
     authorId: string
     // approvals   ArticleApproval[]
     // tags        ArticleTag[]
@@ -60,7 +62,8 @@ export const useLatestArticleStore = defineStore('latest-article', {
         data: undefined,
         parameters: {
             limit: 12,
-            page: 1
+            page: 1,
+            includes: ['author']
         },
         isLoading: false,
         isError: false
@@ -72,6 +75,7 @@ export const useLatestArticleStore = defineStore('latest-article', {
                 query: {
                     limit: state.parameters.limit,
                     page: state.parameters.page,
+                    includes: state.parameters.includes.join(','),
                 },
             });
         },
