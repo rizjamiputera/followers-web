@@ -1,58 +1,12 @@
 import { defineStore } from 'pinia'
 import queryString from 'query-string'
-
-interface User {
-    id: string
-    name: string
-    email: string
-    avatar?: string
-    avatar_md?: string
-    avatar_xs?: string
-}
-
-export interface Paginate<T> {
-    data: T;
-    limit: number;
-    total: number;
-    page: number;
-    last_page: number;
-}
-export interface PaginationParameters {
-    limit: number
-    page: number
-    includes: string[]
-}
-
-interface Article {
-    id: string
-    slug: string
-    title: string
-    excerpt: string
-    image: string
-    image_sm: string
-    // content     ArticleContent          @relation(fields: [contentId], references: [id], onDelete: Restrict)
-    // contentId   :string
-    // versions    ArticleContentVersion[]
-    // isFeatured  Boolean                 @default(false)
-    // status      ArticleStatus           @default(DRAFT)
-    publishedAt?: string // actual publish time
-    author?: User
-    authorId: string
-    // approvals   ArticleApproval[]
-    // tags        ArticleTag[]
-    // comments    Comment[]
-    // reactions   ArticleReaction[]
-    // createdAt   DateTime @default (now())
-    // updatedAt   DateTime @updatedAt
-    // deleted     Boolean @default (false)
-    // readStat    ArticleReadStat @relation(fields: [readStatId], references: [id], onDelete: Restrict)
-    // readStatId: string
-    // visitors    Visit[]
-}
+import type { Paginate, PaginationParameters } from '~/interfaces/app-interface'
+import type { Article } from '~/interfaces/article-interface'
 
 interface LatestArticleStoreState {
     data?: Paginate<Article[]>
     parameters: PaginationParameters
+    authorId?: string
     isLoading: boolean
     isError: boolean
 }
@@ -65,6 +19,7 @@ export const useLatestArticleStore = defineStore('latest-article', {
             page: 1,
             includes: ['author']
         },
+        authorId: undefined,
         isLoading: false,
         isError: false
     }),
@@ -76,6 +31,9 @@ export const useLatestArticleStore = defineStore('latest-article', {
                     limit: state.parameters.limit,
                     page: state.parameters.page,
                     includes: state.parameters.includes.join(','),
+                    authorId: state.authorId,
+                    sortBy: 'publishedAt',
+                    order: 'desc'
                 },
             });
         },

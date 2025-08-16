@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @plugin "daisyui";
+@plugin "@tailwindcss/typography";
 
 @theme {
     --color-default: #1C1C1C;
@@ -12,6 +13,8 @@
     --color-green-secondary: #42E686;
     --color-border-main: #BDBDBD;
 }
+
+@source inline("w-12 h-12");
 
 html,
 body {

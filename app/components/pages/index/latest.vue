@@ -7,7 +7,7 @@
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-5">
                 <template v-if="!isLoading" v-for="(data, n) in latest_articles" :key="n">
-                    <NuxtLink prefetch-on="interaction"
+                    <NuxtLink :to="'/read/' + data.slug" prefetch-on="interaction"
                         class="w-full flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
                         <Image :src="data.image_sm"
                             class="w-33 sm:w-full aspect-4/3 sm:aspect-video rounded-lg bg-cover bg-no-repeat" />
@@ -63,6 +63,7 @@ const LatestArticleStore = useLatestArticleStore();
 const { get } = LatestArticleStore;
 
 const { isLoading, latest_articles, page, last_page, parameters } = storeToRefs(LatestArticleStore);
+LatestArticleStore.authorId = undefined;
 get();
 
 watch(() => parameters.value.page, get)
