@@ -13,13 +13,29 @@
                     <div class="text-2xl md:text-3xl font-semibold">{{ data.title }}</div>
                     <div>
                         <Image :src="data.image" :alt="data.title" class-name="aspect-video bg-cover rounded-2xl" />
-                        <AvatarPublishedAt :data avatar_class="w-12 h-12" class="mt-2" />
+                        <AvatarPublishedAt :data avatar_width="w-10 h-10" class="mt-2" />
+                    </div>
+                    <div class="flex items-center gap-2 mt-1">
+                        <div class="flex items-center text-xs">
+                            <button @click="" class="btn btn-xs btn-circle btn-ghost">
+                                <LucideThumbsUp :size="14" />
+                            </button>
+                            180
+                        </div>
+                        <div class="flex items-center text-xs">
+                            <button @click="" class="btn btn-xs btn-circle btn-ghost">
+                                <LucideThumbsDown :size="14" />
+                            </button>
+                            180
+                        </div>
                     </div>
 
                     <!-- content -->
-                    <div v-if="data.content?.content" class="prose max-w-none">
-                        <WysiwygRenderer :content="data.content.content" />
+                    <div v-if="content" class="prose max-w-none">
+                        <WysiwygRenderer :content="content" />
                     </div>
+
+                    <ArticleComments :articleId="data.id" />
                 </template>
             </div>
             <!-- SIDE RIGHT -->
@@ -33,9 +49,11 @@
 </template>
 
 <script lang="ts" setup>
+import { LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
+
 const route = useRoute();
 const ReadArticleStore = useReadArticleStore();
-const { data, tags } = storeToRefs(ReadArticleStore);
+const { data, tags, content } = storeToRefs(ReadArticleStore);
 const { get } = ReadArticleStore;
 ReadArticleStore.slug = route.params.slug as string;
 

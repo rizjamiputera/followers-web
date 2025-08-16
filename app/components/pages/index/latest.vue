@@ -44,8 +44,6 @@
 
 <script lang="ts" setup>
 import { DefaultBody } from '#components';
-import dayjs from 'dayjs';
-import { LucideClock, LucideUser2 } from 'lucide-vue-next';
 
 const LatestArticleStore = useLatestArticleStore();
 const { get } = LatestArticleStore;

@@ -17,7 +17,7 @@ export interface Article {
     authorId: string
     // approvals   ArticleApproval[]
     tags?: Tag[]
-    // comments    Comment[]
+    // comments?: Comment[]
     // reactions   ArticleReaction[]
     // createdAt   DateTime @default (now())
     // updatedAt   DateTime @updatedAt
@@ -38,4 +38,14 @@ export interface Tag {
     id: string
     name: string
     slug: string
+}
+
+export interface Comment {
+    id: string
+    user?: User
+    content: string
+    parent?: Comment
+    mentioned?: User
+    createdAt: string
+    replies?: Comment[]
 }

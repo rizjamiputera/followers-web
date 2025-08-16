@@ -29,7 +29,8 @@ export const useReadArticleStore = defineStore('read-article', {
                 },
             });
         },
-        tags: (state) => state.data?.tags ?? []
+        tags: (state) => state.data?.tags ?? [],
+        content: (state) => state.data?.content?.content ?? undefined,
     },
     actions: {
         async get() {

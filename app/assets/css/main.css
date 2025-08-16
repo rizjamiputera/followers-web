@@ -14,7 +14,7 @@
     --color-border-main: #BDBDBD;
 }
 
-@source inline("w-5 h-5 w-12 h-12");
+@source inline("w-5 h-5 w-12 h-12 w-10 h-10");
 
 html,
 body {
