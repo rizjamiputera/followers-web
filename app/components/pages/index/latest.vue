@@ -1,5 +1,5 @@
 <template>
-    <section>
+    <section ref="sectionRef">
         <div class="flex flex-col gap-4">
             <div class="flex justify-between items-end">
                 <DefaultTitle class="text-green-main">Artikel Terbaru</DefaultTitle>
@@ -66,7 +66,21 @@ const { isLoading, latest_articles, page, last_page, parameters } = storeToRefs(
 LatestArticleStore.authorId = undefined;
 get();
 
-watch(() => parameters.value.page, get)
+const sectionRef = ref<HTMLElement>();
+
+watch(() => parameters.value.page, () => {
+    get();
+    if (sectionRef.value) {
+        const headerOffset = 64 + 40; // pt-16 = 4rem = 64px
+        const elementPosition = sectionRef.value.offsetTop;
+        const offsetPosition = elementPosition - headerOffset;
+
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+        });
+    }
+})
 </script>
 
 <style></style>
