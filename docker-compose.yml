@@ -1,0 +1,14 @@
+# services / containers
+services:
+    # express app
+    link-se:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: link.se
+        image: web-followers-dev:0.0.1
+        restart: always
+        ports:
+            - 3111:3000
+        environment:
+            NUXT_PUBLIC_WEB_URI: https://dev.followersbicara.com

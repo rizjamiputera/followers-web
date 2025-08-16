@@ -1,0 +1,78 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+@theme {
+    --color-default: #1C1C1C;
+    --color-secondary2: #464646;
+    --color-default2: #525252;
+    --color-default3: #656565;
+    /* --color-white-main: #ab9696; */
+    --color-white-main: #FCFCFC;
+    --color-green-main: #007426;
+    --color-green-secondary: #42E686;
+    --color-border-main: #BDBDBD;
+}
+
+html,
+body {
+    @apply scroll-smooth;
+}
+
+.button-white {
+    @apply rounded-full bg-white hover:bg-green-main hover:border-green-main text-default border-1 border-border-main;
+}
+
+.btn-black {
+    @apply bg-default hover:bg-secondary2 text-white-main;
+}
+
+.btn-green {
+    @apply bg-green-main hover:bg-green-secondary;
+}
+
+.badge-white {
+    @apply bg-[#F6F6F6];
+}
+
+.badge-green {
+    @apply bg-[#DAFEE8] text-[#126937];
+}
+
+hr {
+    @apply border-t border-border-main/30;
+}
+
+/* SIDE MENU */
+.navbar .menu .router-link-active,
+.product-menu .router-link-active,
+.side-menu .router-link-active {
+    @apply text-green-main
+}
+
+.navbar .menu .router-link-active.group,
+.product-menu .router-link-active.group,
+.side-menu .router-link-active.group {
+    @apply border-green-main/30 bg-white/5
+}
+
+.navbar .menu .router-link-active .side-sub-menu-icon,
+.product-menu .router-link-active .side-sub-menu-icon,
+.side-menu .router-link-active .side-sub-menu-icon {
+    @apply fill-green-main
+}
+
+.navbar .menu .router-link-active .side-sub-menu-title,
+.product-menu .router-link-active .side-sub-menu-title,
+.side-menu .router-link-active .side-sub-menu-title {
+    @apply text-green-main
+}
+
+/* SECTION */
+.section-container {
+    @apply flex flex-col gap-15 md:gap-18 xl:gap-26;
+}
+
+section,
+.section {
+    @apply w-full max-w-6xl mx-auto max-md:px-5 max-2xl:px-9 px-11;
+}
