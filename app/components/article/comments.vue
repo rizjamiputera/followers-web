@@ -1,6 +1,6 @@
 <template>
     <div ref="sectionRef">
-        <div class="text-2xl md:text-3xl font-semibold">Comments</div>
+        <div class="text-2xl md:text-3xl font-semibold text-green-main">Comments</div>
         <hr class="bg-green-main/30 mb-5">
         <div class="mb-4">
             <Textarea placeholder="Type comment here.." />

@@ -28,7 +28,7 @@
                 <button @click="" class="btn btn-xs btn-circle btn-ghost">
                     <LucideThumbsDown :size="14" />
                 </button>
-                <button @click="" class="btn btn-xs rounded-full btn-ghost">
+                <button @click="" class="btn btn-xs rounded-full btn-ghost font-light">
                     Reply
                 </button>
             </div>

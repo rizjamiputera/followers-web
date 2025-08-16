@@ -1,9 +1,12 @@
 <template>
     <section>
         <!-- TAGS -->
-        <div class="flex gap-2">
+        <div class="flex flex-wrap gap-2">
             <template v-for="tag in tags" :key="tag.id">
-                <div class="badge badge-neutral capitalize rounded-full">{{ tag.name }}</div>
+                <div
+                    class="badge badge-success badge-ghost badge-outline border-green-main/20 text-green-main capitalize rounded-full line-clamp-1 text-ellipsis">
+                    {{
+                        tag.name }}</div>
             </template>
         </div>
         <div class="grid grid-cols-10 gap-5 md:gap-10 mt-5">
