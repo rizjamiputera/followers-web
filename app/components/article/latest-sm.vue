@@ -3,11 +3,11 @@
         <div class="font-bold text-green-main">Artikel Terbaru {{ authorName }}</div>
         <template v-if="!isLoading" v-for="(data, n) in latestData" :key="n">
             <NuxtLink :to="'/read/' + data.slug" prefetch-on="interaction"
-                class="w-full flex flex-col gap-2 border border-green-main/30 rounded-xl p-3">
+                class="w-full flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
                 <Image :src="data.image_sm"
                     class="w-33 sm:w-full aspect-4/3 sm:aspect-video rounded-lg bg-cover bg-no-repeat" />
                 <div class="flex-1 w-full">
-                    <AvatarPublishedAt :data class="text-xs" />
+                    <AvatarPublishedAt :data class="text-xs" avatar_width="w-5 h-5" />
                     <div class="flex flex-col gap-2 text-xs">
                         <div class="line-clamp-1 font-bold">{{ data.title }}</div>
                         <div class="line-clamp-2">{{ data.excerpt }}</div>

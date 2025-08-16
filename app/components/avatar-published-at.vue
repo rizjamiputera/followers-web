@@ -1,9 +1,11 @@
 <template>
-    <div class="w-full flex flex-wrap justify-between gap-2">
-        <div class="flex items-center gap-1">
+    <div class="w-full flex justify-between gap-2">
+        <div class="flex-1 flex items-center gap-1">
             <LazyAvatar v-if="data.author && data.author.avatar_md" :avatar="data.author.avatar_md"
-                :name="data.author.name" :class="avatar_class" />
-            {{ data.author?.name }}
+                :name="data.author.name" :class="avatar_width" />
+            <div class="flex-1 line-clamp-1">
+                {{ data.author?.name }}
+            </div>
         </div>
         <div class="flex items-center gap-1">
             <LucideClock :size="icon_size" /> {{ dayjs(data.publishedAt).format('D MMM HH:mm') }}
@@ -19,11 +21,11 @@ import type { Article } from '~/interfaces/article-interface';
 withDefaults(
     defineProps<{
         data: Article
-        avatar_class?: string
+        avatar_width?: string
         icon_size?: number
     }>(),
     {
-        avatar_class: '',
+        avatar_width: 'w-12 h-12',
         icon_size: 14
     }
 )

@@ -13,19 +13,7 @@
                             class="w-33 sm:w-full aspect-4/3 sm:aspect-video rounded-lg bg-cover bg-no-repeat" />
                         <div class="flex-1">
                             <div class="flex justify-start sm:justify-between gap-2 text-xs">
-                                <div class="flex items-center gap-1">
-                                    <LazyImage v-if="data.author && data.author.avatar_md" :src="data.author!.avatar_md"
-                                        :alt="data.author?.name"
-                                        class-name="w-5 h-5 rounded-full bg-cover bg-green-main/30" />
-                                    <div v-else
-                                        class="w-5 h-5 rounded-full bg-green-main/30 flex items-center justify-center">
-                                        <LucideUser2 :size="14" />
-                                    </div>
-                                    {{ data.author?.name }}
-                                </div>
-                                <div class="flex items-center gap-1">
-                                    <LucideClock :size="14" /> {{ dayjs(data.publishedAt).format('D MMM HH:mm') }}
-                                </div>
+                                <AvatarPublishedAt :data class="text-xs" avatar_width="w-5 h-5" />
                             </div>
                             <div class="flex flex-col gap-2">
                                 <DefaultBody class="line-clamp-1 font-bold">{{ data.title }}</DefaultBody>
