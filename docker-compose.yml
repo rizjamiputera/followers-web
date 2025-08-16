@@ -1,12 +1,12 @@
 # services / containers
 services:
     # express app
-    link-se:
+    dev-web-followers:
         build:
             context: .
             dockerfile: Dockerfile
-        container_name: link.se
-        image: web-followers-dev:0.0.2
+        container_name: dev-web-followers
+        image: web-followers-dev:0.0.1
         restart: always
         ports:
             - 3111:3000
