@@ -42,7 +42,7 @@
                 </template>
             </div>
             <!-- SIDE RIGHT -->
-            <div class="col-span-full md:col-span-3 min-h-screen">
+            <div class="col-span-full md:col-span-3">
 
                 <LazyArticleLatestSm v-if="data" :authorId="data.authorId" :authorName="data.author?.name"
                     :exclude_slug="data.slug" />
