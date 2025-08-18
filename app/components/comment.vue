@@ -4,7 +4,7 @@
         <div class="flex-1">
             <div class="flex justify-between gap-2 items-end">
                 <span class="font-semibold text-sm">{{ comment.user?.name || 'Anonymous' }}</span>
-                <span class="text-xs">{{ dayjs(comment.createdAt).format('D-MMM-YY H:mm') }}</span>
+                <span class="text-xs">{{ getRelativeTime(comment.createdAt) }}</span>
             </div>
             <div class="text-xs">
                 <span v-if="comment.mentioned" class="badge badge-sm badge-soft badge-success">
@@ -37,9 +37,9 @@
 </template>
 
 <script lang="ts" setup>
-import dayjs from 'dayjs';
 import { LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
 import type { Comment } from '~/interfaces/article-interface';
+import { getRelativeTime } from '~/utils/getRelativetime';
 
 defineProps<{
     comment: Comment

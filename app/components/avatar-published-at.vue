@@ -8,13 +8,12 @@
             </div>
         </div>
         <div class="flex items-center gap-1">
-            <LucideClock :size="icon_size" /> {{ dayjs(data.publishedAt).format('D MMM HH:mm') }}
+            <LucideClock :size="icon_size" /> {{ getRelativeTime(data.publishedAt!) }}
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
-import dayjs from 'dayjs';
 import { LucideClock } from 'lucide-vue-next';
 import type { Article } from '~/interfaces/article-interface';
 
