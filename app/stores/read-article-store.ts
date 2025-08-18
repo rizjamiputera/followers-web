@@ -42,8 +42,8 @@ export const useReadArticleStore = defineStore('read-article', {
     },
     actions: {
         async get() {
-            this.reset();
             this.isLoading = true;
+            this.isError = false;
             try {
                 await new Promise((resolve) => setTimeout(resolve, 400));
                 this.data = await Api.get(this.apiPath) as Article
