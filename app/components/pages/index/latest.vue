@@ -48,14 +48,29 @@ import { DefaultBody } from '#components';
 const LatestArticleStore = useLatestArticleStore();
 const { get } = LatestArticleStore;
 
+// Server-side data fetching for SEO
+const { public: { apiUri } } = useRuntimeConfig();
+const { data: latestData } = await useFetch(`${apiUri}/v1/article/published`, {
+    server: true,
+    query: {
+        page: 1,
+        limit: 12
+    }
+});
+
+// Set initial data in store if available
+if (latestData.value) {
+    LatestArticleStore.data = latestData.value as any;
+}
+
 const { isLoading, latest_articles, page, last_page, parameters } = storeToRefs(LatestArticleStore);
 LatestArticleStore.authorId = undefined;
-get();
 
 const sectionRef = ref<HTMLElement>();
 
 watch(() => parameters.value.page, () => {
     get();
+
     if (sectionRef.value) {
         const headerOffset = 64 + 40; // pt-16 = 4rem = 64px
         const elementPosition = sectionRef.value.offsetTop;
