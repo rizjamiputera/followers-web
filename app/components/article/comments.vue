@@ -48,11 +48,6 @@ const { isLoading } = storeToRefs(ArticleCommentsStore);
 ArticleCommentsStore.articleId = props.articleId;
 ArticleCommentsStore.parameters.page = 1;
 get();
-
-function formatDate(dateString: string) {
-    return new Date(dateString).toLocaleString();
-}
-
 </script>
 
 <style scoped></style>

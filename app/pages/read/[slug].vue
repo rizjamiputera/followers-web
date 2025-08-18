@@ -64,16 +64,47 @@
 </template>
 
 <script lang="ts" setup>
-import { LucideBookmark, LucideClock, LucideShare, LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
+import { LucideBookmark, LucideClock, LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
 
 const route = useRoute();
 const ReadArticleStore = useReadArticleStore();
-const { data, tags, content, stats } = storeToRefs(ReadArticleStore);
-const { get } = ReadArticleStore;
+const { tags, content, stats } = storeToRefs(ReadArticleStore);
 ReadArticleStore.slug = route.params.slug as string;
 
-ReadArticleStore.data = undefined;
-get()
+// Server-side data fetching for SEO
+const { public: { apiUri } } = useRuntimeConfig();
+const { data: articleData } = await useFetch(`${apiUri}/v1/article/read/${route.params.slug}`, {
+    server: true,
+    query: {
+        includes: 'content,author,tags.tag,stats'
+    }
+});
+
+// Set the data in store after fetch
+if (articleData.value) {
+    ReadArticleStore.data = articleData.value as any;
+}
+
+const { data } = storeToRefs(ReadArticleStore);
+
+// Fallback client-side fetch if server-side fails
+if (!ReadArticleStore.data) {
+    ReadArticleStore.get();
+};
+
+// SEO and META
+const { public: { webUri } } = useRuntimeConfig();
+
+useSeoMeta({
+    title: () => data?.value?.title ?? '-',
+    ogTitle: () => data?.value?.title ?? '-',
+    description: () => data?.value?.excerpt ?? '-',
+    ogDescription: () => data?.value?.excerpt ?? '-',
+    ogImage: () => data?.value?.image_sm ?? (webUri + '/logo-hitam.jpg'),
+    twitterCard: 'summary_large_image',
+    ogSiteName: 'FollowersBicara.com',
+    ogUrl: webUri + '/read/' + route.params.slug
+});
 
 const handleShare = async () => {
     if (!ReadArticleStore.data) return;
