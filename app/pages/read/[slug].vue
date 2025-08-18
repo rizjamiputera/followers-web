@@ -6,41 +6,43 @@
                 <div
                     class="badge badge-success badge-ghost badge-outline border-green-main/20 text-green-main capitalize rounded-full line-clamp-1 text-ellipsis">
                     {{
-                        tag.name }}</div>
+                        tag.name
+                    }}</div>
             </template>
         </div>
-        <div class="grid grid-cols-10 gap-5 md:gap-10 mt-5">
+        <div class="grid grid-cols-10 gap-4 md:gap-8 mt-5">
             <div class="col-span-full md:col-span-7 flex flex-col gap-4">
                 <template v-if="data">
                     <!-- ARTICLE IMAGE -->
                     <div class="flex flex-col gap-1">
-                        <div class="flex justify-end items-center gap-1 text-xs">
+                        <div class="flex justify-end items-center gap-1 text-xs font-light">
                             <LucideClock :size="12" /> {{ getRelativeTime(data.publishedAt!) }}
+                            -
+                            <div class="">{{ stats.readCount }} views</div>
                         </div>
                         <Image :src="data.image" :alt="data.title" class-name="aspect-video bg-cover rounded-2xl" />
                         <div class="text-2xl md:text-3xl font-semibold">{{ data.title }}</div>
-                        <div class="flex justify-between">
+                        <div class="flex flex-wrap justify-between w-full">
                             <LazyAvatarName v-if="data.author" :user="data.author" avatar_width="w-10 h-10" />
 
-                            <div class="flex items-center gap-2">
-                                <div class="join join-vertical lg:join-horizontal">
-                                    <button class="btn btn-sm join-item font-light rounded-l-full">
+                            <div class="flex-1 flex items-center gap-2">
+                                <div class="join join-horizontal">
+                                    <button class="btn btn-xs sm:btn-sm join-item font-light rounded-l-full">
                                         <LucideThumbsUp :size="14" /> {{ stats.likeCount }}
                                     </button>
-                                    <button class="btn btn-sm join-item font-light rounded-r-full">
+                                    <button class="btn btn-xs sm:btn-sm join-item font-light rounded-r-full">
                                         <LucideThumbsDown :size="14" /> {{ stats.dislikeCount }}
                                     </button>
                                 </div>
-                                <div class="join join-vertical lg:join-horizontal">
-                                    <button @click="handleShare" class="btn btn-sm join-item font-light rounded-l-full">
+                                <div class="join join-horizontal">
+                                    <button @click="handleShare"
+                                        class="btn btn-xs sm:btn-sm join-item font-light rounded-l-full">
                                         <LucideShare2 :size="14" /> {{ stats.shareCount }}
                                     </button>
-                                    <button class="btn btn-sm join-item font-light rounded-r-full">
+                                    <button class="btn btn-xs sm:btn-sm join-item font-light rounded-r-full">
                                         <LucideBookmark :size="14" /> {{ stats.bookmarkCount }}
                                     </button>
                                 </div>
-
-                                <div class="text-sm font-light">{{ stats.readCount }} views</div>
                             </div>
                         </div>
                     </div>
