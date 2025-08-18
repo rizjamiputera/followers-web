@@ -30,7 +30,7 @@ body {
 }
 
 .btn-green {
-    @apply bg-green-main hover:bg-green-secondary;
+    @apply bg-green-main hover:bg-green-secondary text-white;
 }
 
 .badge-white {

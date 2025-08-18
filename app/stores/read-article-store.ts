@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import queryString from 'query-string'
-import type { Article } from '~/interfaces/article-interface';
+import type { Article, ArticleStats } from '~/interfaces/article-interface';
 
 interface ReadArticleStoreState {
     slug?: string
@@ -15,7 +15,7 @@ export const useReadArticleStore = defineStore('read-article', {
         slug: undefined,
         data: undefined,
         parameters: {
-            includes: ['content', 'author', 'tags.tag']
+            includes: ['content', 'author', 'tags.tag', 'stats']
         },
         isLoading: false,
         isError: false
@@ -31,6 +31,14 @@ export const useReadArticleStore = defineStore('read-article', {
         },
         tags: (state) => state.data?.tags ?? [],
         content: (state) => state.data?.content?.content ?? undefined,
+        stats: (state): ArticleStats => state.data?.stats ?? {
+            commentCount: 0,
+            readCount: 0,
+            likeCount: 0,
+            dislikeCount: 0,
+            shareCount: 0,
+            bookmarkCount: 0,
+        },
     },
     actions: {
         async get() {

@@ -1,11 +1,13 @@
 <template>
     <div ref="sectionRef">
-        <div class="text-2xl md:text-3xl font-semibold text-green-main">Comments</div>
+        <div class="text-2xl md:text-3xl font-semibold text-green-main">
+            <span>{{ `${stats.commentCount} ` }}</span>Comments
+        </div>
         <hr class="bg-green-main/30 mb-5">
         <div class="mb-4">
             <Textarea placeholder="Type comment here.." />
-            <div class="flex justify-end">
-                <Button>Submit</Button>
+            <div class="flex justify-end mt-1">
+                <Button class="btn-green">Submit</Button>
             </div>
         </div>
         <div v-if="isLoading" class="loading">
@@ -36,10 +38,13 @@ const sectionRef = ref<HTMLElement>();
 const props = defineProps<{
     articleId: string
 }>()
+const ReadArticleStore = useReadArticleStore();
+const { stats } = storeToRefs(ReadArticleStore);
+
 const ArticleCommentsStore = useArticleCommentsStore();
 const { get } = ArticleCommentsStore;
 
-const { isLoading, page, last_page, parameters } = storeToRefs(ArticleCommentsStore);
+const { isLoading } = storeToRefs(ArticleCommentsStore);
 ArticleCommentsStore.articleId = props.articleId;
 ArticleCommentsStore.parameters.page = 1;
 get();

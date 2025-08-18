@@ -8,7 +8,7 @@
         <p class="label" v-if="bottomLabel">{{ bottomLabel }}</p>
     </fieldset>
     <textarea v-else v-bind="inputAttrs" v-model="inputValue"
-        class="textarea rounded-2xl border-gray-300/50 w-full h-24"></textarea>
+        class="textarea rounded-2xl border-gray-300/50 focus:outline-green-main w-full h-24"></textarea>
 </template>
 
 <script lang="ts" setup>

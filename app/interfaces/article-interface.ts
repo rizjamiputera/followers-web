@@ -22,7 +22,7 @@ export interface Article {
     // createdAt   DateTime @default (now())
     // updatedAt   DateTime @updatedAt
     // deleted     Boolean @default (false)
-    // readStat    ArticleReadStat @relation(fields: [readStatId], references: [id], onDelete: Restrict)
+    stats?: ArticleStats
     // readStatId: string
     // visitors    Visit[]
 }
@@ -48,4 +48,14 @@ export interface Comment {
     mentioned?: User
     createdAt: string
     replies?: Comment[]
+}
+
+export interface ArticleStats {
+    // lastReadAt: string
+    commentCount: number
+    readCount: number
+    likeCount: number
+    dislikeCount: number
+    shareCount: number
+    bookmarkCount: number
 }
