@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col gap-3">
+    <div class="flex flex-col gap-3 relative">
         <div class="flex justify-end gap-1">
             <Button class="">Cancel</Button>
             <Button class="btn-green" @click="save">Save</Button>
@@ -8,21 +8,61 @@
         <Input v-model="dataDto.title" label="Title" />
         <Input v-model="dataDto.slug" label="Slug" />
 
-        <div>
-            <label class="text-sm font-medium">Image</label>
-            <LazyImage v-if="image" :src="image" alt="main image" class="w-full max-w-60 aspect-video rounded-xl" />
-            <div v-else class="bg-green-main/40 w-full max-w-60 aspect-video rounded-xl"></div>
+        <!-- <div class="w-full flex flex-wrap divide-x-1  divide-green-main/20 "> -->
+        <div class="w-full flex flex-wrap gap-4 items-stretch">
+            <div class="flex-1 max-md:w-full">
+                <div>
+                    <label class="text-sm font-medium">Image</label>
+                    <LazyImage v-if="image" :src="image" alt="main image"
+                        class="w-full max-w-100 aspect-video bg-cover rounded-xl" />
+                    <div v-else class="bg-green-main/40 w-full max-w-60 aspect-video rounded-xl"></div>
+                </div>
+
+                <div>
+                    <label class="text-sm font-medium">Ringkasan</label>
+                    <p class="text-xs font-light mb-1">Berisi maksimal 100 karakter punchline untuk menarik perhatian
+                        pembaca
+                    </p>
+                    <Textarea v-model="dataDto.excerpt" />
+                </div>
+            </div>
+
+            <div class="max-md:hidden py-3">
+                <div class="h-full w-px bg-green-main/10"></div>
+            </div>
+
+            <!-- Preview -->
+            <div class="max-md:w-full">
+                <label class="text-sm font-medium">Preview</label>
+                <div class="w-full sm:max-w-65 flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
+                    <!-- image -->
+                    <Image v-if="image" :src="image"
+                        class="flex-shrink-0 w-30 sm:w-full aspect-4/3 sm:aspect-video rounded-lg bg-cover bg-no-repeat" />
+                    <div v-else
+                        class="flex-shrink-0 w-30 sm:w-full aspect-4/3 sm:aspect-video rounded-lg bg-green-main/20 skeleton" />
+                    <div class="flex-1 min-w-0">
+                        <div class="flex flex-col gap-2 w-full">
+                            <!-- title -->
+                            <DefaultBody v-if="dataDto.title" class="line-clamp-1 font-bold">
+                                {{ dataDto.title }}
+                            </DefaultBody>
+                            <div v-else class="h-5 w-3/4 bg-green-main/20 skeleton"></div>
+                            <!-- exerpt -->
+                            <DefaultBody v-if="dataDto.excerpt" class="line-clamp-3">
+                                {{ dataDto.excerpt }}
+                            </DefaultBody>
+                            <template v-else>
+                                <div class="h-3 w-full bg-green-main/20 skeleton mt-3"></div>
+                                <div class="h-3 w-full bg-green-main/20 skeleton"></div>
+                                <div class="h-3 w-1/2 bg-green-main/20 skeleton"></div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <Textarea v-model="dataDto.excerpt" label="Ringkasan (max 100 chars)" />
-
-        <!-- Wysiwyg editor -->
-        <!-- <div>
-            <label class="text-sm font-medium">Content</label>
-            <WysiwygEditor v-model="content" />
-        </div> -->
         <div>
-            <label class="text-sm font-medium">Content</label>
             <TiptapEditor v-model="content" />
         </div>
 
@@ -70,6 +110,11 @@ watch(article, (newArticle) => {
 
         image.value = newArticle.image_sm
         content.value = newArticle.content?.content || null
+    }
+}, { immediate: true })
+watch(dataDto.value, (newDto) => {
+    if (newDto) {
+        dataDto.value.slug = newDto.title.toLowerCase().replaceAll(' ', '-')
     }
 }, { immediate: true })
 
