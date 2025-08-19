@@ -5,6 +5,7 @@ export interface User {
     avatar?: string
     avatar_md?: string
     role: Role
+    createdAt: string
 }
 
 export type Role = "SUPERADMIN" | "ADMIN" | "OPERATOR" | "USER"

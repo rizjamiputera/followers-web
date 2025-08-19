@@ -46,12 +46,25 @@
                             <Avatar :avatar="user.avatar_md" :name="user.name" class="w-10 h-10" />
                         </div>
                         <div tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
-                            <div class="p-2">{{ user.name }}</div>
+                            <div class="p-2 flex flex-col gap-1">
+                                <div class="text-green-main font-medium">{{ user.name }}</div>
+                                <div class="text-xs">Member since {{ dayjs(user.createdAt).format('DD MMM YYYY') }}
+                                </div>
+                            </div>
                             <hr>
                             <ul class="mt-1 flex flex-col gap-1 text-sm">
                                 <li><a class="rounded-full">Profile</a></li>
-                                <li><a @click="handleLogout"
-                                        class="bg-error text-white-main rounded-full btn-xs">Logout</a></li>
+                                <li v-if="user.role != 'USER'">
+                                    <NuxtLink to="/cp" class="rounded-full justify-between">
+                                        Got to admin
+                                        <LucideArrowRight :size="12" />
+                                    </NuxtLink>
+                                </li>
+                                <li>
+                                    <a @click="handleLogout" class="bg-error text-white-main rounded-full btn-xs">
+                                        Logout
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -66,6 +79,9 @@
 </template>
 
 <script lang="ts" setup>
+import dayjs from 'dayjs';
+import { LucideArrowRight } from 'lucide-vue-next';
+
 const emits = defineEmits(['open'])
 defineProps<{
     menuProduct: any[]
