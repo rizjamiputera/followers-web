@@ -113,7 +113,7 @@ let isUpdatingFromEditor = false
 const editor = useEditor({
     extensions: [
         StarterKit,
-        Image,
+        // Image,
         Image.configure({
             HTMLAttributes: {
                 class: 'max-w-full h-auto rounded-lg',

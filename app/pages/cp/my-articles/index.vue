@@ -18,11 +18,13 @@
         <div class="overflow-x-auto rounded-2xl border border-green-main/5 bg-base-100">
             <table class="table">
                 <thead>
-                    <th>No</th>
-                    <th>Title</th>
-                    <th class="text-center">Status</th>
-                    <th>Created At</th>
-                    <th>Action</th>
+                    <tr>
+                        <th>No</th>
+                        <th>Title</th>
+                        <th class="text-center">Status</th>
+                        <th>Created At</th>
+                        <th>Action</th>
+                    </tr>
                 </thead>
                 <tbody>
                     <tr v-if="isEmpty">

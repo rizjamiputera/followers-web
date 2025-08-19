@@ -2,7 +2,7 @@
     <div class="flex flex-col gap-3 relative">
         <div class="flex justify-end gap-1">
             <Button class="">Cancel</Button>
-            <Button class="btn-green" @click="save">Save</Button>
+            <Button class="btn-green" @click="showConfirm = true">Save</Button>
         </div>
 
         <Input v-model="title" label="Title" @keyup="checkTitleChange" />
@@ -10,7 +10,7 @@
             <div class="flex gap-1 items-center mb-2">
                 <label class="text-sm font-medium">Slug</label>
                 <div v-if="slug != article?.slug">
-                    <LucideLoaderCircle v-if="checkingSlug" :size="24" class="stroke-green-main animate-spin" />
+                    <LucideLoader v-if="checkingSlug" :size="24" class="stroke-green-main animate-spin" />
                     <LucideCheckCircle2 v-else-if="slugAvailable" :size="24" class="stroke-green-main" />
                     <LucideXCircle v-else :size="24" class="stroke-red-800" />
                 </div>
@@ -82,13 +82,27 @@
 
         <div class="flex justify-end gap-1">
             <Button class="">Cancel</Button>
-            <Button class="btn-green" @click="save">Save</Button>
+            <Button class="btn-green" @click="showConfirm = true">Save</Button>
         </div>
     </div>
+
+    <ClientOnly>
+        <Modal :show="showConfirm" @close="showConfirm = false">
+            Are you sure?
+            <div class="modal-action">
+                <Button @click="showConfirm = false" :disabled="isSubmitting">No</Button>
+                <Button @click="submit" :disabled="isSubmitting" class="btn-green">
+                    <LucideLoader :size="20" v-show="isSubmitting" class="animate-spin" />
+                    Yes
+                </Button>
+            </div>
+        </Modal>
+    </ClientOnly>
 </template>
 
 <script lang="ts" setup>
-import { LucideCheck, LucideCheckCircle2, LucideLoaderCircle, LucideXCircle } from 'lucide-vue-next';
+import Joi from 'joi';
+import { LucideCheckCircle2, LucideLoader, LucideXCircle } from 'lucide-vue-next';
 import type { Article } from '~/interfaces/article-interface';
 
 definePageMeta({
@@ -109,7 +123,6 @@ const get = async () => {
     const id = route.params.id as string;
 
     article.value = await Api.get('/v1/article/' + id + '?includes=content&format=html',) as Article
-    console.log(article.value)
 }
 
 onMounted(get);
@@ -139,7 +152,7 @@ const checkSlugChange = () => {
 
 
 const checkingSlug = ref<boolean>(false);
-const slugAvailable = ref<boolean>(false);
+const slugAvailable = ref<boolean>(true);
 let checkSlugTimeout: NodeJS.Timeout | null = null;
 const checkSlug = () => {
     if (slug.value && article.value) {
@@ -164,9 +177,46 @@ const checkSlug = () => {
     }
 }
 
+const isArticle = Joi.object({
+    title: IsString,
+    slug: IsString,
+    excerpt: IsString,
+})
 
-const save = () => {
-    console.log(content.value)
+const showConfirm = ref<boolean>(false);
+const isSubmitting = ref<boolean>(false);
+const submit = async () => {
+    if (!article.value) return;
+    if (!slugAvailable.value) return;
+    if (isSubmitting.value) return;
+
+    // set loading state
+    isSubmitting.value = true;
+
+    const dataDto = {
+        title: title.value,
+        slug: slug.value,
+        excerpt: excerpt.value,
+
+    };
+
+    try {
+        const data = Validate(isArticle, dataDto);
+
+        await Api.patch('/v1/article/' + article.value.id, {
+            ...data,
+            content: content.value,
+        });
+
+        showConfirm.value = false;
+        toastSuccess('Success')
+
+        // emit('close');
+    } catch (error) {
+        toastError(error)
+    } finally {
+        isSubmitting.value = false;
+    }
 }
 </script>
 

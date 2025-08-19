@@ -16,7 +16,7 @@
 
 <script lang="ts" setup>
 import Header from '~/components/cp/header.vue';
-
+import "vue-toast-notification/dist/theme-sugar.css";
 
 </script>
 
