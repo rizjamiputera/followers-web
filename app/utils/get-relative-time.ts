@@ -5,6 +5,6 @@ import 'dayjs/locale/id'; // or any other locale you prefer
 dayjs.extend(relativeTime);
 dayjs.locale('id');
 
-export default (datetime: string) => {
+export const getRelativeTime = (datetime: string) => {
     return dayjs(datetime).fromNow();
 }

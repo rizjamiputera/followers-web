@@ -1,5 +1,5 @@
 <template>
-    <NuxtLink :to prefetch-on="interaction" class="button-link btn scale-90">
+    <NuxtLink :to prefetch-on="interaction" class="button-link btn">
         <slot />
     </NuxtLink>
 </template>

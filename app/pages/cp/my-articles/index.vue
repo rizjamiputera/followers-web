@@ -64,7 +64,9 @@
                         </td>
                         <td>{{ dayjs(dt.createdAt).format('DD-MMM-YY') }}</td>
                         <td>
-                            <button>View</button>
+                            <Button class="btn-sm btn-green">View</Button>
+                            <ButtonLink :to="`/cp/my-articles/edit/${dt.id}`" class="btn-sm btn-green">Edit
+                            </ButtonLink>
                         </td>
                     </tr>
                     <template v-else v-for="n in 10">

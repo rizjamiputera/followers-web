@@ -85,6 +85,11 @@ section,
     @apply rounded-xl
 }
 
+/* editor */
+.tiptap.ProseMirror {
+    @apply focus:outline-none
+}
+
 
 /* TOAST */
 .v-toast>.v-toast__item {
