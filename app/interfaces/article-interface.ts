@@ -11,7 +11,7 @@ export interface Article {
     // contentId   :string
     // versions    ArticleContentVersion[]
     // isFeatured  Boolean                 @default(false)
-    // status      ArticleStatus           @default(DRAFT)
+    status: ArticleStatus
     publishedAt?: string // actual publish time
     author?: User
     authorId: string
@@ -19,13 +19,31 @@ export interface Article {
     tags?: Tag[]
     // comments?: Comment[]
     // reactions   ArticleReaction[]
-    // createdAt   DateTime @default (now())
+    createdAt: string
     // updatedAt   DateTime @updatedAt
     // deleted     Boolean @default (false)
     stats?: ArticleStats
     // readStatId: string
     // visitors    Visit[]
 }
+
+export type ArticleStatus =
+    "DRAFT" |
+    "ON_REVIEW" |
+    "REJECTED" |
+    "APPROVED" |
+    "PUBLISHED" |
+    "TAKE_DOWN";
+
+export const articleStatuses: ArticleStatus[] = [
+    "DRAFT",
+    "ON_REVIEW",
+    "REJECTED",
+    "APPROVED",
+    "PUBLISHED",
+    "TAKE_DOWN",
+];
+
 
 export interface ArticleContent {
     content: {

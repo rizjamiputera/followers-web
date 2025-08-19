@@ -15,8 +15,7 @@
                     <!-- ARTICLE IMAGE -->
                     <div class="flex flex-col gap-1">
                         <div class="flex justify-end items-center gap-1 text-xs font-light">
-                            <LucideClock :size="12" /> {{ getRelativeTime(data.publishedAt!) }}
-                            -
+                            <LucideClock :size="12" /> {{ data.publishedAt ? getRelativeTime(data.publishedAt) : '-' }}
                             <div class="">{{ stats.readCount }} views</div>
                         </div>
                         <Image :src="data.image" :alt="data.title" class-name="aspect-video bg-cover rounded-2xl" />

@@ -14,7 +14,7 @@
     --color-border-main: #BDBDBD;
 }
 
-@source inline("w-5 h-5 w-12 h-12 w-10 h-10");
+@source inline("w-5 h-5 w-12 h-12 w-10 h-10 badge-neutral badge-accent badge-warning badge-info badge-success badge-error");
 
 html,
 body {
@@ -93,4 +93,10 @@ section,
 
 .v-toast .v-toast__text {
     @apply !py-4
+}
+
+
+/* TABLE */
+table th {
+    @apply text-green-main
 }

@@ -39,7 +39,7 @@
 <script lang="ts" setup>
 import { LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
 import type { Comment } from '~/interfaces/article-interface';
-import { getRelativeTime } from '~/utils/getRelativetime';
+import { getRelativeTime } from '~/utils/get-relative-time';
 
 defineProps<{
     comment: Comment
