@@ -5,8 +5,22 @@
             <Button class="btn-green" @click="save">Save</Button>
         </div>
 
-        <Input v-model="dataDto.title" label="Title" />
-        <Input v-model="dataDto.slug" label="Slug" />
+        <Input v-model="title" label="Title" @keyup="checkTitleChange" />
+        <div>
+            <div class="flex gap-1 items-center mb-2">
+                <label class="text-sm font-medium">Slug</label>
+                <div v-if="slug != article?.slug">
+                    <LucideLoaderCircle v-if="checkingSlug" :size="24" class="stroke-green-main animate-spin" />
+                    <LucideCheckCircle2 v-else-if="slugAvailable" :size="24" class="stroke-green-main" />
+                    <LucideXCircle v-else :size="24" class="stroke-red-800" />
+                </div>
+            </div>
+
+            <div class="join w-full">
+                <button class="btn join-item rounded-l-full btn-active font-light">{{ webUri }}/</button>
+                <Input class="join-item rounded-l-none flex-1" v-model="slug" @keyup="checkSlugChange" />
+            </div>
+        </div>
 
         <!-- <div class="w-full flex flex-wrap divide-x-1  divide-green-main/20 "> -->
         <div class="w-full flex flex-wrap gap-4 items-stretch">
@@ -20,10 +34,10 @@
 
                 <div>
                     <label class="text-sm font-medium">Ringkasan</label>
-                    <p class="text-xs font-light mb-1">Berisi maksimal 100 karakter punchline untuk menarik perhatian
-                        pembaca
+                    <p class="text-xs font-light mb-1">
+                        Berisi maksimal 100 karakter punchline untuk menarik perhatian pembaca
                     </p>
-                    <Textarea v-model="dataDto.excerpt" />
+                    <Textarea v-model="excerpt" />
                 </div>
             </div>
 
@@ -43,13 +57,13 @@
                     <div class="flex-1 min-w-0">
                         <div class="flex flex-col gap-2 w-full">
                             <!-- title -->
-                            <DefaultBody v-if="dataDto.title" class="line-clamp-1 font-bold">
-                                {{ dataDto.title }}
+                            <DefaultBody v-if="title" class="line-clamp-1 font-bold">
+                                {{ title }}
                             </DefaultBody>
                             <div v-else class="h-5 w-3/4 bg-green-main/20 skeleton"></div>
                             <!-- exerpt -->
-                            <DefaultBody v-if="dataDto.excerpt" class="line-clamp-3">
-                                {{ dataDto.excerpt }}
+                            <DefaultBody v-if="excerpt" class="line-clamp-3">
+                                {{ excerpt }}
                             </DefaultBody>
                             <template v-else>
                                 <div class="h-3 w-full bg-green-main/20 skeleton mt-3"></div>
@@ -74,21 +88,20 @@
 </template>
 
 <script lang="ts" setup>
+import { LucideCheck, LucideCheckCircle2, LucideLoaderCircle, LucideXCircle } from 'lucide-vue-next';
 import type { Article } from '~/interfaces/article-interface';
 
 definePageMeta({
     layout: 'control-panel'
 })
+const { public: { webUri } } = useRuntimeConfig();
 const route = useRoute();
 
 const article = ref<Article | undefined>(undefined)
+const title = ref<string>('')
+const slug = ref<string>('')
+const excerpt = ref<string>('')
 const content = ref<any>(undefined)
-
-const dataDto = ref({
-    title: '',
-    slug: '',
-    excerpt: '',
-});
 
 const image = ref<string | null>(null)
 
@@ -104,19 +117,52 @@ onMounted(get);
 // Watch for article updates and sync into dataDto
 watch(article, (newArticle) => {
     if (newArticle) {
-        dataDto.value.title = newArticle.title
-        dataDto.value.slug = newArticle.slug
-        dataDto.value.excerpt = newArticle.excerpt
+        title.value = newArticle.title
+        slug.value = newArticle.slug
+        excerpt.value = newArticle.excerpt
 
         image.value = newArticle.image_sm
         content.value = newArticle.content?.content || null
     }
 }, { immediate: true })
-watch(dataDto.value, (newDto) => {
-    if (newDto) {
-        dataDto.value.slug = newDto.title.toLowerCase().replaceAll(' ', '-')
+
+
+
+const checkTitleChange = () => {
+    slug.value = slugify(title.value)
+    checkSlug();
+}
+const checkSlugChange = () => {
+    slug.value = slugify(slug.value)
+    checkSlug();
+}
+
+
+const checkingSlug = ref<boolean>(false);
+const slugAvailable = ref<boolean>(false);
+let checkSlugTimeout: NodeJS.Timeout | null = null;
+const checkSlug = () => {
+    if (slug.value && article.value) {
+
+        if (slug.value != article.value.slug) {
+            checkingSlug.value = true;
+            if (checkSlugTimeout) {
+                clearTimeout(checkSlugTimeout);
+            }
+
+            checkSlugTimeout = setTimeout(async () => {
+                try {
+                    slugAvailable.value = await Api.get('/v1/article/slug/check?slug=' + slug.value) as boolean;
+                } catch (error) {
+                    slugAvailable.value = false;
+                } finally {
+                    checkingSlug.value = false;
+                }
+            }, 2000);
+        }
+
     }
-}, { immediate: true })
+}
 
 
 const save = () => {
