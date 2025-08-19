@@ -71,11 +71,11 @@ export const useAuthStore = defineStore('auth', {
             this.isLoading = true;
 
             try {
-                const { data } = await Api.post('/v1/auth/register', payload) as any;
+                const data = await Api.post('/v1/auth/register', payload) as any;
 
-                // this.setAuth(data as LoginResponse);
+                this.setAuth(data as LoginResponse);
 
-                // navigateTo('/auth/login');
+                navigateTo('/');
             } finally {
                 this.isLoading = false;
             }

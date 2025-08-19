@@ -84,3 +84,13 @@ section,
 .prose img {
     @apply rounded-xl
 }
+
+
+/* TOAST */
+.v-toast>.v-toast__item {
+    @apply rounded-full min-h-[2em]
+}
+
+.v-toast .v-toast__text {
+    @apply !py-4
+}

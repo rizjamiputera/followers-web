@@ -20,8 +20,8 @@
                 label="Confirm Password" placeholder="Confirm Password" class="bg-transparent sm:input-lg font-light" />
         </form>
 
-        <Button class="w-full sm:btn-lg btn-green border-0 text-white mt-5" @click="handleRegister(dataDto)"
-            :disabled="isLoading" :loading="isLoading">
+        <Button class="w-full sm:btn-lg btn-green border-0 text-white mt-5" @click="register" :disabled="isLoading"
+            :loading="isLoading">
             Register
         </Button>
 
@@ -32,6 +32,7 @@
 </template>
 
 <script lang="ts" setup>
+import Joi from 'joi';
 import Input from '~/components/input.vue';
 
 
@@ -52,6 +53,30 @@ const { handleRegister } = AuthStore;
 const { isLoading } = storeToRefs(AuthStore);
 
 const showConfirm = ref<boolean>(false);
+
+const isRegister = Joi.object({
+    name: IsString.min(3),
+    email: IsEmail.min(3),
+    password: IsString.min(8),
+    confirm_password: IsString.min(8)
+        .valid(Joi.ref('password'))
+        .label('Password Confirmation')
+        .options({
+            messages: {
+                'any.only': '{{#label}} is not match'
+            }
+        }),
+})
+
+const register = async () => {
+    try {
+        const data = Validate(isRegister, dataDto.value)
+
+        await handleRegister(data);
+    } catch (error) {
+        toastError(error)
+    }
+}
 
 </script>
 
