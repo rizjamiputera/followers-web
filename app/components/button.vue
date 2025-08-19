@@ -1,5 +1,5 @@
 <template>
-    <button v-bind="buttonAttrs" class="btn scale-90">
+    <button v-bind="buttonAttrs" class="btn">
         <div>
             <slot />
             <svg v-show="loading" class="size-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none"

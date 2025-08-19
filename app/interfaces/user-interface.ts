@@ -4,5 +4,7 @@ export interface User {
     email: string
     avatar?: string
     avatar_md?: string
-    avatar_xs?: string
+    role: Role
 }
+
+export type Role = "SUPERADMIN" | "ADMIN" | "OPERATOR" | "USER"

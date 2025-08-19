@@ -37,9 +37,24 @@
                     </ul>
                 </div>
                 <div class="navbar-end gap-5">
-                    <ButtonLink to="/" prefetch-on="interaction" class="btn-white font-medium h-9">
+                    <ButtonLink v-if="!user" to="/auth/login" prefetch-on="interaction"
+                        class="btn-white font-medium h-9">
                         Login
                     </ButtonLink>
+                    <div v-else class="dropdown dropdown-bottom dropdown-left">
+                        <div tabindex="0" role="button" class="btn btn-active btn-circle bg-indigo-300 border-0">
+                            <Avatar :avatar="user.avatar_md" :name="user.name" class="w-10 h-10" />
+                        </div>
+                        <div tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                            <div class="p-2">{{ user.name }}</div>
+                            <hr>
+                            <ul class="mt-1 flex flex-col gap-1 text-sm">
+                                <li><a class="rounded-full">Profile</a></li>
+                                <li><a @click="handleLogout"
+                                        class="bg-error text-white-main rounded-full btn-xs">Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
                     <button @click="$emit('open')"
                         class="lg:hidden btn bg-green-main border-1 border-white h-9 p-3 rounded-xl shadow-none">
                         <svg-menu-bar class="w-3" />
@@ -56,25 +71,30 @@ defineProps<{
     menuProduct: any[]
 }>()
 
+const AuthStore = useAuthStore();
+
+const { user } = storeToRefs(AuthStore);
+const { handleLogout } = AuthStore;
+
 const show_product_menu = ref<boolean>(false);
 
 
-const checkScreenSize = () => {
-    if (typeof window !== 'undefined') {
-        if (window.innerWidth < 1024) {
-            show_product_menu.value = false;
-        }
-    }
-}
+// const checkScreenSize = () => {
+//     if (typeof window !== 'undefined') {
+//         if (window.innerWidth < 1024) {
+//             show_product_menu.value = false;
+//         }
+//     }
+// }
 
-onMounted(() => {
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-});
+// onMounted(() => {
+//     checkScreenSize();
+//     window.addEventListener('resize', checkScreenSize);
+// });
 
-onUnmounted(() => {
-    if (typeof window !== 'undefined') {
-        window.removeEventListener('resize', checkScreenSize);
-    }
-});
+// onUnmounted(() => {
+//     if (typeof window !== 'undefined') {
+//         window.removeEventListener('resize', checkScreenSize);
+//     }
+// });
 </script>

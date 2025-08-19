@@ -3,11 +3,12 @@
         <legend class="font-medium text-sm">{{ label }}
             <span class="text-error">{{ required ? '*' : '' }}</span>
         </legend>
-        <input v-bind="inputAttrs" v-model="inputValue" class="input rounded-full border-gray-300/50 w-full" :class />
+        <input v-bind="inputAttrs" v-model="inputValue"
+            class="input rounded-full bg-white-main focus:outline-green-main border-gray-300/50 w-full" :class />
         <p class="label" v-if="bottomLabel">{{ bottomLabel }}</p>
     </fieldset>
-    <input v-else v-bind="inputAttrs" v-model="inputValue" class="input rounded-full border-gray-300/50 w-full"
-        :class />
+    <input v-else v-bind="inputAttrs" v-model="inputValue"
+        class="input rounded-full bg-white-main focus:outline-green-main border-gray-300/50 w-full" :class />
 </template>
 
 <script lang="ts" setup>
