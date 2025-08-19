@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { User } from '~/interfaces/user-interface'
+import { Role, Module, Permission, type User, type UserPermission } from '~/interfaces/user-interface'
 
 
 interface LoginResponse {
@@ -22,10 +22,26 @@ export const useAuthStore = defineStore('auth', {
         user: undefined,
         isLoading: false,
     }),
+    getters: {
+        permissions: (state): UserPermission[] => state.user?.permissions ?? [],
+        can: (state) => {
+            return (module: Module, permission: Permission): boolean => {
+                if (!state.user) return false;
+                if ([Role.SUPERADMIN, Role.ADMIN].includes(state.user.role)) return true;
+                if (!state.user.permissions) return false;
+
+                const find = state.user.permissions.find(p => p.module == Module[module] && p.permission == Permission[permission])
+
+                return find != null;
+            }
+        }
+    },
     actions: {
         async getAuthUser() {
             try {
-                this.user = await $fetch('/api/auth/user')
+                this.user = await $fetch('/api/auth/user', {
+                    query: { includes: 'permissions' }
+                })
             } catch {
                 this.reset()
             }

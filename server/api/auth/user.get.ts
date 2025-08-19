@@ -4,15 +4,15 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 401, message: "Not authenticated" })
     }
 
+    const query = getQuery(event)
     const { public: { apiUri } } = useRuntimeConfig();
 
     try {
         // verify token or call backend
         const user = await $fetch(`${apiUri}/v1/auth/profile`, {
             headers: { Authorization: `Bearer ${token}` },
+            query
         })
-
-        console.log({ user })
 
         return user
     } catch (error) {
