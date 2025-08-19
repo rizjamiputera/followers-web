@@ -122,7 +122,7 @@ const image = ref<string | null>(null)
 const get = async () => {
     const id = route.params.id as string;
 
-    article.value = await Api.get('/v1/article/' + id + '?includes=content&format=html',) as Article
+    article.value = await Api.get('/v1/article/my/' + id + '?includes=content&format=html',) as Article
 }
 
 onMounted(get);

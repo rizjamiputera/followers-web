@@ -99,6 +99,7 @@ import { useEditor, EditorContent } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
 import { LucideCode2, LucideImage, LucideQuote, LucideRedo2, LucideStrikethrough, LucideUndo2 } from 'lucide-vue-next';
+import type { ArticlePhotoContent } from '~/interfaces/article-interface';
 
 const props = defineProps<{
     modelValue?: any
@@ -131,13 +132,13 @@ const editor = useEditor({
 })
 
 // image
-const addImage = () => {
-    const url = window.prompt('URL')
+// const addImage = () => {
+//     const url = window.prompt('URL')
 
-    if (url) {
-        editor.value?.chain().focus().setImage({ src: url }).run()
-    }
-};
+//     if (url) {
+//         editor.value?.chain().focus().setImage({ src: url }).run()
+//     }
+// };
 
 // Handle file input
 const fileInput = ref<HTMLInputElement | null>(null)
@@ -145,21 +146,19 @@ const handleFileChange = async (e: Event) => {
     const file = (e.target as HTMLInputElement).files?.[0]
     if (!file) return
 
-    const formData = new FormData()
-    formData.append('file', file)
+    try {
+        const formData = new FormData()
+        formData.append('photo', file)
 
-    // upload to your NestJS backend
-    const res = await fetch('http://localhost:3000/upload', {
-        method: 'POST',
-        body: formData,
-    })
+        // upload to your NestJS backend
+        const { path: src } = await Api.post('/v1/article/photo/upload', formData) as ArticlePhotoContent
 
-    const { url } = await res.json()
+        editor.value?.chain().focus().setImage({ src }).run()
+    } catch (error) {
+        toastError(error);
+    }
 
-    editor.value?.chain().focus().setImage({ src: url }).run()
 }
-
-
 
 watch(() => props.modelValue, (newValue) => {
     if (!isUpdatingFromEditor && editor.value && newValue) {
