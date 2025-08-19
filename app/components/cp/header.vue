@@ -16,41 +16,43 @@
                 <div class="navbar-center hidden lg:flex">
                 </div>
                 <div class="navbar-end gap-5">
-                    <ButtonLink v-if="!user" to="/auth/login" prefetch-on="interaction"
-                        class="btn-white font-medium h-9">
-                        Login
-                    </ButtonLink>
-                    <div v-else class="dropdown dropdown-bottom dropdown-left">
-                        <div tabindex="0" class="flex items-center gap-2">
-                            <div class="text-green-main text-sm font-medium">{{ user.name }}</div>
-                            <div role="button" class="btn btn-sm btn-active btn-circle bg-indigo-300 border-0">
-                                <Avatar :avatar="user.avatar_md" :name="user.name" class="w-8 h-8" />
-                            </div>
-                        </div>
-                        <div tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
-                            <div class="p-2 flex flex-col gap-1">
-                                <div class="text-green-main font-medium">{{ user.name }}</div>
-                                <div class="text-xs">Member since {{ dayjs(user.createdAt).format('DD MMM YYYY') }}
+                    <ClientOnly>
+                        <ButtonLink v-if="!user" to="/auth/login" prefetch-on="interaction"
+                            class="btn-white font-medium h-9">
+                            Login
+                        </ButtonLink>
+                        <div v-else class="dropdown dropdown-bottom dropdown-left">
+                            <div tabindex="0" class="flex items-center gap-2">
+                                <div class="text-green-main text-sm font-medium">{{ user.name }}</div>
+                                <div role="button" class="btn btn-sm btn-active btn-circle bg-indigo-300 border-0">
+                                    <Avatar :avatar="user.avatar_md" :name="user.name" class="w-8 h-8" />
                                 </div>
                             </div>
-                            <hr>
-                            <ul class="mt-1 flex flex-col gap-1 text-sm">
-                                <li><a class="rounded-full">Profile</a></li>
-                                <li v-if="user.role != 'USER'">
-                                    <NuxtLink to="/" class="rounded-full justify-between">
-                                        Got to home
-                                        <LucideArrowRight :size="12" />
-                                    </NuxtLink>
-                                </li>
-                                <li>
-                                    <a @click="handleLogout" class="bg-error text-white-main rounded-full btn-xs">
-                                        Logout
-                                    </a>
-                                </li>
-                            </ul>
+                            <div tabindex="0"
+                                class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                                <div class="p-2 flex flex-col gap-1">
+                                    <div class="text-green-main font-medium">{{ user.name }}</div>
+                                    <div class="text-xs">Member since {{ dayjs(user.createdAt).format('DD MMM YYYY') }}
+                                    </div>
+                                </div>
+                                <hr>
+                                <ul class="mt-1 flex flex-col gap-1 text-sm">
+                                    <li><a class="rounded-full">Profile</a></li>
+                                    <li v-if="user.role != Role.USER">
+                                        <NuxtLink to="/" class="rounded-full justify-between">
+                                            Got to home
+                                            <LucideArrowRight :size="12" />
+                                        </NuxtLink>
+                                    </li>
+                                    <li>
+                                        <a @click="handleLogout" class="bg-error text-white-main rounded-full btn-xs">
+                                            Logout
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-
+                    </ClientOnly>
                 </div>
             </div>
         </div>
@@ -60,6 +62,7 @@
 <script lang="ts" setup>
 import dayjs from 'dayjs';
 import { LucideArrowRight } from 'lucide-vue-next';
+import { Role } from '~/interfaces/user-interface';
 
 const AuthStore = useAuthStore();
 
