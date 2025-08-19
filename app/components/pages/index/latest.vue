@@ -6,7 +6,12 @@
                 <Pagination :page :last_page @prev="--parameters.page" @next="++parameters.page" />
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-5">
-                <template v-if="!isLoading" v-for="(data, n) in latest_articles" :key="n">
+                <template v-if="isEmpty">
+                    <div class="col-span-full text-3xl text-center text-green-main/50">
+                        Tidak ada article terbaru
+                    </div>
+                </template>
+                <template v-else-if="!isLoading" v-for="(data, n) in latest_articles" :key="n">
                     <NuxtLink :to="'/read/' + data.slug" prefetch-on="interaction"
                         class="w-full flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
                         <Image :src="data.image_sm"
@@ -22,10 +27,9 @@
                         </div>
                     </NuxtLink>
                 </template>
-                <template v-else v-for="m in 12" :key="m">
-                    <div prefetch-on="interaction"
-                        class="w-full flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
-                        <div class="w-33 sm:w-full aspect-4/3 sm:aspect-video rounded-lg bg-green-main/20" />
+                <template v-else v-for="m in 6" :key="m">
+                    <div class="w-full flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
+                        <div class="w-33 sm:w-full aspect-4/3 sm:aspect-video rounded-lg bg-green-main/20 skeleton" />
                         <div class="flex-1 flex flex-col gap-1">
                             <div class="h-5 w-3/4 bg-green-main/20 skeleton"></div>
                             <div class="h-3 w-full bg-green-main/20 skeleton mt-3"></div>
@@ -49,24 +53,26 @@ const LatestArticleStore = useLatestArticleStore();
 const { get } = LatestArticleStore;
 
 // Server-side data fetching for SEO
-const { public: { apiUri } } = useRuntimeConfig();
-const { data: latestData } = await useFetch(`${apiUri}/v1/article/published`, {
-    server: true,
-    query: {
-        page: 1,
-        limit: 12
-    }
-});
+// const { public: { apiUri } } = useRuntimeConfig();
+// const { data: latestData } = await useFetch(`${apiUri}/v1/article/published`, {
+//     server: true,
+//     query: {
+//         page: 1,
+//         limit: 12
+//     }
+// });
 
-// Set initial data in store if available
-if (latestData.value) {
-    LatestArticleStore.data = latestData.value as any;
-}
+// // Set initial data in store if available
+// if (latestData.value) {
+//     LatestArticleStore.data = latestData.value as any;
+// }
 
-const { isLoading, latest_articles, page, last_page, parameters } = storeToRefs(LatestArticleStore);
+const { isLoading, latest_articles, page, last_page, parameters, isEmpty } = storeToRefs(LatestArticleStore);
 LatestArticleStore.authorId = undefined;
 
 const sectionRef = ref<HTMLElement>();
+// load first data
+onMounted(() => get())
 
 watch(() => parameters.value.page, () => {
     get();
