@@ -5,9 +5,8 @@
             <template v-for="tag in tags" :key="tag.id">
                 <div
                     class="badge badge-success badge-ghost badge-outline border-green-main/20 text-green-main capitalize rounded-full line-clamp-1 text-ellipsis">
-                    {{
-                        tag.name
-                    }}</div>
+                    {{ tag.name }}
+                </div>
             </template>
         </div>
         <div class="grid grid-cols-10 gap-4 md:gap-8 mt-5">
@@ -57,6 +56,14 @@
                     <div v-if="content" class="prose max-w-none">
                         <WysiwygRenderer :content="content" />
                     </div>
+                    <div v-else>
+                        <div class="flex-1 flex flex-col gap-1">
+                            <div class="h-5 w-3/4 bg-green-main/20 skeleton"></div>
+                            <div class="h-3 w-full bg-green-main/20 skeleton mt-3"></div>
+                            <div class="h-3 w-full bg-green-main/20 skeleton"></div>
+                            <div class="h-3 w-1/2 bg-green-main/20 skeleton"></div>
+                        </div>
+                    </div>
 
                     <ArticleComments :articleId="data.id" />
                 </template>
@@ -73,6 +80,7 @@
 
 <script lang="ts" setup>
 import { LucideBookmark, LucideClock, LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
+import type { Article } from '~/interfaces/article-interface';
 
 const route = useRoute();
 const ReadArticleStore = useReadArticleStore();
@@ -85,10 +93,12 @@ const { data: articleData } = await useFetch(`${apiUri}/v1/article/read/${route.
     server: true,
 });
 
-// Set the data in store after fetch
+// hydrate store with light data
 if (articleData.value) {
-    ReadArticleStore.data = articleData.value as any;
+    ReadArticleStore.data = articleData.value as Article;
 }
+
+// 2. Client-side (full fetch for readers)
 onMounted(() => {
     ReadArticleStore.get();
 })
