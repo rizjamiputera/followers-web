@@ -8,8 +8,6 @@ export default (status: ArticleStatus) => {
             return 'badge-accent';
         case 'REJECTED':
             return 'badge-warning';
-        case 'APPROVED':
-            return 'badge-info';
         case 'PUBLISHED':
             return 'badge-success';
         case 'TAKE_DOWN':

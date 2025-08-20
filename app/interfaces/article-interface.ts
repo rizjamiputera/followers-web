@@ -31,7 +31,6 @@ export type ArticleStatus =
     "DRAFT" |
     "ON_REVIEW" |
     "REJECTED" |
-    "APPROVED" |
     "PUBLISHED" |
     "TAKE_DOWN";
 
@@ -39,7 +38,6 @@ export const articleStatuses: ArticleStatus[] = [
     "DRAFT",
     "ON_REVIEW",
     "REJECTED",
-    "APPROVED",
     "PUBLISHED",
     "TAKE_DOWN",
 ];

@@ -11,9 +11,14 @@
                 <Button class="mr-4" @click="show_preview = true">Preview</Button>
                 <Button @click="confirm_cancel = true">Cancel</Button>
                 <ClientOnly>
-                    <Button class="btn-green" v-if="canPublish" @click="validate(true)">Simpan & Publish</Button>
+                    <Button class="btn-green" v-if="canPublish" @click="status = 'PUBLISHED'; validate()">
+                        Simpan & Publish
+                    </Button>
+                    <Button class="btn-green" v-else @click="status = 'ON_REVIEW'; validate()">
+                        Simpan & Ajukan Approval
+                    </Button>
                 </ClientOnly>
-                <Button class="btn-black" @click="validate(false)">Simpan Draft</Button>
+                <Button class="btn-black" @click="status = 'DRAFT'; validate()">Simpan Draft</Button>
             </div>
         </div>
 
@@ -97,9 +102,14 @@
             <Button class="mr-4" @click="show_preview = true">Preview</Button>
             <Button @click="confirm_cancel = true">Cancel</Button>
             <ClientOnly>
-                <Button class="btn-green" v-if="canPublish" @click="validate(true)">Simpan & Publish</Button>
+                <Button class="btn-green" v-if="canPublish" @click="status = 'PUBLISHED'; validate()">
+                    Simpan & Publish
+                </Button>
+                <Button class="btn-green" v-else @click="status = 'ON_REVIEW'; validate()">
+                    Simpan & Ajukan Approval
+                </Button>
             </ClientOnly>
-            <Button class="btn-black" @click="validate(false)">Simpan Draft</Button>
+            <Button class="btn-black" @click="status = 'DRAFT'; validate()">Simpan Draft</Button>
         </div>
     </div>
 
@@ -128,17 +138,11 @@
             </div>
         </LazyModal>
 
-        <LazyModal v-if="showConfirmDraft" :show="showConfirmDraft" @close="showConfirmDraft = false">
+        <LazyModal v-if="showConfirmDraftOrReview" :show="showConfirmDraftOrReview"
+            @close="showConfirmDraftOrReview = false">
             Yakin simpan sebagai draft?
             <div class="modal-action">
-                <Button @click="showConfirmDraft = false" :disabled="isSubmitting">No</Button>
-
-                <!-- publish -->
-                <Button v-if="can(Module.ARTICLE, Permission.APPROVE)" @click="submit" :disabled="isSubmitting"
-                    class="btn-green">
-                    <LucideLoader :size="20" v-show="isSubmitting" class="animate-spin" />
-                    Publish
-                </Button>
+                <Button @click="showConfirmDraftOrReview = false" :disabled="isSubmitting">No</Button>
 
                 <Button @click="submit" :disabled="isSubmitting" class="btn-black">
                     <LucideLoader :size="20" v-show="isSubmitting" class="animate-spin" />
@@ -158,7 +162,7 @@
 <script lang="ts" setup>
 import Joi from 'joi';
 import { LucideCheckCircle2, LucideLoader, LucideXCircle } from 'lucide-vue-next';
-import { type Article, type PhotoContent } from '~/interfaces/article-interface';
+import { type Article, type ArticleStatus, type PhotoContent } from '~/interfaces/article-interface';
 import { Module, Permission } from '~/interfaces/user-interface';
 
 definePageMeta({
@@ -188,7 +192,10 @@ const get = async () => {
     if (!id) return;
     // const id = route.params.id as string;
 
-    article.value = await Api.get('/v1/article/my/' + id + '?includes=content') as Article
+    article.value = await Api.get('/v1/article/my/' + id + '?includes=content') as Article;
+
+    // initial at edit
+    slugAvailable.value = true;
 }
 
 onMounted(get);
@@ -272,16 +279,17 @@ const isEditArticle = Joi.object({
 
 const confirm_cancel = ref<boolean>(false);
 const showConfirmPublish = ref<boolean>(false);
-const showConfirmDraft = ref<boolean>(false);
+const showConfirmDraftOrReview = ref<boolean>(false);
 const isSubmitting = ref<boolean>(false);
 
 const validatedData = ref<Record<string, any>>({});
 
-const validate = (publish: boolean = false) => {
+const status = ref<ArticleStatus>('DRAFT');
+
+const validate = () => {
     // reset
-    console.log({ publish })
     showConfirmPublish.value = false;
-    showConfirmDraft.value = false;
+    showConfirmDraftOrReview.value = false;
 
     const dataDto: Partial<Article> = {
         title: title.value,
@@ -297,12 +305,12 @@ const validate = (publish: boolean = false) => {
     try {
         validatedData.value = Validate(id ? isEditArticle : isCreateArticle, dataDto);
 
-        if (publish) {
-            validatedData.value.status = "PUBLISHED"
+        if (status.value == "PUBLISHED") {
+            // validatedData.value.status = "PUBLISHED"
             showConfirmPublish.value = true;
         } else {
-            validatedData.value.status = "DRAFT"
-            showConfirmDraft.value = true;
+            // validatedData.value.status = "DRAFT"
+            showConfirmDraftOrReview.value = true;
         }
     } catch (error) {
         toastError(error);
@@ -325,9 +333,40 @@ const submit = async () => {
         if (id) {
             // update
             await Api.patch('/v1/article/' + id, validatedData.value);
+
+            // 1 set as draft
+            if (status.value == "DRAFT" && article.value?.status != "DRAFT") {
+                await Api.post('/v1/article/draft/' + id);
+            }
+            // 2 set as on_review
+            if (status.value == "ON_REVIEW" && article.value?.status != "ON_REVIEW") {
+                await Api.post('/v1/article/review/' + id);
+            }
+            // 3 set as publish
+            if (status.value == "PUBLISHED" && article.value?.status != "PUBLISHED" && canPublish.value) {
+                // TODO add published at
+                await Api.post('/v1/article/publish/' + id);
+            }
+
+            get()
         } else {
             // create
-            await Api.post('/v1/article', validatedData.value);
+            const newData = await Api.post('/v1/article', validatedData.value) as Article;
+
+            if (newData) {
+                // 1 set as on_review
+                if (status.value == "ON_REVIEW") {
+                    await Api.post('/v1/article/review/' + newData.id);
+                }
+                // 2 set as publish
+
+                if (status.value == "PUBLISHED" && canPublish.value) {
+                    // TODO add published at
+                    await Api.post('/v1/article/publish/' + newData.id);
+                }
+
+                navigateTo('/cp/my-articles/form?id=' + newData.id);
+            }
         }
 
         // showConfirm.value = false;
@@ -341,7 +380,7 @@ const submit = async () => {
         isSubmitting.value = false;
 
         showConfirmPublish.value = false;
-        showConfirmDraft.value = false;
+        showConfirmDraftOrReview.value = false;
     }
 }
 </script>
