@@ -8,6 +8,7 @@ interface ReadArticleStoreState {
     parameters: Record<string, any>
     isLoading: boolean
     isError: boolean
+    isNotFound: boolean
 }
 
 export const useReadArticleStore = defineStore('read-article', {
@@ -18,7 +19,8 @@ export const useReadArticleStore = defineStore('read-article', {
             includes: ['content', 'author', 'tags.tag', 'stats']
         },
         isLoading: false,
-        isError: false
+        isError: false,
+        isNotFound: false
     }),
     getters: {
         apiPath: (state) => {
@@ -44,11 +46,17 @@ export const useReadArticleStore = defineStore('read-article', {
         async get() {
             this.isLoading = true;
             this.isError = false;
+            this.isNotFound = false;
             try {
                 await new Promise((resolve) => setTimeout(resolve, 400));
                 this.data = await Api.get(this.apiPath) as Article
-            } catch (error) {
-                this.isError = true
+            } catch (error: any) {
+                if (error.status == 404) {
+                    this.isNotFound = true
+
+                } else {
+                    this.isError = true
+                }
             } finally {
                 this.isLoading = false;
             }

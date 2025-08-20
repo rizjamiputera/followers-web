@@ -9,16 +9,20 @@
                 </div>
             </template>
         </div>
+        <div v-if="isNotFound" class="text-lg text-center font-light text-green-main/80">
+            Artikel tidak ditemukan
+        </div>
+
         <div class="grid grid-cols-10 gap-4 md:gap-8 mt-5">
             <div class="col-span-full md:col-span-7 flex flex-col gap-4">
                 <template v-if="data">
                     <!-- ARTICLE IMAGE -->
                     <div class="flex flex-col gap-1">
+                        <div class="text-2xl md:text-3xl font-semibold mb-1">{{ data.title }}</div>
                         <div class="flex justify-end items-center gap-1 text-xs font-light">
                             <LucideClock :size="12" /> {{ data.publishedAt ? getRelativeTime(data.publishedAt) : '-' }}
                             <div class="">{{ stats.readCount }} views</div>
                         </div>
-                        <div class="text-2xl md:text-3xl font-semibold mb-2">{{ data.title }}</div>
                         <Image :src="data.image" :alt="data.title" class-name="aspect-video bg-cover rounded-2xl" />
                         <div class="flex flex-wrap justify-center sm:justify-between gap-2">
                             <LazyAvatarName v-if="data.author" :user="data.author" avatar_width="w-10 h-10" />
@@ -66,6 +70,8 @@
 
                     <ArticleComments :articleId="data.id" />
                 </template>
+
+
             </div>
             <!-- SIDE RIGHT -->
             <div class="col-span-full md:col-span-3">
@@ -83,7 +89,7 @@ import type { Article } from '~/interfaces/article-interface';
 
 const route = useRoute();
 const ReadArticleStore = useReadArticleStore();
-const { data, tags, content, stats } = storeToRefs(ReadArticleStore);
+const { data, tags, content, stats, isNotFound } = storeToRefs(ReadArticleStore);
 ReadArticleStore.slug = route.params.slug as string;
 
 // Server-side data fetching for SEO
