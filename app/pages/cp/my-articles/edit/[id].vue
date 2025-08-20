@@ -23,11 +23,13 @@
             </div>
         </div>
 
-        <!-- <div class="w-full flex flex-wrap divide-x-1  divide-green-main/20 "> -->
         <div class="w-full flex flex-wrap gap-4 items-stretch">
             <div class="flex-1 max-md:w-full">
                 <div>
-                    <label class="text-sm font-medium">Image</label>
+                    <div class="flex gap-1 items-center mb-1">
+                        <label class="text-sm font-medium">Image</label>
+                        <ButtonChangePhotos @uploaded="handleNewPhoto" />
+                    </div>
                     <LazyImage v-if="image" :src="image" alt="main image"
                         class="w-full max-w-100 aspect-video bg-cover rounded-xl" />
                     <div v-else class="bg-green-main/40 w-full max-w-60 aspect-video rounded-xl"></div>
@@ -82,6 +84,7 @@
         </div>
 
         <div class="flex justify-end gap-1">
+            <Button class="mr-4" @click="show_preview = true">Preview</Button>
             <ButtonLink to="/cp/my-article">Cancel</ButtonLink>
             <Button class="btn-green" @click="showConfirm = true">Save</Button>
         </div>
@@ -111,8 +114,8 @@
 
 <script lang="ts" setup>
 import Joi from 'joi';
-import { LucideCheckCircle2, LucideLoader, LucideXCircle } from 'lucide-vue-next';
-import type { Article } from '~/interfaces/article-interface';
+import { LucideCheckCircle2, LucideLoader, LucidePencil, LucideXCircle } from 'lucide-vue-next';
+import type { Article, PhotoContent } from '~/interfaces/article-interface';
 
 definePageMeta({
     layout: 'control-panel'
@@ -129,6 +132,7 @@ const excerpt = ref<string>('')
 const content = ref<any>(undefined)
 
 const image = ref<string | null>(null)
+const newPhotos = ref<PhotoContent[] | null>(null)
 
 const get = async () => {
     const id = route.params.id as string;
@@ -145,7 +149,7 @@ watch(article, (newArticle) => {
         slug.value = newArticle.slug
         excerpt.value = newArticle.excerpt
 
-        image.value = newArticle.image_sm
+        image.value = newArticle.image
         content.value = newArticle.content?.content || null
     }
 }, { immediate: true })
@@ -161,6 +165,12 @@ const checkSlugChange = () => {
     checkSlug();
 }
 
+// handle photo
+const handleNewPhoto = (photos: PhotoContent[]) => {
+    newPhotos.value = photos;
+
+    image.value = photos[0]?.path ?? '';
+}
 
 const checkingSlug = ref<boolean>(false);
 const slugAvailable = ref<boolean>(true);
@@ -194,6 +204,8 @@ const isArticle = Joi.object({
     title: IsString,
     slug: IsString,
     excerpt: IsString,
+    image: IsString.optional().allow(null, ''),
+    image_md: IsString.optional().allow(null, ''),
 })
 
 const showConfirm = ref<boolean>(false);
@@ -206,11 +218,14 @@ const submit = async () => {
     // set loading state
     isSubmitting.value = true;
 
-    const dataDto = {
+    const dataDto: Partial<Article> = {
         title: title.value,
         slug: slug.value,
         excerpt: excerpt.value,
-
+        ...((newPhotos.value && newPhotos.value.length == 2) && {
+            image: newPhotos.value[0]?.path,
+            image_md: newPhotos.value[1]?.path,
+        })
     };
 
     try {

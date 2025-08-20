@@ -4,7 +4,7 @@
         <template v-if="!isLoading" v-for="(data, n) in latestData" :key="n">
             <NuxtLink :to="'/read/' + data.slug" prefetch-on="interaction"
                 class="w-full flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
-                <Image :src="data.image_sm"
+                <Image :src="data.image_md"
                     class="w-33 sm:w-full aspect-4/3 sm:aspect-video rounded-lg bg-cover bg-no-repeat" />
                 <div class="flex-1 w-full">
                     <AvatarPublishedAt :data class="text-xs" avatar_width="w-5 h-5" />

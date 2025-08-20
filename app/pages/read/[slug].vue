@@ -110,7 +110,7 @@ useSeoMeta({
     ogTitle: () => data?.value?.title ?? '-',
     description: () => data?.value?.excerpt ?? '-',
     ogDescription: () => data?.value?.excerpt ?? '-',
-    ogImage: () => data?.value?.image_sm ?? (webUri + '/logo-hitam.jpg'),
+    ogImage: () => data?.value?.image_md ?? (webUri + '/logo-hitam.jpg'),
     twitterCard: 'summary_large_image',
     ogSiteName: 'FollowersBicara.com',
     ogUrl: webUri + '/read/' + route.params.slug

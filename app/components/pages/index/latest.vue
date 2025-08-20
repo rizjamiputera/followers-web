@@ -14,7 +14,7 @@
                 <template v-else-if="!isLoading" v-for="(data, n) in latest_articles" :key="n">
                     <NuxtLink :to="'/read/' + data.slug" prefetch-on="interaction"
                         class="w-full flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
-                        <Image :src="data.image_sm"
+                        <Image :src="data.image_md"
                             class="w-33 sm:w-full aspect-4/3 sm:aspect-video rounded-lg bg-cover bg-no-repeat" />
                         <div class="flex-1">
                             <div class="flex justify-start sm:justify-between gap-2 text-xs">

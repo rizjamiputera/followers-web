@@ -162,7 +162,6 @@ const handleFileChange = async (e: Event) => {
         // ✅ clear the file input so same file can be reselected
         input.value = ''
     }
-
 }
 
 watch(() => props.modelValue, (newValue) => {

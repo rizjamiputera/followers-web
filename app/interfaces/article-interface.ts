@@ -6,7 +6,7 @@ export interface Article {
     title: string
     excerpt: string
     image: string
-    image_sm: string
+    image_md: string
     content?: ArticleContent
     // contentId   :string
     // versions    ArticleContentVersion[]

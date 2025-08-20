@@ -1,10 +1,10 @@
 <template>
-    <div v-if="!fullImage" ref="target" class="transition-opacity duration-300 bg-green-main/30"
+    <div v-if="!fullImage" ref="target" class="transition-opacity duration-300 bg-green-main/30 bg-center"
         :class="[className, { 'opacity-0': !isLoaded }]" :style="isLoaded ? `background-image: url('${src}');` : ''">
         <slot />
     </div>
-    <img v-else ref="target" class="transition-opacity duration-300" :class="[className, { 'opacity-0': !isLoaded }]"
-        :src="isLoaded ? src : ''" :alt="alt || ''" />
+    <img v-else ref="target" class="transition-opacity duration-300 object-center"
+        :class="[className, { 'opacity-0': !isLoaded }]" :src="isLoaded ? src : ''" :alt="alt || ''" />
 </template>
 
 <script lang="ts" setup>

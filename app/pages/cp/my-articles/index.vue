@@ -101,7 +101,7 @@
     <ClientOnly>
         <LazyModal v-if="show_preview" :show="show_preview" @close="show_preview = false" max-width="max-w-4xl">
             <div class="p-4" v-if="selectedPreview">
-                <ArticlePreview :title="selectedPreview.title" :image="selectedPreview.image_sm"
+                <ArticlePreview :title="selectedPreview.title" :image="selectedPreview.image"
                     :content="selectedPreview.content!.content" />
             </div>
         </LazyModal>
