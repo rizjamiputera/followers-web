@@ -32,7 +32,6 @@ export enum Permission {
     CREATE,
     EDIT,
     DELETE,
-    APPROVE, // can approve article
-    PUBLISH // can publish or take down article
+    APPROVE, // can approve, publish or take down article
 
 }

@@ -1,13 +1,19 @@
 <template>
     <div class="flex flex-col gap-3 relative">
         <div class="flex justify-between items-center gap-3">
-            <div v-if="article" class="badge badge-lg rounded-full" :class="articleStatusBadgeColor(article.status)">
-                {{ article.status.replace('_', ' ') }}
+            <div>
+                <div v-if="article" class="badge badge-lg rounded-full"
+                    :class="articleStatusBadgeColor(article.status)">
+                    {{ article.status.replace('_', ' ') }}
+                </div>
             </div>
             <div class="flex gap-1">
                 <Button class="mr-4" @click="show_preview = true">Preview</Button>
                 <Button @click="confirm_cancel = true">Cancel</Button>
-                <Button class="btn-green" @click="showConfirm = true">Save</Button>
+                <ClientOnly>
+                    <Button class="btn-green" v-if="canPublish" @click="validate(true)">Simpan & Publish</Button>
+                </ClientOnly>
+                <Button class="btn-black" @click="validate(false)">Simpan Draft</Button>
             </div>
         </div>
 
@@ -18,7 +24,7 @@
                 <div v-if="slug != article?.slug">
                     <LucideLoader v-if="checkingSlug" :size="24" class="stroke-green-main animate-spin" />
                     <LucideCheckCircle2 v-else-if="slugAvailable" :size="24" class="stroke-green-main" />
-                    <LucideXCircle v-else :size="24" class="stroke-red-800" />
+                    <LucideXCircle v-else-if="title != ''" :size="24" class="stroke-red-800" />
                 </div>
             </div>
 
@@ -56,27 +62,26 @@
             <!-- Preview -->
             <div class="max-md:w-full">
                 <label class="text-sm font-medium">Preview</label>
-                <div class="w-full sm:max-w-65 flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
+                <div class="w-full min-w-65 flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
                     <!-- image -->
                     <Image v-if="image" :src="image"
-                        class="flex-shrink-0 w-30 sm:w-full aspect-4/3 sm:aspect-video rounded-lg bg-cover bg-no-repeat" />
-                    <div v-else
-                        class="flex-shrink-0 w-30 sm:w-full aspect-4/3 sm:aspect-video rounded-lg bg-green-main/20 skeleton" />
+                        class="flex-shrink-0 w-full aspect-4/3 sm:aspect-video rounded-lg bg-cover bg-no-repeat" />
+                    <div v-else class="flex-shrink-0 w-full aspect-4/3 sm:aspect-video rounded-lg bg-green-main/20" />
                     <div class="flex-1 min-w-0">
                         <div class="flex flex-col gap-2 w-full">
                             <!-- title -->
                             <DefaultBody v-if="title" class="line-clamp-1 font-bold">
                                 {{ title }}
                             </DefaultBody>
-                            <div v-else class="h-5 w-3/4 bg-green-main/20 skeleton"></div>
+                            <div v-else class="h-5 w-3/4 rounded-full bg-green-main/20"></div>
                             <!-- exerpt -->
                             <DefaultBody v-if="excerpt" class="line-clamp-3">
                                 {{ excerpt }}
                             </DefaultBody>
                             <template v-else>
-                                <div class="h-3 w-full bg-green-main/20 skeleton mt-3"></div>
-                                <div class="h-3 w-full bg-green-main/20 skeleton"></div>
-                                <div class="h-3 w-1/2 bg-green-main/20 skeleton"></div>
+                                <div class="h-3 w-full rounded-full bg-green-main/20 mt-3"></div>
+                                <div class="h-3 w-full rounded-full bg-green-main/20"></div>
+                                <div class="h-3 w-1/2 rounded-full bg-green-main/20"></div>
                             </template>
                         </div>
                     </div>
@@ -91,7 +96,10 @@
         <div class="flex justify-end gap-1">
             <Button class="mr-4" @click="show_preview = true">Preview</Button>
             <Button @click="confirm_cancel = true">Cancel</Button>
-            <Button class="btn-green" @click="showConfirm = true">Save</Button>
+            <ClientOnly>
+                <Button class="btn-green" v-if="canPublish" @click="validate(true)">Simpan & Publish</Button>
+            </ClientOnly>
+            <Button class="btn-black" @click="validate(false)">Simpan Draft</Button>
         </div>
     </div>
 
@@ -105,13 +113,36 @@
                 </ButtonLink>
             </div>
         </LazyModal>
-        <LazyModal v-if="showConfirm" :show="showConfirm" @close="showConfirm = false">
-            Are you sure?
+
+        <LazyModal v-if="canPublish && showConfirmPublish" :show="showConfirmPublish"
+            @close="showConfirmPublish = false">
+            Yakin simpan publish artikel ini?
             <div class="modal-action">
-                <Button @click="showConfirm = false" :disabled="isSubmitting">No</Button>
+                <Button @click="showConfirmPublish = false" :disabled="isSubmitting">No</Button>
+
+                <!-- publish -->
                 <Button @click="submit" :disabled="isSubmitting" class="btn-green">
                     <LucideLoader :size="20" v-show="isSubmitting" class="animate-spin" />
-                    Simpan
+                    Publish
+                </Button>
+            </div>
+        </LazyModal>
+
+        <LazyModal v-if="showConfirmDraft" :show="showConfirmDraft" @close="showConfirmDraft = false">
+            Yakin simpan sebagai draft?
+            <div class="modal-action">
+                <Button @click="showConfirmDraft = false" :disabled="isSubmitting">No</Button>
+
+                <!-- publish -->
+                <Button v-if="can(Module.ARTICLE, Permission.APPROVE)" @click="submit" :disabled="isSubmitting"
+                    class="btn-green">
+                    <LucideLoader :size="20" v-show="isSubmitting" class="animate-spin" />
+                    Publish
+                </Button>
+
+                <Button @click="submit" :disabled="isSubmitting" class="btn-black">
+                    <LucideLoader :size="20" v-show="isSubmitting" class="animate-spin" />
+                    Simpan Draft
                 </Button>
             </div>
         </LazyModal>
@@ -127,11 +158,16 @@
 <script lang="ts" setup>
 import Joi from 'joi';
 import { LucideCheckCircle2, LucideLoader, LucideXCircle } from 'lucide-vue-next';
-import type { Article, PhotoContent } from '~/interfaces/article-interface';
+import { type Article, type PhotoContent } from '~/interfaces/article-interface';
+import { Module, Permission } from '~/interfaces/user-interface';
 
 definePageMeta({
     layout: 'control-panel'
 });
+const AuthStore = useAuthStore();
+const { can } = storeToRefs(AuthStore)
+
+const canPublish = computed(() => AuthStore.can(Module.ARTICLE, Permission.APPROVE));
 
 const { public: { webUri } } = useRuntimeConfig();
 const route = useRoute();
@@ -143,7 +179,7 @@ const article = ref<Article | undefined>(undefined)
 const title = ref<string>('')
 const slug = ref<string>('')
 const excerpt = ref<string>('')
-const content = ref<any>(undefined)
+const content = ref<any>("")
 
 const image = ref<string | null>(null)
 const newPhotos = ref<PhotoContent[] | null>(null)
@@ -188,51 +224,64 @@ const handleNewPhoto = (photos: PhotoContent[]) => {
 }
 
 const checkingSlug = ref<boolean>(false);
-const slugAvailable = ref<boolean>(true);
+const slugAvailable = ref<boolean>(false);
 let checkSlugTimeout: NodeJS.Timeout | null = null;
 const checkSlug = () => {
-    if (slug.value && article.value) {
-
-        if (slug.value != article.value.slug) {
-            checkingSlug.value = true;
-            if (checkSlugTimeout) {
-                clearTimeout(checkSlugTimeout);
-            }
-
-            checkSlugTimeout = setTimeout(async () => {
-                try {
-                    slugAvailable.value = await Api.get('/v1/article/slug/check?slug=' + slug.value) as boolean;
-                } catch (error) {
-                    slugAvailable.value = false;
-                } finally {
-                    checkingSlug.value = false;
-                }
-            }, 2000);
+    if (slug.value) {
+        checkingSlug.value = true;
+        if (checkSlugTimeout) {
+            clearTimeout(checkSlugTimeout);
         }
 
+        checkSlugTimeout = setTimeout(async () => {
+            try {
+                if (article.value) {
+                    if (slug.value != article.value.slug)
+                        slugAvailable.value = await Api.get('/v1/article/slug/check?slug=' + slug.value) as boolean;
+                } else {
+                    slugAvailable.value = await Api.get('/v1/article/slug/check?slug=' + slug.value) as boolean;
+
+                }
+            } catch (error) {
+                slugAvailable.value = false;
+            } finally {
+                checkingSlug.value = false;
+            }
+        }, 2000);
     }
 }
 
 
 // HANDLE SUBMIT
-const isArticle = Joi.object({
+const isCreateArticle = Joi.object({
     title: IsString,
     slug: IsString,
-    excerpt: IsString,
+    image: IsString,
+    image_md: IsString,
+    excerpt: IsString.label('Ringkasan'),
+    content: Joi.object(),
+})
+const isEditArticle = Joi.object({
+    title: IsString,
+    slug: IsString,
     image: IsString.optional().allow(null, ''),
     image_md: IsString.optional().allow(null, ''),
+    excerpt: IsString.label('Ringkasan'),
+    content: Joi.object(),
 })
 
 const confirm_cancel = ref<boolean>(false);
-const showConfirm = ref<boolean>(false);
+const showConfirmPublish = ref<boolean>(false);
+const showConfirmDraft = ref<boolean>(false);
 const isSubmitting = ref<boolean>(false);
-const submit = async () => {
-    if (!article.value) return;
-    if (!slugAvailable.value) return;
-    if (isSubmitting.value) return;
 
-    // set loading state
-    isSubmitting.value = true;
+const validatedData = ref<Record<string, any>>({});
+
+const validate = (publish: boolean = false) => {
+    // reset
+    console.log({ publish })
+    showConfirmPublish.value = false;
+    showConfirmDraft.value = false;
 
     const dataDto: Partial<Article> = {
         title: title.value,
@@ -241,25 +290,58 @@ const submit = async () => {
         ...((newPhotos.value && newPhotos.value.length == 2) && {
             image: newPhotos.value[0]?.path,
             image_md: newPhotos.value[1]?.path,
-        })
+        }),
+        content: content.value
     };
 
     try {
-        const data = Validate(isArticle, dataDto);
+        validatedData.value = Validate(id ? isEditArticle : isCreateArticle, dataDto);
 
-        await Api.patch('/v1/article/' + article.value.id, {
-            ...data,
-            content: content.value,
-        });
+        if (publish) {
+            validatedData.value.status = "PUBLISHED"
+            showConfirmPublish.value = true;
+        } else {
+            validatedData.value.status = "DRAFT"
+            showConfirmDraft.value = true;
+        }
+    } catch (error) {
+        toastError(error);
+    }
 
-        showConfirm.value = false;
+}
+
+const submit = async () => {
+    // if (!article.value) return;
+    if (!slugAvailable.value) return;
+    if (isSubmitting.value) return;
+
+    // set loading state
+    isSubmitting.value = true;
+
+
+    try {
+        // const data = Validate(isArticle, dataDto);
+
+        if (id) {
+            // update
+            await Api.patch('/v1/article/' + id, validatedData.value);
+        } else {
+            // create
+            await Api.post('/v1/article', validatedData.value);
+        }
+
+        // showConfirm.value = false;
         toastSuccess('Success')
 
         // emit('close');
     } catch (error) {
+        console.log(error)
         toastError(error)
     } finally {
         isSubmitting.value = false;
+
+        showConfirmPublish.value = false;
+        showConfirmDraft.value = false;
     }
 }
 </script>
