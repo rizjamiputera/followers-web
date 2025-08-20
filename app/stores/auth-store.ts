@@ -39,7 +39,7 @@ export const useAuthStore = defineStore('auth', {
     actions: {
         async getAuthUser() {
             try {
-                this.user = await $fetch('/api/auth/user', {
+                this.user = await $fetch<User>('/api/auth/user', {
                     query: { includes: 'permissions' }
                 })
             } catch {
