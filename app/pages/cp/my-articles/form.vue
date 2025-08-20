@@ -126,7 +126,14 @@
 
         <LazyModal v-if="canPublish && showConfirmPublish" :show="showConfirmPublish"
             @close="showConfirmPublish = false">
-            Yakin simpan publish artikel ini?
+            <div class="flex flex-col gap-2">
+                <div>Yakin publish artikel ini?</div>
+                <div class="text-sm h-[350px]">
+                    Atur Jadwal:
+                    <DateTimePicker v-model="publishedAt" />
+                </div>
+            </div>
+
             <div class="modal-action">
                 <Button @click="showConfirmPublish = false" :disabled="isSubmitting">No</Button>
 
@@ -323,6 +330,7 @@ const validate = () => {
 
 }
 
+const publishedAt = ref<string>("")
 const submit = async () => {
     // if (!article.value) return;
     if (!slugAvailable.value) return;
@@ -348,9 +356,9 @@ const submit = async () => {
                 await Api.post('/v1/article/review/' + id);
             }
             // 3 set as publish
-            if (status.value == "PUBLISHED" && article.value?.status != "PUBLISHED" && canPublish.value) {
+            if (status.value == "PUBLISHED" && canPublish.value) {
                 // TODO add published at
-                await Api.post('/v1/article/publish/' + id);
+                await Api.post('/v1/article/publish/' + id, { publishedAt: publishedAt.value });
             }
 
             get()
@@ -367,7 +375,7 @@ const submit = async () => {
 
                 if (status.value == "PUBLISHED" && canPublish.value) {
                     // TODO add published at
-                    await Api.post('/v1/article/publish/' + newData.id);
+                    await Api.post('/v1/article/publish/' + newData.id, { publishedAt: publishedAt.value });
                 }
 
                 await router.replace({

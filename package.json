@@ -11,6 +11,7 @@
     },
     "dependencies": {
         "@pinia/nuxt": "^0.11.2",
+        "@popperjs/core": "^2.11.8",
         "@tailwindcss/typography": "^0.5.16",
         "@tailwindcss/vite": "^4.1.11",
         "@tiptap/extension-image": "^3.2.0",
@@ -25,6 +26,7 @@
         "pinia": "^3.0.3",
         "query-string": "^9.2.2",
         "tailwindcss": "^4.1.11",
+        "v-calendar": "^3.1.2",
         "vue": "^3.5.17",
         "vue-router": "^4.5.1",
         "vue-toast-notification": "^3.1.3"

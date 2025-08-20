@@ -1,5 +1,8 @@
 <template>
     <div ref="sectionRef" class="flex flex-col gap-4">
+        <div>
+            <DateTimePicker />
+        </div>
         <div class="flex justify-between gap-2 items-center">
             <div class="text-3xl font-medium text-green-main">My Article</div>
             <ButtonLink to="/cp/my-articles/form" class="btn-green">
@@ -27,6 +30,7 @@
                         <th>No</th>
                         <th>Title</th>
                         <th class="text-center">Status</th>
+                        <th class="text-center">Published At</th>
                         <th class="text-center">Created At</th>
                         <th class="text-center">Action</th>
                     </tr>
@@ -70,6 +74,7 @@
                                 {{ dt.status.replace('_', ' ') }}
                             </div>
                         </td>
+                        <td class="text-center">{{ formatDateTimeTz(dt.publishedAt) }}</td>
                         <td class="text-center">{{ dayjs(dt.createdAt).format('DD-MMM-YY') }}</td>
                         <td class="text-center">
                             <div class="flex gap-1 justify-center">
