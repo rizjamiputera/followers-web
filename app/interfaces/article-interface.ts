@@ -77,6 +77,6 @@ export interface ArticleStats {
     shareCount: number
     bookmarkCount: number
 }
-export interface ArticlePhotoContent {
+export interface PhotoContent {
     path: string
 }

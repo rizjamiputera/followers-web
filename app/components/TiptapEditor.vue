@@ -99,7 +99,7 @@ import { useEditor, EditorContent } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
 import { LucideCode2, LucideImage, LucideQuote, LucideRedo2, LucideStrikethrough, LucideUndo2 } from 'lucide-vue-next';
-import type { ArticlePhotoContent } from '~/interfaces/article-interface';
+import type { PhotoContent } from '~/interfaces/article-interface';
 
 const props = defineProps<{
     modelValue?: any
@@ -143,7 +143,9 @@ const editor = useEditor({
 // Handle file input
 const fileInput = ref<HTMLInputElement | null>(null)
 const handleFileChange = async (e: Event) => {
-    const file = (e.target as HTMLInputElement).files?.[0]
+    const input = e.target as HTMLInputElement
+    const file = input.files?.[0]
+
     if (!file) return
 
     try {
@@ -151,11 +153,14 @@ const handleFileChange = async (e: Event) => {
         formData.append('photo', file)
 
         // upload to your NestJS backend
-        const { path: src } = await Api.post('/v1/article/photo/upload', formData) as ArticlePhotoContent
+        const { path: src } = await Api.post('/v1/photo-content', formData) as PhotoContent
 
         editor.value?.chain().focus().setImage({ src }).run()
     } catch (error) {
         toastError(error);
+    } finally {
+        // ✅ clear the file input so same file can be reselected
+        input.value = ''
     }
 
 }
