@@ -169,13 +169,14 @@ definePageMeta({
     layout: 'control-panel'
 });
 const AuthStore = useAuthStore();
-const { can } = storeToRefs(AuthStore)
 
 const canPublish = computed(() => AuthStore.can(Module.ARTICLE, Permission.APPROVE));
 
 const { public: { webUri } } = useRuntimeConfig();
+
+const router = useRouter()
 const route = useRoute();
-const id = route.query.id as string | undefined;
+let id = route.query.id as string | undefined;
 
 const show_preview = ref<boolean>(false)
 
@@ -243,10 +244,13 @@ const checkSlug = () => {
         checkSlugTimeout = setTimeout(async () => {
             try {
                 if (article.value) {
-                    if (slug.value != article.value.slug)
-                        slugAvailable.value = await Api.get('/v1/article/slug/check?slug=' + slug.value) as boolean;
+                    if (slug.value != article.value.slug) {
+                        const response = await Api.get('/v1/article/slug/check?slug=' + slug.value);
+                        slugAvailable.value = response == 'true';
+                    }
                 } else {
-                    slugAvailable.value = await Api.get('/v1/article/slug/check?slug=' + slug.value) as boolean;
+                    const response = await Api.get('/v1/article/slug/check?slug=' + slug.value);
+                    slugAvailable.value = response == 'true';
 
                 }
             } catch (error) {
@@ -287,6 +291,7 @@ const validatedData = ref<Record<string, any>>({});
 const status = ref<ArticleStatus>('DRAFT');
 
 const validate = () => {
+    if (!slugAvailable.value) return;
     // reset
     showConfirmPublish.value = false;
     showConfirmDraftOrReview.value = false;
@@ -365,7 +370,13 @@ const submit = async () => {
                     await Api.post('/v1/article/publish/' + newData.id);
                 }
 
-                navigateTo('/cp/my-articles/form?id=' + newData.id);
+                await router.replace({
+                    path: '/cp/my-articles/form',
+                    query: { id: newData.id }
+                })
+
+                id = newData.id;
+                get();
             }
         }
 
