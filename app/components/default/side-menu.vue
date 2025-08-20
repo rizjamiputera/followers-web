@@ -6,9 +6,10 @@
                 <img src="/logo-putih.webp" alt="Followers Logo" class="h-10">
             </NuxtLink>
             <div class="flex gap-5 items-center">
-                <ButtonLink to="#" prefetch-on="interaction" @click="$emit('close')" class="font-medium h-9">
+                <LazyButtonLink v-if="!user" to="#" prefetch-on="interaction" @click="$emit('close')"
+                    class="font-medium h-9">
                     Login
-                </ButtonLink>
+                </LazyButtonLink>
                 <button @click="$emit('close')"
                     class="btn bg-default border-1 border-white h-9 p-3 rounded-xl shadow-none">
                     <svg-menu-close class="w-3" />
@@ -52,9 +53,12 @@ const props = defineProps<{
     menuProduct: any[]
 }>()
 
-const route = useRoute();
+// const route = useRoute();
+// const isOpen = computed(() => props.menuProduct.some(m => route.path.startsWith(m.url)))
 
-const isOpen = computed(() => props.menuProduct.some(m => route.path.startsWith(m.url)))
+const AuthStore = useAuthStore();
+
+const { user } = storeToRefs(AuthStore);
 </script>
 
 <style></style>
