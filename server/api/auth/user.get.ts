@@ -19,4 +19,16 @@ export default defineEventHandler(async (event) => {
         throw error;
     }
 
+
+    // ANOTHER OPTION
+    // const response = await fetch(`${apiUri}/v1/auth/profile?${new URLSearchParams(query as Record<string, string>)}`, {
+    //     headers: { Authorization: `Bearer ${token}` }
+    // })
+
+    // if (!response.ok) {
+    //     throw createError({ statusCode: response.status, message: 'Failed to fetch user' })
+    // }
+
+    // const user = await response.json()
+
 })

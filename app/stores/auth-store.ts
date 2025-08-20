@@ -101,10 +101,10 @@ export const useAuthStore = defineStore('auth', {
             this.exp = data.exp;
             this.user = data.user;
 
-            // if (process.client) {
-            const access_token = useCookie('access_token')
-            access_token.value = data.access_token;
-            // }
+            if (process.client) {
+                const access_token = useCookie('access_token')
+                access_token.value = data.access_token;
+            }
         },
         reset() {
             this.isLoading = false;
@@ -112,10 +112,10 @@ export const useAuthStore = defineStore('auth', {
             this.exp = 0;
             this.user = undefined;
 
-            // if (process.client) {
-            const access_token = useCookie('access_token', { maxAge: new Date().getTime() - 1000 })
-            access_token.value = null;
-            // }
+            if (process.client) {
+                const access_token = useCookie('access_token', { maxAge: new Date().getTime() - 1000 })
+                access_token.value = null;
+            }
         },
     }
 })
