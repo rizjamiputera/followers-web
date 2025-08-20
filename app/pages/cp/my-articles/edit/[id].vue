@@ -1,7 +1,8 @@
 <template>
     <div class="flex flex-col gap-3 relative">
         <div class="flex justify-end gap-1">
-            <Button class="">Cancel</Button>
+            <Button class="mr-4" @click="show_preview = true">Preview</Button>
+            <ButtonLink to="/cp/my-article">Cancel</ButtonLink>
             <Button class="btn-green" @click="showConfirm = true">Save</Button>
         </div>
 
@@ -17,7 +18,7 @@
             </div>
 
             <div class="join w-full">
-                <button class="btn join-item rounded-l-full btn-active font-light">{{ webUri }}/</button>
+                <button class="btn join-item rounded-l-full btn-active font-light">{{ webUri }}/read/</button>
                 <Input class="join-item rounded-l-none flex-1" v-model="slug" @keyup="checkSlugChange" />
             </div>
         </div>
@@ -81,13 +82,13 @@
         </div>
 
         <div class="flex justify-end gap-1">
-            <Button class="">Cancel</Button>
+            <ButtonLink to="/cp/my-article">Cancel</ButtonLink>
             <Button class="btn-green" @click="showConfirm = true">Save</Button>
         </div>
     </div>
 
     <ClientOnly>
-        <Modal :show="showConfirm" @close="showConfirm = false">
+        <LazyModal v-if="showConfirm" :show="showConfirm" @close="showConfirm = false">
             Are you sure?
             <div class="modal-action">
                 <Button @click="showConfirm = false" :disabled="isSubmitting">No</Button>
@@ -96,7 +97,15 @@
                     Yes
                 </Button>
             </div>
-        </Modal>
+        </LazyModal>
+    </ClientOnly>
+
+    <ClientOnly>
+        <LazyModal v-if="show_preview" :show="show_preview" @close="show_preview = false" max-width="max-w-4xl">
+            <div class="p-4">
+                <ArticlePreview :title :image :content />
+            </div>
+        </LazyModal>
     </ClientOnly>
 </template>
 
@@ -111,6 +120,8 @@ definePageMeta({
 const { public: { webUri } } = useRuntimeConfig();
 const route = useRoute();
 
+const show_preview = ref<boolean>(false)
+
 const article = ref<Article | undefined>(undefined)
 const title = ref<string>('')
 const slug = ref<string>('')
@@ -122,7 +133,7 @@ const image = ref<string | null>(null)
 const get = async () => {
     const id = route.params.id as string;
 
-    article.value = await Api.get('/v1/article/my/' + id + '?includes=content&format=html',) as Article
+    article.value = await Api.get('/v1/article/my/' + id + '?includes=content') as Article
 }
 
 onMounted(get);
@@ -177,6 +188,8 @@ const checkSlug = () => {
     }
 }
 
+
+// HANDLE SUBMIT
 const isArticle = Joi.object({
     title: IsString,
     slug: IsString,

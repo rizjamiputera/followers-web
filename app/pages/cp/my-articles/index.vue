@@ -22,8 +22,8 @@
                         <th>No</th>
                         <th>Title</th>
                         <th class="text-center">Status</th>
-                        <th>Created At</th>
-                        <th>Action</th>
+                        <th class="text-center">Created At</th>
+                        <th class="text-center">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -61,14 +61,16 @@
                             </div>
                         </td>
                         <td class="text-center">
-                            <div class="badge" :class="articleStatusBadgeColor(dt.status)">{{
+                            <div class="badge rounded-full" :class="articleStatusBadgeColor(dt.status)">{{
                                 dt.status.replace('_', ' ') }}</div>
                         </td>
-                        <td>{{ dayjs(dt.createdAt).format('DD-MMM-YY') }}</td>
-                        <td>
-                            <Button class="btn-sm btn-green">View</Button>
-                            <ButtonLink :to="`/cp/my-articles/edit/${dt.id}`" class="btn-sm btn-green">Edit
-                            </ButtonLink>
+                        <td class="text-center">{{ dayjs(dt.createdAt).format('DD-MMM-YY') }}</td>
+                        <td class="text-center">
+                            <div class="flex gap-1 justify-center">
+                                <Button class="btn-sm" @click="get_preview(dt.id)">Preview</Button>
+                                <ButtonLink :to="`/cp/my-articles/edit/${dt.id}`" class="btn-sm btn-green">Edit
+                                </ButtonLink>
+                            </div>
                         </td>
                     </tr>
                     <template v-else v-for="n in 10">
@@ -95,12 +97,21 @@
         </div>
         <pagination :page :last_page @prev="--parameters.page" @next="++parameters.page" />
     </div>
+
+    <ClientOnly>
+        <LazyModal v-if="show_preview" :show="show_preview" @close="show_preview = false" max-width="max-w-4xl">
+            <div class="p-4" v-if="selectedPreview">
+                <ArticlePreview :title="selectedPreview.title" :image="selectedPreview.image_sm"
+                    :content="selectedPreview.content!.content" />
+            </div>
+        </LazyModal>
+    </ClientOnly>
 </template>
 
 <script lang="ts" setup>
 import dayjs from 'dayjs';
 import { LucideBookmark, LucideEye, LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
-import { articleStatuses, type ArticleStatus } from '~/interfaces/article-interface';
+import { articleStatuses, type Article, type ArticleStatus } from '~/interfaces/article-interface';
 
 definePageMeta({
     layout: 'control-panel'
@@ -160,6 +171,19 @@ const updateStatus = (e: any) => {
     } else {
         MyArticleStore.parameters.page = 1;
     }
+}
+
+
+// PREVIEW
+const show_preview = ref<boolean>(false)
+const selectedPreview = ref<Article | null>(null)
+
+const get_preview = async (id: string) => {
+    if (!id) return;
+    selectedPreview.value = await Api.get('/v1/article/my/' + id + '?includes=content') as Article
+
+    show_preview.value = true;
+
 }
 </script>
 

@@ -18,8 +18,8 @@
                             <LucideClock :size="12" /> {{ data.publishedAt ? getRelativeTime(data.publishedAt) : '-' }}
                             <div class="">{{ stats.readCount }} views</div>
                         </div>
+                        <div class="text-2xl md:text-3xl font-semibold mb-2">{{ data.title }}</div>
                         <Image :src="data.image" :alt="data.title" class-name="aspect-video bg-cover rounded-2xl" />
-                        <div class="text-2xl md:text-3xl font-semibold">{{ data.title }}</div>
                         <div class="flex flex-wrap justify-center sm:justify-between gap-2">
                             <LazyAvatarName v-if="data.author" :user="data.author" avatar_width="w-10 h-10" />
 
