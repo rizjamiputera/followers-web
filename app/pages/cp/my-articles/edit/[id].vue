@@ -2,7 +2,7 @@
     <div class="flex flex-col gap-3 relative">
         <div class="flex justify-end gap-1">
             <Button class="mr-4" @click="show_preview = true">Preview</Button>
-            <ButtonLink to="/cp/my-article">Cancel</ButtonLink>
+            <ButtonLink to="/cp/my-articles">Cancel</ButtonLink>
             <Button class="btn-green" @click="showConfirm = true">Save</Button>
         </div>
 
@@ -85,7 +85,7 @@
 
         <div class="flex justify-end gap-1">
             <Button class="mr-4" @click="show_preview = true">Preview</Button>
-            <ButtonLink to="/cp/my-article">Cancel</ButtonLink>
+            <ButtonLink to="/cp/my-articles">Cancel</ButtonLink>
             <Button class="btn-green" @click="showConfirm = true">Save</Button>
         </div>
     </div>
