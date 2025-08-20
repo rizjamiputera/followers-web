@@ -1,9 +1,14 @@
 <template>
     <div class="flex flex-col gap-3 relative">
-        <div class="flex justify-end gap-1">
-            <Button class="mr-4" @click="show_preview = true">Preview</Button>
-            <Button @click="confirm_cancel = true">Cancel</Button>
-            <Button class="btn-green" @click="showConfirm = true">Save</Button>
+        <div class="flex justify-between items-center gap-3">
+            <div v-if="article" class="badge badge-lg rounded-full" :class="articleStatusBadgeColor(article.status)">
+                {{ article.status.replace('_', ' ') }}
+            </div>
+            <div class="flex gap-1">
+                <Button class="mr-4" @click="show_preview = true">Preview</Button>
+                <Button @click="confirm_cancel = true">Cancel</Button>
+                <Button class="btn-green" @click="showConfirm = true">Save</Button>
+            </div>
         </div>
 
         <Input v-model="title" label="Title" @keyup="checkTitleChange" />
@@ -121,14 +126,16 @@
 
 <script lang="ts" setup>
 import Joi from 'joi';
-import { LucideCheckCircle2, LucideLoader, LucidePencil, LucideXCircle } from 'lucide-vue-next';
+import { LucideCheckCircle2, LucideLoader, LucideXCircle } from 'lucide-vue-next';
 import type { Article, PhotoContent } from '~/interfaces/article-interface';
 
 definePageMeta({
     layout: 'control-panel'
-})
+});
+
 const { public: { webUri } } = useRuntimeConfig();
 const route = useRoute();
+const id = route.query.id as string | undefined;
 
 const show_preview = ref<boolean>(false)
 
@@ -142,7 +149,8 @@ const image = ref<string | null>(null)
 const newPhotos = ref<PhotoContent[] | null>(null)
 
 const get = async () => {
-    const id = route.params.id as string;
+    if (!id) return;
+    // const id = route.params.id as string;
 
     article.value = await Api.get('/v1/article/my/' + id + '?includes=content') as Article
 }

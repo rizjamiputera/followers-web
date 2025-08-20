@@ -1,6 +1,11 @@
 <template>
     <div ref="sectionRef" class="flex flex-col gap-4">
-        <div class="text-3xl font-medium text-green-main">Article</div>
+        <div class="flex justify-between gap-2 items-center">
+            <div class="text-3xl font-medium text-green-main">My Article</div>
+            <ButtonLink to="/cp/my-articles/form" class="btn-green">
+                Create New Article
+            </ButtonLink>
+        </div>
 
         <div class="flex justify-between gap-4">
             <pagination :page :last_page @prev="--parameters.page" @next="++parameters.page" />
@@ -61,14 +66,15 @@
                             </div>
                         </td>
                         <td class="text-center">
-                            <div class="badge rounded-full" :class="articleStatusBadgeColor(dt.status)">{{
-                                dt.status.replace('_', ' ') }}</div>
+                            <div class="badge rounded-full" :class="articleStatusBadgeColor(dt.status)">
+                                {{ dt.status.replace('_', ' ') }}
+                            </div>
                         </td>
                         <td class="text-center">{{ dayjs(dt.createdAt).format('DD-MMM-YY') }}</td>
                         <td class="text-center">
                             <div class="flex gap-1 justify-center">
                                 <Button class="btn-sm" @click="get_preview(dt.id)">Preview</Button>
-                                <ButtonLink :to="`/cp/my-articles/edit/${dt.id}`" class="btn-sm btn-green">Edit
+                                <ButtonLink :to="`/cp/my-articles/form?id=${dt.id}`" class="btn-sm btn-green">Edit
                                 </ButtonLink>
                             </div>
                         </td>
@@ -110,7 +116,7 @@
 
 <script lang="ts" setup>
 import dayjs from 'dayjs';
-import { LucideBookmark, LucideEye, LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
+import { LucideBookmark, LucideEye, LucidePlus, LucidePlusCircle, LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
 import { articleStatuses, type Article, type ArticleStatus } from '~/interfaces/article-interface';
 
 definePageMeta({
