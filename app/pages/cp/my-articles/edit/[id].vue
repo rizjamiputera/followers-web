@@ -2,7 +2,7 @@
     <div class="flex flex-col gap-3 relative">
         <div class="flex justify-end gap-1">
             <Button class="mr-4" @click="show_preview = true">Preview</Button>
-            <ButtonLink to="/cp/my-articles">Cancel</ButtonLink>
+            <Button @click="confirm_cancel = true">Cancel</Button>
             <Button class="btn-green" @click="showConfirm = true">Save</Button>
         </div>
 
@@ -85,25 +85,32 @@
 
         <div class="flex justify-end gap-1">
             <Button class="mr-4" @click="show_preview = true">Preview</Button>
-            <ButtonLink to="/cp/my-articles">Cancel</ButtonLink>
+            <Button @click="confirm_cancel = true">Cancel</Button>
             <Button class="btn-green" @click="showConfirm = true">Save</Button>
         </div>
     </div>
 
     <ClientOnly>
+        <LazyModal v-if="confirm_cancel" :show="confirm_cancel" @close="confirm_cancel = false">
+            Are you sure to discard?
+            <div class="modal-action">
+                <Button @click="confirm_cancel = false">Lanjutkan</Button>
+                <ButtonLink to="/cp/my-articles" class="btn-green">
+                    Yes
+                </ButtonLink>
+            </div>
+        </LazyModal>
         <LazyModal v-if="showConfirm" :show="showConfirm" @close="showConfirm = false">
             Are you sure?
             <div class="modal-action">
                 <Button @click="showConfirm = false" :disabled="isSubmitting">No</Button>
                 <Button @click="submit" :disabled="isSubmitting" class="btn-green">
                     <LucideLoader :size="20" v-show="isSubmitting" class="animate-spin" />
-                    Yes
+                    Simpan
                 </Button>
             </div>
         </LazyModal>
-    </ClientOnly>
 
-    <ClientOnly>
         <LazyModal v-if="show_preview" :show="show_preview" @close="show_preview = false" max-width="max-w-4xl">
             <div class="p-4">
                 <ArticlePreview :title :image :content />
@@ -208,6 +215,7 @@ const isArticle = Joi.object({
     image_md: IsString.optional().allow(null, ''),
 })
 
+const confirm_cancel = ref<boolean>(false);
 const showConfirm = ref<boolean>(false);
 const isSubmitting = ref<boolean>(false);
 const submit = async () => {
