@@ -87,7 +87,8 @@
                 <LucideImage :size="15" /> Image 2
             </Button>
         </div>
-        <EditorContent :editor="editor" class="prose max-w-none p-4 min-h-[300px] focus:outline-none" />
+        <EditorContent :editor="editor" class="prose max-w-none p-4 min-h-[300px] focus:outline-none"
+            @click="handleEditorClick" />
 
         <input type="file" ref="fileInput" class="hidden" accept="image/jpg, image/jpeg, image/png"
             @change="handleFileChange" />
@@ -131,14 +132,11 @@ const editor = useEditor({
     },
 })
 
-// image
-// const addImage = () => {
-//     const url = window.prompt('URL')
-
-//     if (url) {
-//         editor.value?.chain().focus().setImage({ src: url }).run()
-//     }
-// };
+const handleEditorClick = () => {
+    if (editor.value?.isEmpty) {
+        editor.value?.commands.focus('start') // focus first line if empty
+    }
+}
 
 // Handle file input
 const fileInput = ref<HTMLInputElement | null>(null)
