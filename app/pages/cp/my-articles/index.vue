@@ -1,8 +1,5 @@
 <template>
     <div ref="sectionRef" class="flex flex-col gap-4">
-        <div>
-            <DateTimePicker />
-        </div>
         <div class="flex justify-between gap-2 items-center">
             <div class="text-3xl font-medium text-green-main">My Article</div>
             <ButtonLink to="/cp/my-articles/form" class="btn-green">
@@ -32,6 +29,7 @@
                         <th class="text-center">Status</th>
                         <th class="text-center">Published At</th>
                         <th class="text-center">Created At</th>
+                        <th class="text-center">Publish</th>
                         <th class="text-center">Action</th>
                     </tr>
                 </thead>
@@ -78,6 +76,19 @@
                         <td class="text-center">{{ dayjs(dt.createdAt).format('DD-MMM-YY') }}</td>
                         <td class="text-center">
                             <div class="flex gap-1 justify-center">
+                                <Button v-if="!canPublish" class="btn-sm" @click="get_preview(dt.id)">
+                                    Ajukan Approval
+                                </Button>
+                                <Button v-else class="btn-sm"
+                                    @click="selectedArticleId = dt.id; showConfirmPublish = true">
+                                    Publish
+                                </Button>
+                                <!-- <ButtonLink :to="`/cp/my-articles/form?id=${dt.id}`" class="btn-sm btn-green">Edit
+                                </ButtonLink> -->
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="flex gap-1 justify-center">
                                 <Button class="btn-sm" @click="get_preview(dt.id)">Preview</Button>
                                 <ButtonLink :to="`/cp/my-articles/form?id=${dt.id}`" class="btn-sm btn-green">Edit
                                 </ButtonLink>
@@ -109,24 +120,30 @@
         <pagination :page :last_page @prev="--parameters.page" @next="++parameters.page" />
     </div>
 
-    <ClientOnly>
-        <LazyModal v-if="show_preview" :show="show_preview" @close="show_preview = false" max-width="max-w-4xl">
-            <div class="p-4" v-if="selectedPreview">
-                <ArticlePreview :title="selectedPreview.title" :image="selectedPreview.image"
-                    :content="selectedPreview.content!.content" />
-            </div>
-        </LazyModal>
-    </ClientOnly>
+    <LazyModal v-if="show_preview" :show="show_preview" @close="show_preview = false" max-width="max-w-4xl">
+        <div class="p-4" v-if="selectedPreview">
+            <ArticlePreview :title="selectedPreview.title" :image="selectedPreview.image"
+                :content="selectedPreview.content!.content" />
+        </div>
+    </LazyModal>
+
+    <LazySetPublishModal v-if="canPublish && selectedArticleId && showConfirmPublish" :show="showConfirmPublish"
+        :articleId="selectedArticleId" @close="showConfirmPublish = false"
+        @submited="showConfirmPublish = false; get()" />
 </template>
 
 <script lang="ts" setup>
 import dayjs from 'dayjs';
-import { LucideBookmark, LucideEye, LucidePlus, LucidePlusCircle, LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
+import { LucideBookmark, LucideEye, LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
 import { articleStatuses, type Article, type ArticleStatus } from '~/interfaces/article-interface';
+import { Module, Permission } from '~/interfaces/user-interface';
 
 definePageMeta({
     layout: 'control-panel'
-})
+});
+
+const AuthStore = useAuthStore();
+const canPublish = computed(() => AuthStore.can(Module.ARTICLE, Permission.APPROVE));
 
 const MyArticleStore = useMyArticleStore()
 const { articles, page, last_page, parameters, isEmpty, isLoading, search } = storeToRefs(MyArticleStore);
@@ -196,6 +213,10 @@ const get_preview = async (id: string) => {
     show_preview.value = true;
 
 }
+
+// SET PUBLISH
+const selectedArticleId = ref<string | null>(null);
+const showConfirmPublish = ref<boolean>(false);
 </script>
 
 <style></style>

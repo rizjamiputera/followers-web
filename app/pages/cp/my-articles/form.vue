@@ -113,57 +113,54 @@
         </div>
     </div>
 
-    <ClientOnly>
-        <LazyModal v-if="confirm_cancel" :show="confirm_cancel" @close="confirm_cancel = false">
-            Are you sure to discard?
-            <div class="modal-action">
-                <Button @click="confirm_cancel = false">Lanjutkan</Button>
-                <ButtonLink to="/cp/my-articles" class="btn-green">
-                    Yes
-                </ButtonLink>
+    <LazyModal v-if="confirm_cancel" :show="confirm_cancel" @close="confirm_cancel = false">
+        Are you sure to discard?
+        <div class="modal-action">
+            <Button @click="confirm_cancel = false">Lanjutkan</Button>
+            <ButtonLink to="/cp/my-articles" class="btn-green">
+                Yes
+            </ButtonLink>
+        </div>
+    </LazyModal>
+
+    <LazyModal v-if="canPublish && showConfirmPublish" :show="showConfirmPublish" @close="showConfirmPublish = false">
+        <div class="flex flex-col gap-2">
+            <div>Yakin publish artikel ini?</div>
+            <div class="text-sm h-[350px]">
+                Atur Jadwal:
+                <DateTimePicker v-model="publishedAt" />
             </div>
-        </LazyModal>
+        </div>
 
-        <LazyModal v-if="canPublish && showConfirmPublish" :show="showConfirmPublish"
-            @close="showConfirmPublish = false">
-            <div class="flex flex-col gap-2">
-                <div>Yakin publish artikel ini?</div>
-                <div class="text-sm h-[350px]">
-                    Atur Jadwal:
-                    <DateTimePicker v-model="publishedAt" />
-                </div>
-            </div>
+        <div class="modal-action">
+            <Button @click="showConfirmPublish = false" :disabled="isSubmitting">No</Button>
 
-            <div class="modal-action">
-                <Button @click="showConfirmPublish = false" :disabled="isSubmitting">No</Button>
+            <!-- publish -->
+            <Button @click="submit" :disabled="isSubmitting" class="btn-green">
+                <LucideLoader :size="20" v-show="isSubmitting" class="animate-spin" />
+                Publish
+            </Button>
+        </div>
+    </LazyModal>
 
-                <!-- publish -->
-                <Button @click="submit" :disabled="isSubmitting" class="btn-green">
-                    <LucideLoader :size="20" v-show="isSubmitting" class="animate-spin" />
-                    Publish
-                </Button>
-            </div>
-        </LazyModal>
+    <LazyModal v-if="showConfirmDraftOrReview" :show="showConfirmDraftOrReview"
+        @close="showConfirmDraftOrReview = false">
+        Yakin simpan sebagai draft?
+        <div class="modal-action">
+            <Button @click="showConfirmDraftOrReview = false" :disabled="isSubmitting">No</Button>
 
-        <LazyModal v-if="showConfirmDraftOrReview" :show="showConfirmDraftOrReview"
-            @close="showConfirmDraftOrReview = false">
-            Yakin simpan sebagai draft?
-            <div class="modal-action">
-                <Button @click="showConfirmDraftOrReview = false" :disabled="isSubmitting">No</Button>
+            <Button @click="submit" :disabled="isSubmitting" class="btn-black">
+                <LucideLoader :size="20" v-show="isSubmitting" class="animate-spin" />
+                Simpan Draft
+            </Button>
+        </div>
+    </LazyModal>
 
-                <Button @click="submit" :disabled="isSubmitting" class="btn-black">
-                    <LucideLoader :size="20" v-show="isSubmitting" class="animate-spin" />
-                    Simpan Draft
-                </Button>
-            </div>
-        </LazyModal>
-
-        <LazyModal v-if="show_preview" :show="show_preview" @close="show_preview = false" max-width="max-w-4xl">
-            <div class="p-4">
-                <ArticlePreview :title :image :content />
-            </div>
-        </LazyModal>
-    </ClientOnly>
+    <LazyModal v-if="show_preview" :show="show_preview" @close="show_preview = false" max-width="max-w-4xl">
+        <div class="p-4">
+            <ArticlePreview :title :image :content />
+        </div>
+    </LazyModal>
 </template>
 
 <script lang="ts" setup>
@@ -175,8 +172,8 @@ import { Module, Permission } from '~/interfaces/user-interface';
 definePageMeta({
     layout: 'control-panel'
 });
-const AuthStore = useAuthStore();
 
+const AuthStore = useAuthStore();
 const canPublish = computed(() => AuthStore.can(Module.ARTICLE, Permission.APPROVE));
 
 const { public: { webUri } } = useRuntimeConfig();
@@ -330,7 +327,7 @@ const validate = () => {
 
 }
 
-const publishedAt = ref<string>("")
+const publishedAt = ref<string | null>(null)
 const submit = async () => {
     // if (!article.value) return;
     if (!slugAvailable.value) return;
@@ -357,7 +354,6 @@ const submit = async () => {
             }
             // 3 set as publish
             if (status.value == "PUBLISHED" && canPublish.value) {
-                // TODO add published at
                 await Api.post('/v1/article/publish/' + id, { publishedAt: publishedAt.value });
             }
 

@@ -23,7 +23,7 @@ import { DatePicker } from 'v-calendar';
 import 'v-calendar/style.css';
 
 interface Props {
-    modelValue?: string,
+    modelValue: string | null,
     label?: string
 }
 
@@ -35,11 +35,8 @@ const props = withDefaults(defineProps<Props>(), {
 const _value = ref<string>(props.modelValue || "");
 
 watch(_value, (newValue) => {
-    emit('update:modelValue', dayjs(newValue));
+    emit('update:modelValue', newValue);
 });
-
-// const date = ref(null);
-
 </script>
 
 <style></style>
