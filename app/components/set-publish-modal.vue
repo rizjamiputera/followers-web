@@ -33,11 +33,17 @@ const props = defineProps<{
 const publishedAt = ref<string | null>(null)
 const isSubmitting = ref<boolean>(false);
 const submit = async () => {
-    await Api.post(`/v1/${props.type}/publish/${props.dataId}`, { publishedAt: publishedAt.value });
+    if (isSubmitting.value) return;
 
-    emits('submited')
+    isSubmitting.value = true
+    try {
+        await Api.post(`/v1/${props.type}/publish/${props.dataId}`, { publishedAt: publishedAt.value });
+
+        emits('submited');
+    } finally {
+        isSubmitting.value = true
+    }
 }
-
 </script>
 
 <style></style>

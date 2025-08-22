@@ -1,4 +1,4 @@
-import type { ContentStatus } from "~/interfaces/article-interface";
+import type { ContentStatus } from "~/interfaces/content-interface";
 
 export default (status: ContentStatus) => {
     switch (status) {

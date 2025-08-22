@@ -24,9 +24,16 @@ const props = defineProps<{
 
 const isSubmitting = ref<boolean>(false);
 const submit = async () => {
-    await Api.post(`/v1/${props.type}/review/${props.dataId}`);
+    if (isSubmitting.value) return;
 
-    emits('submited')
+    isSubmitting.value = true
+    try {
+        await Api.post(`/v1/${props.type}/review/${props.dataId}`);
+
+        emits('submited');
+    } finally {
+        isSubmitting.value = true
+    }
 }
 </script>
 

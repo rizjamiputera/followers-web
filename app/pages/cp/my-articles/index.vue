@@ -72,16 +72,21 @@
                         </td>
                         <td class="text-center">
                             <div class="flex gap-1 justify-center">
-                                <Button v-if="canWrite && !['PUBLISHED', 'ON_REVIEW'].includes(dt.status)"
+                                <Button v-if="!canPublish && !['PUBLISHED', 'ON_REVIEW'].includes(dt.status)"
                                     class="btn-sm" @click="selectedArticleId = dt.id; showConfirmRequestReview = true">
                                     Ajukan Approval
                                 </Button>
-                                <Button v-else-if="canPublish && dt.status != 'PUBLISHED'" class="btn-sm"
-                                    @click="selectedArticleId = dt.id; showConfirmPublish = true">
-                                    Publish
+                                <Button
+                                    v-else-if="canPublish && (dt.status != 'PUBLISHED' || (dt.status == 'PUBLISHED' && dt.publishedAt == null))"
+                                    class="btn-sm" @click="selectedArticleId = dt.id; showConfirmPublish = true">
+                                    {{
+                                        dt.status == 'PUBLISHED' && dt.publishedAt == null
+                                            ? 'Atur Jadwal Publish' :
+                                            'Publish'
+                                    }}
                                 </Button>
 
-                                <span v-else-if="dt.status == 'PUBLISHED'">
+                                <span v-else-if="dt.status == 'PUBLISHED' && dt.publishedAt != null">
                                     {{ dt.publishedAt ? formatDateTimeTz(dt.publishedAt) : '-' }}
                                 </span>
                             </div>

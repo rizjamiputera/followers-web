@@ -1,12 +1,17 @@
 <template>
     <LazyModal v-if="show" :show="show" @close="$emit('close')">
-        Yakin take down?
+        <div class="flex flex-col gap-4">
+            <div>Yakin take down {{ type == 'article' ? 'artikel' : 'event' }} ini?</div>
+
+            <Textarea label="Catatan" placeholder="Catatan untuk penulis" v-model="note" />
+        </div>
+
         <div class="modal-action">
             <Button @click="$emit('close')" :disabled="isSubmitting">No</Button>
 
-            <Button @click="submit" :disabled="isSubmitting" class="btn-black">
+            <Button @click="submit" :disabled="isSubmitting" class="btn-error">
                 <LucideLoader :size="20" v-show="isSubmitting" class="animate-spin" />
-                Simpan
+                Take Down
             </Button>
         </div>
     </LazyModal>
@@ -14,23 +19,26 @@
 
 <script lang="ts" setup>
 import { LucideLoader } from 'lucide-vue-next';
-import { Module, Permission } from '~/interfaces/user-interface';
 
 const emits = defineEmits(['close', 'submited'])
 const props = defineProps<{
-    articleId: string
+    type: 'article' | 'event'
+    dataId: string
     show: boolean
 }>()
 
-const AuthStore = useAuthStore();
-const canCreateArticle = computed(() => AuthStore.can(Module.ARTICLE, Permission.CREATE));
-
+const note = ref<string>('');
 const isSubmitting = ref<boolean>(false);
 const submit = async () => {
-    if (canCreateArticle.value) {
-        await Api.post('/v1/article/take-down/' + props.articleId);
+    if (isSubmitting.value) return;
 
-        emits('submited')
+    isSubmitting.value = true
+    try {
+        await Api.post(`/v1/${props.type}/take-down/${props.dataId}`, { note: note.value });
+
+        emits('submited');
+    } finally {
+        isSubmitting.value = true
     }
 }
 </script>

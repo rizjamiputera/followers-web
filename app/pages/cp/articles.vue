@@ -74,15 +74,18 @@
                         <td class="text-center">
                             <div class="flex gap-1 justify-center">
                                 <Button
-                                    v-if="canPublish && (['ON_REVIEW', 'REJECT', 'TAKE_DOWN'].includes(dt.status) || (dt.status == 'PUBLISHED' && dt.publishedAt == null))"
+                                    v-if="canPublish && (['ON_REVIEW', 'REJECTED', 'TAKE_DOWN'].includes(dt.status) || (dt.status == 'PUBLISHED' && dt.publishedAt == null))"
                                     class="btn-sm btn-success"
                                     @click="selectedArticleId = dt.id; showConfirmPublish = true">
-                                    {{ dt.status == 'PUBLISHED' && dt.publishedAt == null ? 'Atur Jadwal Publish' :
-                                        'Publish' }}
+                                    {{
+                                        dt.status == 'PUBLISHED' && dt.publishedAt == null
+                                            ? 'Atur Jadwal Publish' :
+                                            'Publish'
+                                    }}
                                 </Button>
 
                                 <Button v-if="canPublish && dt.status == 'ON_REVIEW'" class="btn-sm btn-warning"
-                                    @click="selectedArticleId = dt.id; showConfirmPublish = true">
+                                    @click="selectedArticleId = dt.id; showConfirmReject = true">
                                     Reject
                                 </Button>
 
@@ -134,11 +137,15 @@
     </LazyModal>
 
     <LazySetPublishModal v-if="canPublish && selectedArticleId && showConfirmPublish" :show="showConfirmPublish"
-        :articleId="selectedArticleId" @close="showConfirmPublish = false"
+        type="article" :dataId="selectedArticleId" @close="showConfirmPublish = false"
         @submited="showConfirmPublish = false; get(false)" />
 
-    <LazySetTakeDown v-if="showConfirmTakeDown && selectedArticleId" :show="showConfirmTakeDown"
-        :articleId="selectedArticleId" @close="showConfirmTakeDown = false"
+    <LazySetRejectModal v-if="canPublish && selectedArticleId && showConfirmReject" :show="showConfirmReject"
+        type="article" :dataId="selectedArticleId" @close="showConfirmReject = false"
+        @submited="showConfirmReject = false; get(false)" />
+
+    <LazySetTakeDown v-if="canPublish && showConfirmTakeDown && selectedArticleId" :show="showConfirmTakeDown"
+        type="article" :dataId="selectedArticleId" @close="showConfirmTakeDown = false"
         @submited="showConfirmTakeDown = false; get(false)" />
 </template>
 
@@ -220,17 +227,16 @@ const selectedPreview = ref<Article | null>(null)
 
 const get_preview = async (id: string) => {
     if (!id) return;
-    selectedPreview.value = await Api.get('/v1/article/my/' + id + '?includes=content') as Article
+    selectedPreview.value = await Api.get('/v1/article/' + id + '?includes=content') as Article
 
     show_preview.value = true;
 
 }
 
-// SET PUBLISH
+// SET
 const selectedArticleId = ref<string | null>(null);
 const showConfirmPublish = ref<boolean>(false);
-
-// TAKE DOWN
+const showConfirmReject = ref<boolean>(false);
 const showConfirmTakeDown = ref<boolean>(false);
 </script>
 
