@@ -75,12 +75,13 @@
                             <div class="flex gap-1 justify-center">
                                 <Button
                                     v-if="canPublish && (['ON_REVIEW', 'REJECT', 'TAKE_DOWN'].includes(dt.status) || (dt.status == 'PUBLISHED' && dt.publishedAt == null))"
-                                    class="btn-sm" @click="selectedArticleId = dt.id; showConfirmPublish = true">
+                                    class="btn-sm btn-success"
+                                    @click="selectedArticleId = dt.id; showConfirmPublish = true">
                                     {{ dt.status == 'PUBLISHED' && dt.publishedAt == null ? 'Atur Jadwal Publish' :
                                         'Publish' }}
                                 </Button>
 
-                                <Button v-if="canPublish && dt.status == 'ON_REVIEW'" class="btn-sm"
+                                <Button v-if="canPublish && dt.status == 'ON_REVIEW'" class="btn-sm btn-warning"
                                     @click="selectedArticleId = dt.id; showConfirmPublish = true">
                                     Reject
                                 </Button>
@@ -93,8 +94,10 @@
                         <td class="text-center">
                             <div class="flex gap-1 justify-center">
                                 <Button class="btn-sm" @click="get_preview(dt.id)">Preview</Button>
-                                <Button class="btn-sm btn-neutral" v-if="dt.status == 'PUBLISHED'"
-                                    @click="selectedArticleId = dt.id; showConfirmTakeDown = true">Take down</Button>
+                                <Button class="btn-sm btn-error" v-if="dt.status == 'PUBLISHED'"
+                                    @click="selectedArticleId = dt.id; showConfirmTakeDown = true">
+                                    Take down
+                                </Button>
                             </div>
                         </td>
                     </tr>
