@@ -128,11 +128,11 @@
     </LazyModal>
 
     <LazySetPublishModal v-if="canPublish && selectedArticleId && showConfirmPublish" :show="showConfirmPublish"
-        :articleId="selectedArticleId" @close="showConfirmPublish = false"
+        type="article" :dataId="selectedArticleId" @close="showConfirmPublish = false"
         @submited="showConfirmPublish = false; get(false)" />
 
-    <LazySetRequestReview v-if="showConfirmRequestReview && selectedArticleId" :show="showConfirmRequestReview"
-        :articleId="selectedArticleId" @close="showConfirmRequestReview = false"
+    <LazySetRequestReview v-if="canWrite && showConfirmRequestReview && selectedArticleId" type="article"
+        :show="showConfirmRequestReview" :dataId="selectedArticleId" @close="showConfirmRequestReview = false"
         @submited="showConfirmRequestReview = false; get(false)" />
 </template>
 

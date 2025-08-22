@@ -24,6 +24,12 @@
             <li v-if="can(Module.ARTICLE, Permission.CREATE)">
                 <NuxtLink to="/cp/my-articles" prefetch-on="interaction">My Articles</NuxtLink>
             </li>
+            <li v-if="can(Module.EVENT, Permission.READ)">
+                <NuxtLink to="/cp/events" prefetch-on="interaction">Events</NuxtLink>
+            </li>
+            <li v-if="can(Module.EVENT, Permission.CREATE)">
+                <NuxtLink to="/cp/my-events" prefetch-on="interaction">My Events</NuxtLink>
+            </li>
         </ClientOnly>
     </ul>
 </template>

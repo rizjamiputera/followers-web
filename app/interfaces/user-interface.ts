@@ -23,6 +23,7 @@ export interface UserPermission {
 
 export enum Module {
     ARTICLE,
+    EVENT,
     USER,
     COMMENT
 }

@@ -29,7 +29,7 @@ export const useMyArticlesStore = defineStore('my-articles', {
     getters: {
         apiPath: (state) => {
             return queryString.stringifyUrl({
-                url: '/v1/article/my-article',
+                url: '/v1/article/my-articles',
                 query: {
                     limit: state.parameters.limit,
                     page: state.parameters.page,

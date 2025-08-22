@@ -14,24 +14,19 @@
 
 <script lang="ts" setup>
 import { LucideLoader } from 'lucide-vue-next';
-import { Module, Permission } from '~/interfaces/user-interface';
 
 const emits = defineEmits(['close', 'submited'])
 const props = defineProps<{
-    articleId: string
+    type: 'article' | 'event'
+    dataId: string
     show: boolean
 }>()
 
-const AuthStore = useAuthStore();
-const canCreateArticle = computed(() => AuthStore.can(Module.ARTICLE, Permission.CREATE));
-
 const isSubmitting = ref<boolean>(false);
 const submit = async () => {
-    if (canCreateArticle.value) {
-        await Api.post('/v1/article/review/' + props.articleId);
+    await Api.post(`/v1/${props.type}/review/${props.dataId}`);
 
-        emits('submited')
-    }
+    emits('submited')
 }
 </script>
 
