@@ -68,9 +68,7 @@
                         </td>
                         <td class="text-center">{{ dayjs(dt.createdAt).format('DD-MMM-YY') }}</td>
                         <td class="text-center">
-                            <div class="badge badge-sm rounded-full" :class="articleStatusBadgeColor(dt.status)">
-                                {{ dt.status.replace('_', ' ') }}
-                            </div>
+                            <StatusBade :status="dt.status" />
                         </td>
                         <td class="text-center">
                             <div class="flex gap-1 justify-center">
