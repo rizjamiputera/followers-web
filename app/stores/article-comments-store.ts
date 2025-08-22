@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import queryString from 'query-string'
 import type { Paginate, PaginationParameters } from '~/interfaces/app-interface'
-import type { Comment } from '~/interfaces/article-interface'
+import type { Comment } from '~/interfaces/content-interface'
 
 interface ArticleCommentsStoreState {
     articleId?: string

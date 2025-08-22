@@ -166,7 +166,8 @@
 <script lang="ts" setup>
 import Joi from 'joi';
 import { LucideCheckCircle2, LucideLoader, LucideXCircle } from 'lucide-vue-next';
-import { type Article, type ContentStatus, type PhotoContent } from '~/interfaces/article-interface';
+import type { Article } from '~/interfaces/article-interface';
+import type { ContentStatus, PhotoContent } from '~/interfaces/content-interface';
 import { Module, Permission } from '~/interfaces/user-interface';
 
 definePageMeta({

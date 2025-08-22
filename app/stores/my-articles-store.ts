@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
 import queryString from 'query-string'
 import type { Paginate, PaginationParameters } from '~/interfaces/app-interface'
-import type { Article, ContentStatus } from '~/interfaces/article-interface'
+import type { Article } from '~/interfaces/article-interface'
+import type { ContentStatus } from '~/interfaces/content-interface'
 
 interface MyArticlesStoreState {
     data?: Paginate<Article[]>

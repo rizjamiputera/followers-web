@@ -1,4 +1,6 @@
+import type { Content, ContentStats, ContentStatus, Tag } from "./content-interface"
 import type { User } from "./user-interface"
+
 
 export interface Article {
     id: string
@@ -25,56 +27,4 @@ export interface Article {
     stats?: ContentStats
     // readStatId: string
     // visitors    Visit[]
-}
-
-export type ContentStatus =
-    "DRAFT" |
-    "ON_REVIEW" |
-    "REJECTED" |
-    "PUBLISHED" |
-    "TAKE_DOWN";
-
-export const contentStatuses: ContentStatus[] = [
-    "DRAFT",
-    "ON_REVIEW",
-    "REJECTED",
-    "PUBLISHED",
-    "TAKE_DOWN",
-];
-
-
-export interface Content {
-    content: {
-        content: Record<string, any>
-        type: string
-    }
-}
-
-export interface Tag {
-    id: string
-    name: string
-    slug: string
-}
-
-export interface Comment {
-    id: string
-    user?: User
-    content: string
-    parent?: Comment
-    mentioned?: User
-    createdAt: string
-    replies?: Comment[]
-}
-
-export interface ContentStats {
-    // lastReadAt: string
-    commentCount: number
-    readCount: number
-    likeCount: number
-    dislikeCount: number
-    shareCount: number
-    bookmarkCount: number
-}
-export interface PhotoContent {
-    path: string
 }

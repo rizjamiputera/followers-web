@@ -145,7 +145,8 @@
 <script lang="ts" setup>
 import dayjs from 'dayjs';
 import { LucideBookmark, LucideEye, LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
-import { contentStatuses, type Article, type ContentStatus } from '~/interfaces/article-interface';
+import type { Article } from '~/interfaces/article-interface';
+import { contentStatuses, type ContentStatus } from '~/interfaces/content-interface';
 import { Module, Permission } from '~/interfaces/user-interface';
 
 definePageMeta({

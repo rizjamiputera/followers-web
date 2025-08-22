@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import queryString from 'query-string'
-import type { Article, ContentStats } from '~/interfaces/article-interface';
+import type { Article } from '~/interfaces/article-interface';
+import type { ContentStats } from '~/interfaces/content-interface';
 
 interface ReadArticleStoreState {
     slug?: string
