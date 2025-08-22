@@ -50,9 +50,11 @@ export const useMyArticleStore = defineStore('my-article', {
         isEmpty: (state): boolean => state.data ? (state.data.data.length ? false : true) : false,
     },
     actions: {
-        async get() {
-            this.reset();
-            this.isLoading = true;
+        async get(reset = true) {
+            if (reset) {
+                this.reset();
+                this.isLoading = true;
+            }
             try {
                 await new Promise((resolve) => setTimeout(resolve, 400));
                 this.data = await Api.get(this.apiPath) as Paginate<Article[]>

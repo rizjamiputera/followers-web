@@ -145,13 +145,13 @@
 
     <LazyModal v-if="showConfirmDraftOrReview" :show="showConfirmDraftOrReview"
         @close="showConfirmDraftOrReview = false">
-        Yakin simpan sebagai draft?
+        {{ status == "ON_REVIEW" ? 'Yakin simpan & ajukan approval?' : 'Yakin simpan sebagai draft?' }}
         <div class="modal-action">
             <Button @click="showConfirmDraftOrReview = false" :disabled="isSubmitting">No</Button>
 
             <Button @click="submit" :disabled="isSubmitting" class="btn-black">
                 <LucideLoader :size="20" v-show="isSubmitting" class="animate-spin" />
-                Simpan Draft
+                Simpan
             </Button>
         </div>
     </LazyModal>

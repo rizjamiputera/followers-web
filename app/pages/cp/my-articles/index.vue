@@ -26,9 +26,8 @@
                     <tr>
                         <th>No</th>
                         <th>Title</th>
-                        <th class="text-center">Status</th>
-                        <th class="text-center">Published At</th>
                         <th class="text-center">Created At</th>
+                        <th class="text-center">Status</th>
                         <th class="text-center">Publish</th>
                         <th class="text-center">Action</th>
                     </tr>
@@ -67,22 +66,26 @@
                                 </div>
                             </div>
                         </td>
+                        <td class="text-center">{{ dayjs(dt.createdAt).format('DD-MMM-YY') }}</td>
                         <td class="text-center">
-                            <div class="badge rounded-full" :class="articleStatusBadgeColor(dt.status)">
+                            <div class="badge badge-sm rounded-full" :class="articleStatusBadgeColor(dt.status)">
                                 {{ dt.status.replace('_', ' ') }}
                             </div>
                         </td>
-                        <td class="text-center">{{ formatDateTimeTz(dt.publishedAt) }}</td>
-                        <td class="text-center">{{ dayjs(dt.createdAt).format('DD-MMM-YY') }}</td>
                         <td class="text-center">
                             <div class="flex gap-1 justify-center">
-                                <Button v-if="!canPublish" class="btn-sm" @click="get_preview(dt.id)">
+                                <Button v-if="canWrite && !['PUBLISHED', 'ON_REVIEW'].includes(dt.status)"
+                                    class="btn-sm" @click="selectedArticleId = dt.id; showConfirmRequestReview = true">
                                     Ajukan Approval
                                 </Button>
-                                <Button v-else class="btn-sm"
+                                <Button v-else-if="canPublish && dt.status != 'PUBLISHED'" class="btn-sm"
                                     @click="selectedArticleId = dt.id; showConfirmPublish = true">
                                     Publish
                                 </Button>
+
+                                <span v-else-if="dt.status == 'PUBLISHED'">
+                                    {{ dt.publishedAt ? formatDateTimeTz(dt.publishedAt) : '-' }}
+                                </span>
                                 <!-- <ButtonLink :to="`/cp/my-articles/form?id=${dt.id}`" class="btn-sm btn-green">Edit
                                 </ButtonLink> -->
                             </div>
@@ -129,7 +132,11 @@
 
     <LazySetPublishModal v-if="canPublish && selectedArticleId && showConfirmPublish" :show="showConfirmPublish"
         :articleId="selectedArticleId" @close="showConfirmPublish = false"
-        @submited="showConfirmPublish = false; get()" />
+        @submited="showConfirmPublish = false; get(false)" />
+
+    <LazySetRequestReview v-if="showConfirmRequestReview && selectedArticleId" :show="showConfirmRequestReview"
+        :articleId="selectedArticleId" @close="showConfirmRequestReview = false"
+        @submited="showConfirmRequestReview = false; get(false)" />
 </template>
 
 <script lang="ts" setup>
@@ -143,6 +150,7 @@ definePageMeta({
 });
 
 const AuthStore = useAuthStore();
+const canWrite = computed(() => AuthStore.can(Module.ARTICLE, Permission.CREATE));
 const canPublish = computed(() => AuthStore.can(Module.ARTICLE, Permission.APPROVE));
 
 const MyArticleStore = useMyArticleStore()
@@ -217,6 +225,7 @@ const get_preview = async (id: string) => {
 // SET PUBLISH
 const selectedArticleId = ref<string | null>(null);
 const showConfirmPublish = ref<boolean>(false);
+const showConfirmRequestReview = ref<boolean>(false);
 </script>
 
 <style></style>

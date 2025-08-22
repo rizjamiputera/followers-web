@@ -9,7 +9,7 @@
         </div>
 
         <div class="modal-action">
-            <Button @click="showConfirmPublish = false" :disabled="isSubmitting">No</Button>
+            <Button @click="$emit('close')" :disabled="isSubmitting">No</Button>
 
             <!-- publish -->
             <Button @click="submit" :disabled="isSubmitting" class="btn-green">
@@ -32,7 +32,6 @@ const props = defineProps<{
 
 const AuthStore = useAuthStore();
 const canPublish = computed(() => AuthStore.can(Module.ARTICLE, Permission.APPROVE));
-const showConfirmPublish = ref<boolean>(props.show);
 const publishedAt = ref<string | null>(null)
 
 const isSubmitting = ref<boolean>(false);
