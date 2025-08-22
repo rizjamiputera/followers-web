@@ -1,13 +1,15 @@
 <template>
-  <div>
-    
-  </div>
+    <div>
+
+    </div>
 </template>
 
 <script lang="ts" setup>
+definePageMeta({
+    layout: 'control-panel'
+});
+
 
 </script>
 
-<style>
-
-</style>
+<style></style>
