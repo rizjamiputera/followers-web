@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import queryString from 'query-string'
-import type { Article, ArticleStats } from '~/interfaces/article-interface';
+import type { Article, ContentStats } from '~/interfaces/article-interface';
 
 interface ReadArticleStoreState {
     slug?: string
@@ -33,7 +33,7 @@ export const useReadArticleStore = defineStore('read-article', {
         },
         tags: (state) => state.data?.tags ?? [],
         content: (state) => state.data?.content?.content ?? undefined,
-        stats: (state): ArticleStats => state.data?.stats ?? {
+        stats: (state): ContentStats => state.data?.stats ?? {
             commentCount: 0,
             readCount: 0,
             likeCount: 0,

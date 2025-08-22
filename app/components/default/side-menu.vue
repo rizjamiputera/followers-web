@@ -6,10 +6,12 @@
                 <img src="/logo-putih.webp" alt="Followers Logo" class="h-10">
             </NuxtLink>
             <div class="flex gap-5 items-center">
-                <LazyButtonLink v-if="!user" to="#" prefetch-on="interaction" @click="$emit('close')"
-                    class="font-medium h-9">
-                    Login
-                </LazyButtonLink>
+                <ClientOnly>
+                    <LazyButtonLink v-if="!user" to="#" prefetch-on="interaction" @click="$emit('close')"
+                        class="font-medium h-9">
+                        Login
+                    </LazyButtonLink>
+                </ClientOnly>
                 <button @click="$emit('close')"
                     class="btn bg-default border-1 border-white h-9 p-3 rounded-xl shadow-none">
                     <svg-menu-close class="w-3" />

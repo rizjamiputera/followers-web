@@ -7,11 +7,11 @@ export interface Article {
     excerpt: string
     image: string
     image_md: string
-    content?: ArticleContent
+    content?: Content
     // contentId   :string
     // versions    ArticleContentVersion[]
     // isFeatured  Boolean                 @default(false)
-    status: ArticleStatus
+    status: ContentStatus
     publishedAt?: string // actual publish time
     author?: User
     authorId: string
@@ -22,19 +22,19 @@ export interface Article {
     createdAt: string
     // updatedAt   DateTime @updatedAt
     // deleted     Boolean @default (false)
-    stats?: ArticleStats
+    stats?: ContentStats
     // readStatId: string
     // visitors    Visit[]
 }
 
-export type ArticleStatus =
+export type ContentStatus =
     "DRAFT" |
     "ON_REVIEW" |
     "REJECTED" |
     "PUBLISHED" |
     "TAKE_DOWN";
 
-export const articleStatuses: ArticleStatus[] = [
+export const contentStatuses: ContentStatus[] = [
     "DRAFT",
     "ON_REVIEW",
     "REJECTED",
@@ -43,7 +43,7 @@ export const articleStatuses: ArticleStatus[] = [
 ];
 
 
-export interface ArticleContent {
+export interface Content {
     content: {
         content: Record<string, any>
         type: string
@@ -66,7 +66,7 @@ export interface Comment {
     replies?: Comment[]
 }
 
-export interface ArticleStats {
+export interface ContentStats {
     // lastReadAt: string
     commentCount: number
     readCount: number

@@ -12,7 +12,7 @@
                 <select v-model="selectedStatus" @change="updateStatus"
                     class="select w-40 select-sm rounded-full focus:outline-green-main/40 border-green-main/20">
                     <option value="">Semua Status</option>
-                    <option v-for="value in articleStatuses.filter(s => s != 'DRAFT')" :key="value" :value>
+                    <option v-for="value in contentStatuses.filter(s => s != 'DRAFT')" :key="value" :value>
                         {{ value.replace('_', ' ') }}
                     </option>
                 </select>
@@ -145,7 +145,7 @@
 <script lang="ts" setup>
 import dayjs from 'dayjs';
 import { LucideBookmark, LucideEye, LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
-import { articleStatuses, type Article, type ArticleStatus } from '~/interfaces/article-interface';
+import { contentStatuses, type Article, type ContentStatus } from '~/interfaces/article-interface';
 import { Module, Permission } from '~/interfaces/user-interface';
 
 definePageMeta({
@@ -198,7 +198,7 @@ watch(() => search.value, () => {
     }, 2000);
 });
 
-const selectedStatus = ref<ArticleStatus | ''>('')
+const selectedStatus = ref<ContentStatus | ''>('')
 const updateStatus = (e: any) => {
     const selected = e.target.value
 

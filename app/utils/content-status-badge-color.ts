@@ -1,6 +1,6 @@
-import type { ArticleStatus } from "~/interfaces/article-interface";
+import type { ContentStatus } from "~/interfaces/article-interface";
 
-export default (status: ArticleStatus) => {
+export default (status: ContentStatus) => {
     switch (status) {
         case 'DRAFT':
             return 'badge-neutral';

@@ -3,7 +3,7 @@
         <div class="flex justify-between items-center gap-3">
             <div>
                 <div v-if="article" class="badge badge-lg rounded-full"
-                    :class="articleStatusBadgeColor(article.status)">
+                    :class="contentStatusBadgeColor(article.status)">
                     {{ article.status.replace('_', ' ') }}
                 </div>
             </div>
@@ -166,7 +166,7 @@
 <script lang="ts" setup>
 import Joi from 'joi';
 import { LucideCheckCircle2, LucideLoader, LucideXCircle } from 'lucide-vue-next';
-import { type Article, type ArticleStatus, type PhotoContent } from '~/interfaces/article-interface';
+import { type Article, type ContentStatus, type PhotoContent } from '~/interfaces/article-interface';
 import { Module, Permission } from '~/interfaces/user-interface';
 
 definePageMeta({
@@ -292,7 +292,7 @@ const isSubmitting = ref<boolean>(false);
 
 const validatedData = ref<Record<string, any>>({});
 
-const status = ref<ArticleStatus>('DRAFT');
+const status = ref<ContentStatus>('DRAFT');
 
 const validate = () => {
     if (!slugAvailable.value) return;

@@ -1,14 +1,14 @@
 <template>
-    <div class="badge badge-sm rounded-full text-nowrap" :class="articleStatusBadgeColor(status)">
+    <div class="badge badge-sm rounded-full text-nowrap" :class="contentStatusBadgeColor(status)">
         {{ status.replace('_', ' ') }}
     </div>
 </template>
 
 <script lang="ts" setup>
-import type { ArticleStatus } from '~/interfaces/article-interface';
+import type { ContentStatus } from '~/interfaces/article-interface';
 
 defineProps<{
-    status: ArticleStatus
+    status: ContentStatus
 }>()
 
 </script>
