@@ -153,12 +153,12 @@ const AuthStore = useAuthStore();
 const canWrite = computed(() => AuthStore.can(Module.ARTICLE, Permission.CREATE));
 const canPublish = computed(() => AuthStore.can(Module.ARTICLE, Permission.APPROVE));
 
-const MyArticleStore = useMyArticleStore()
-const { articles, page, last_page, parameters, isEmpty, isLoading, search } = storeToRefs(MyArticleStore);
-const { get } = MyArticleStore;
+const MyArticlesStore = useMyArticlesStore()
+const { articles, page, last_page, parameters, isEmpty, isLoading, search } = storeToRefs(MyArticlesStore);
+const { get } = MyArticlesStore;
 onMounted(() => {
-    MyArticleStore.status = undefined;
-    MyArticleStore.parameters.page = 1;
+    MyArticlesStore.status = undefined;
+    MyArticlesStore.parameters.page = 1;
     get();
 })
 
@@ -187,10 +187,10 @@ watch(() => search.value, () => {
 
     searchTimeout = setTimeout(() => {
         // prevent double api call, because page is watch
-        if (MyArticleStore.parameters.page == 1) {
+        if (MyArticlesStore.parameters.page == 1) {
             get()
         } else {
-            MyArticleStore.parameters.page = 1;
+            MyArticlesStore.parameters.page = 1;
         }
     }, 2000);
 });
@@ -199,13 +199,13 @@ const selectedStatus = ref<ArticleStatus | ''>('')
 const updateStatus = (e: any) => {
     const selected = e.target.value
 
-    MyArticleStore.status = selected ? selected : undefined;
+    MyArticlesStore.status = selected ? selected : undefined;
 
     // prevent double api call, because page is watch
-    if (MyArticleStore.parameters.page == 1) {
+    if (MyArticlesStore.parameters.page == 1) {
         get()
     } else {
-        MyArticleStore.parameters.page = 1;
+        MyArticlesStore.parameters.page = 1;
     }
 }
 

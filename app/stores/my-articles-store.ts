@@ -3,18 +3,17 @@ import queryString from 'query-string'
 import type { Paginate, PaginationParameters } from '~/interfaces/app-interface'
 import type { Article, ArticleStatus } from '~/interfaces/article-interface'
 
-interface MyArticleStoreState {
+interface MyArticlesStoreState {
     data?: Paginate<Article[]>
     parameters: PaginationParameters
     search: string
     status?: ArticleStatus
-    authorId?: string
     isLoading: boolean
     isError: boolean
 }
 
-export const useMyArticleStore = defineStore('my-article', {
-    state: (): MyArticleStoreState => ({
+export const useMyArticlesStore = defineStore('my-articles', {
+    state: (): MyArticlesStoreState => ({
         data: undefined,
         parameters: {
             limit: 10,
@@ -23,7 +22,6 @@ export const useMyArticleStore = defineStore('my-article', {
         },
         search: '',
         status: undefined,
-        authorId: undefined,
         isLoading: false,
         isError: false
     }),
@@ -36,7 +34,6 @@ export const useMyArticleStore = defineStore('my-article', {
                     page: state.parameters.page,
                     includes: state.parameters.includes.join(','),
                     search: state.search,
-                    authorId: state.authorId,
                     status: state.status,
                     sortBy: 'createdAt',
                     order: 'desc'
@@ -56,7 +53,6 @@ export const useMyArticleStore = defineStore('my-article', {
                 this.isLoading = true;
             }
             try {
-                await new Promise((resolve) => setTimeout(resolve, 400));
                 this.data = await Api.get(this.apiPath) as Paginate<Article[]>
             } catch (error) {
                 this.isError = true

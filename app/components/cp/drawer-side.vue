@@ -19,10 +19,10 @@
         <!-- Sidebar content here -->
         <ClientOnly>
             <li v-if="can(Module.ARTICLE, Permission.READ)">
-                <NuxtLink to="/cp/articles" prefetch-on="interaction">Article</NuxtLink>
+                <NuxtLink to="/cp/articles" prefetch-on="interaction">Articles</NuxtLink>
             </li>
             <li v-if="can(Module.ARTICLE, Permission.CREATE)">
-                <NuxtLink to="/cp/my-articles" prefetch-on="interaction">My Article</NuxtLink>
+                <NuxtLink to="/cp/my-articles" prefetch-on="interaction">My Articles</NuxtLink>
             </li>
         </ClientOnly>
     </ul>
