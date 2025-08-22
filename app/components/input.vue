@@ -4,11 +4,11 @@
             <span class="text-error">{{ required ? '*' : '' }}</span>
         </legend>
         <input v-bind="inputAttrs" v-model="inputValue"
-            class="input rounded-full bg-white-main focus:outline-green-main border-green-main/20 w-full" :class />
+            class="input rounded-full bg-white-main focus:outline-green-main/40 border-green-main/20 w-full" :class />
         <p class="label" v-if="bottomLabel">{{ bottomLabel }}</p>
     </fieldset>
     <input v-else v-bind="inputAttrs" v-model="inputValue"
-        class="input rounded-full bg-white-main focus:outline-green-main border-green-main/20 w-full" :class />
+        class="input rounded-full bg-white-main focus:outline-green-main/40 border-green-main/20 w-full" :class />
 </template>
 
 <script lang="ts" setup>

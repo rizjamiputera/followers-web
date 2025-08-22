@@ -7,9 +7,11 @@
                 <slot />
             </div>
         </div>
-        <div class="drawer-side pt-16">
+        <div class="drawer-side">
             <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
-            <CpDrawerSide />
+            <div class="h-full pt-16">
+                <CpDrawerSide />
+            </div>
         </div>
     </main>
 </template>
