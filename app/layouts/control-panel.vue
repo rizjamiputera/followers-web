@@ -7,7 +7,7 @@
                 <slot />
             </div>
         </div>
-        <div class="drawer-side pt-16 bg-white-main">
+        <div class="drawer-side pt-16">
             <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
             <CpDrawerSide />
         </div>
