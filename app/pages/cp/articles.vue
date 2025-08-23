@@ -97,6 +97,11 @@
                         <td class="text-center">
                             <div class="flex gap-1 justify-center">
                                 <Button class="btn-sm" @click="get_preview(dt.id)">Preview</Button>
+                                <ButtonLink v-if="dt.status == 'PUBLISHED'" :to="`/read/${dt.slug}`" target="_blank"
+                                    class="btn-sm btn-outline-green">
+                                    <LucideLink :size="12" />
+                                    Open
+                                </ButtonLink>
                                 <Button class="btn-sm btn-error" v-if="dt.status == 'PUBLISHED'"
                                     @click="selectedArticleId = dt.id; showConfirmTakeDown = true">
                                     Take down
@@ -131,8 +136,7 @@
 
     <LazyModal v-if="show_preview" :show="show_preview" @close="show_preview = false" max-width="max-w-4xl">
         <div class="p-4" v-if="selectedPreview">
-            <ArticlePreview :title="selectedPreview.title" :image="selectedPreview.image"
-                :content="selectedPreview.content!.content" />
+            <ArticlePreview :data="selectedPreview" />
         </div>
     </LazyModal>
 
@@ -151,7 +155,7 @@
 
 <script lang="ts" setup>
 import dayjs from 'dayjs';
-import { LucideBookmark, LucideEye, LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
+import { LucideBookmark, LucideEye, LucideLink, LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
 import type { Article } from '~/interfaces/article-interface';
 import { contentStatuses, type ContentStatus } from '~/interfaces/content-interface';
 import { Module, Permission } from '~/interfaces/user-interface';

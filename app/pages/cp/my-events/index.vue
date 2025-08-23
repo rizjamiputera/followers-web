@@ -100,6 +100,7 @@
                                 <Button class="btn-sm" @click="get_preview(dt.id)">Preview</Button>
                                 <ButtonLink v-if="dt.status == 'PUBLISHED'" :to="`/event/${dt.slug}`" target="_blank"
                                     class="btn-sm  btn-outline-green">
+                                    <LucideLink :size="12" />
                                     Open
                                 </ButtonLink>
                                 <ButtonLink :to="`/cp/my-events/form?id=${dt.id}`" class="btn-sm btn-green">
@@ -150,7 +151,7 @@
 
 <script lang="ts" setup>
 import dayjs from 'dayjs';
-import { LucideBookmark, LucideEye, LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
+import { LucideBookmark, LucideEye, LucideLink, LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
 import { contentStatuses, type ContentStatus } from '~/interfaces/content-interface';
 import type { Event } from '~/interfaces/event-interface';
 import { Module, Permission } from '~/interfaces/user-interface';

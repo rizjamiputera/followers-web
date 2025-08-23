@@ -298,6 +298,7 @@ const isSubmitting = ref<boolean>(false);
 const validatedData = ref<Record<string, any>>({});
 
 const status = ref<ContentStatus>('DRAFT');
+const publishedAt = ref<string | null>(null)
 
 const validate = () => {
     if (!slugAvailable.value) return;
@@ -310,6 +311,9 @@ const validate = () => {
         validatedData.value.content = validatedData.value.content.content;
 
         if (status.value == "PUBLISHED") {
+            if (article.value) {
+                publishedAt.value = article.value.publishedAt ?? '';
+            }
             // validatedData.value.status = "PUBLISHED"
             showConfirmPublish.value = true;
         } else {
@@ -322,7 +326,6 @@ const validate = () => {
 
 }
 
-const publishedAt = ref<string | null>(null)
 const submit = async () => {
     if (!slugAvailable.value) return;
     if (isSubmitting.value) return;
