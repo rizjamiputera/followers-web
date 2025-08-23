@@ -45,6 +45,10 @@ body {
     @apply bg-[#DAFEE8] text-[#126937];
 }
 
+.badge-outline-green {
+    @apply border-green-main/30 rounded-full font-light;
+}
+
 hr {
     @apply border-t border-border-main/30;
 }
