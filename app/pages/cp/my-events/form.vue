@@ -260,6 +260,7 @@ const handleNewPhoto = (photos: PhotoContent[]) => {
     newPhotos.value = photos;
 
     dataDto.value.image = photos[0]?.path ?? '';
+    dataDto.value.image_md = photos[1]?.path ?? '';
 }
 
 const checkingSlug = ref<boolean>(false);

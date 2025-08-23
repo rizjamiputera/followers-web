@@ -9,7 +9,7 @@
 
 <script lang="ts" setup>
 import { LucidePencil } from 'lucide-vue-next';
-import type { PhotoContent } from '~/interfaces/article-interface';
+import type { PhotoContent } from '~/interfaces/content-interface';
 
 const emits = defineEmits(['uploaded'])
 const fileInput = ref<HTMLInputElement | null>(null)
