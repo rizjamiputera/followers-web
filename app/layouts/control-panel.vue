@@ -10,7 +10,7 @@
         <div class="drawer-side">
             <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
             <div class="h-full pt-16">
-                <CpDrawerSide />
+                <CpMenu />
             </div>
         </div>
     </main>
