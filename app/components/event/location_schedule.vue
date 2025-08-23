@@ -55,8 +55,8 @@ const sameDay = computed<boolean>(() => {
     if (!props.data.end_at) return true;
     console.log({ start: props.data.start_at, end: props.data.end_at });
 
-    const startDay = dayjs(props.data.start_at).format('dd-mm-yyyy');
-    const endDay = dayjs(props.data.end_at).format('dd-mm-yyyy');
+    const startDay = dayjs(props.data.start_at).format('DD-MM-YY');
+    const endDay = dayjs(props.data.end_at).format('DD-MM-YY');
 
     console.log({ startDay, endDay })
 
