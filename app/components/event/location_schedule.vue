@@ -8,25 +8,25 @@
     </div>
 
     <template v-if="sameDay">
-        <div v-if="data.end_at" class="flex gap-1">
+        <div v-if="data.end_at" class="flex flex-wrap gap-1">
             <div class="badge badge-outline-green">
                 <LucideCalendar :size="14" /> {{ dayjs(data.start_at).format('DD MMMM YYYY') }}
             </div>
             <div class="badge badge-outline-green">
-                <LucideClock :size="14" /> {{ formatTime(data.start_at) }} sd {{ formatTime(data.start_at) }}
+                <LucideClock :size="14" /> {{ formatTime(data.start_at) }} sd {{ formatTime(data.end_at) }}
             </div>
             <div class="badge badge-outline-green">
                 {{ userTimezone() }}
             </div>
         </div>
-        <template v-else>
+        <div v-else class="flex flex-wrap gap-1">
             <div class="badge badge-outline-green">
                 <LucideCalendar :size="14" /> {{ dayjs(data.start_at).format('DD-MMM-YY') }}
             </div>
             <div class="badge badge-outline-green">
-                <LucideClock :size="14" /> {{ formatDateTimeTz(data.start_at) }}
+                <LucideClock :size="14" /> {{ formatTimeTz(data.start_at) }}
             </div>
-        </template>
+        </div>
     </template>
     <template v-else>
         <div class="badge badge-outline-green">

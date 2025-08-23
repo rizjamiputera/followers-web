@@ -102,7 +102,7 @@
             </div>
         </div>
 
-        <div v-if="dataDto.content">
+        <div v-if="dataDto.content?.content">
             <TiptapEditor v-model="dataDto.content.content" />
         </div>
 
@@ -194,7 +194,14 @@ let id = route.query.id as string | undefined;
 const show_preview = ref<boolean>(false)
 
 const article = ref<Article | undefined>(undefined)
-const dataDto = ref<Partial<Article>>({});
+const dataDto = ref<Partial<Article>>({
+    content: {
+        content: {
+            content: [],
+            type: 'doc'
+        },
+    }
+});
 
 const newPhotos = ref<PhotoContent[] | null>(null)
 

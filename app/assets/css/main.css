@@ -113,3 +113,8 @@ section,
 table th {
     @apply text-green-main
 }
+
+/* DATE TIME PICKER */
+.vc-popover-content-wrapper {
+    @apply !z-50
+}

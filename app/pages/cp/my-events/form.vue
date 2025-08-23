@@ -55,8 +55,8 @@
                         <ButtonChangePhotos @uploaded="handleNewPhoto" />
                     </div>
                     <LazyImage v-if="dataDto.image" :src="dataDto.image" alt="main image"
-                        class="w-full max-w-100 aspect-video bg-cover rounded-xl" />
-                    <div v-else class="bg-green-main/40 w-full max-w-60 aspect-video rounded-xl"></div>
+                        class="w-full max-w-100 aspect-3/4 bg-cover rounded-xl" />
+                    <div v-else class="bg-green-main/40 w-full max-w-60 aspect-3/4 rounded-xl"></div>
                 </div>
 
                 <div>
@@ -78,8 +78,8 @@
                 <div class="w-65 flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
                     <!-- image -->
                     <Image v-if="dataDto.image" :src="dataDto.image"
-                        class="flex-shrink-0 w-full aspect-4/3 sm:aspect-video rounded-lg bg-cover bg-no-repeat" />
-                    <div v-else class="flex-shrink-0 w-full aspect-4/3 sm:aspect-video rounded-lg bg-green-main/20" />
+                        class="flex-shrink-0 w-full sm:aspect-3/4 rounded-lg bg-cover bg-no-repeat" />
+                    <div v-else class="flex-shrink-0 w-full sm:aspect-3/4 rounded-lg bg-green-main/20" />
                     <div class="flex-1 min-w-0">
                         <div class="flex flex-col gap-2 w-full">
                             <!-- title -->
@@ -87,6 +87,9 @@
                                 {{ dataDto.title }}
                             </DefaultBody>
                             <div v-else class="h-5 w-3/4 rounded-full bg-green-main/20"></div>
+
+                            <EventLocationSchedule :data="dataDto" :skipAddress="true" />
+
                             <!-- exerpt -->
                             <DefaultBody v-if="dataDto.excerpt" class="line-clamp-3">
                                 {{ dataDto.excerpt }}
@@ -119,7 +122,7 @@
         </div>
 
 
-        <div v-if="dataDto.content">
+        <div v-if="dataDto.content?.content">
             <TiptapEditor v-model="dataDto.content.content" />
         </div>
 
@@ -190,7 +193,7 @@
 
 <script lang="ts" setup>
 import Joi from 'joi';
-import { LucideCheckCircle2, LucideLoader, LucideXCircle } from 'lucide-vue-next';
+import { LucideCheckCircle2, LucideLoader, LucideMapPin, LucideXCircle } from 'lucide-vue-next';
 import type { ContentStatus, PhotoContent } from '~/interfaces/content-interface';
 import type { Event } from '~/interfaces/event-interface';
 import { Module, Permission } from '~/interfaces/user-interface';
@@ -211,7 +214,14 @@ let id = route.query.id as string | undefined;
 const show_preview = ref<boolean>(false)
 
 const event = ref<Event | undefined>(undefined)
-const dataDto = ref<Partial<Event>>({});
+const dataDto = ref<Partial<Event>>({
+    content: {
+        content: {
+            content: [],
+            type: 'doc'
+        },
+    }
+});
 
 const newPhotos = ref<PhotoContent[] | null>(null)
 
