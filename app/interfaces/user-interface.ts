@@ -17,22 +17,22 @@ export type Role =
     "USER"
 
 export interface UserPermission {
-    module: string
-    permission: string
+    module: Module
+    permission: Permission
 }
 
 export enum Module {
-    ARTICLE,
-    EVENT,
-    USER,
-    COMMENT
+    ARTICLE = 'Article',
+    EVENT = 'Event',
+    USER = 'User',
+    COMMENT = 'Comment'
 }
 
 export enum Permission {
-    READ,
-    CREATE,
-    EDIT,
-    DELETE,
-    APPROVE, // can approve, publish or take down article
+    READ = 'Read',
+    CREATE = 'Create',
+    EDIT = 'Edit',
+    DELETE = 'Delete',
+    APPROVE = 'Approve', // can approve, publish or take down article
 
 }

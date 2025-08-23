@@ -1,29 +1,55 @@
 <template>
-    <div class="flex gap-3">
-        <!-- avatar -->
-        <img v-if="user && user.avatar_md" class="w-20 h-20 rounded-full object-cover object-center bg-green-main/20"
-            :src="user.avatar_md" />
-        <div v-else class="w-20 h-20 rounded-full bg-green-main/20"></div>
+    <div>
+        <div class="flex gap-3">
+            <!-- avatar -->
+            <img v-if="user && user.avatar_md"
+                class="w-20 h-20 rounded-full object-cover object-center bg-green-main/20" :src="user.avatar_md" />
+            <div v-else class="w-20 h-20 rounded-full bg-green-main/20"></div>
 
-        <!-- profile -->
-        <div class="flex flex-col gap-1">
-            <div class="text-sm">{{ user?.name }}</div>
-            <div class="text-sm">{{ user?.email }}</div>
-            <div class="flex gap-2 items-center">
-                <div class="text-sm">Role</div>
-                <select v-model="role" @change="updateRole"
-                    class="select w-40 select-sm rounded-full focus:outline-green-main/40 border-green-main/20">
-                    <option value="ADMIN"
-                        v-if="['SUPERADMIN', 'ADMIN'].includes((AuthStore.user?.role ?? '') as string)">
-                        Admin
-                    </option>
-                    <option value="OPERATOR"
-                        v-if="['SUPERADMIN', 'ADMIN', 'OPERATOR'].includes((AuthStore.user?.role ?? '') as string)">
-                        Operator
-                    </option>
-                    <option value="USER">User</option>
-                </select>
+            <!-- profile -->
+            <div class="flex flex-col gap-1">
+                <div class="text-sm">{{ user?.name }}</div>
+                <div class="text-sm">{{ user?.email }}</div>
+                <div class="flex gap-2 items-center">
+                    <div class="text-sm">Role</div>
+                    <select v-model="role" @change="updateRole"
+                        class="select w-40 select-sm rounded-full focus:outline-green-main/40 border-green-main/20">
+                        <option value="ADMIN"
+                            v-if="['SUPERADMIN', 'ADMIN'].includes((AuthStore.user?.role ?? '') as string)">
+                            Admin
+                        </option>
+                        <option value="OPERATOR"
+                            v-if="['SUPERADMIN', 'ADMIN', 'OPERATOR'].includes((AuthStore.user?.role ?? '') as string)">
+                            Operator
+                        </option>
+                        <option value="USER">User</option>
+                    </select>
+                </div>
+
             </div>
+        </div>
+        <hr class="my-4">
+        <div v-if="user?.role == 'OPERATOR'">
+            <div>Permissions</div>
+
+            <table class="table">
+                <tbody>
+                    <template v-for="module in modules">
+                        <tr>
+                            <th>{{ module.name }}</th>
+                            <template v-for="p in module.permissions">
+                                <td v-if="!(!['ARTICLE', 'EVENT'].includes(module.name) && p.name == 'APPROVE')">
+
+                                    <input type="checkbox" class="checkbox" :checked="p.checked"
+                                        @change="(e) => togglePermission(module.name, p.name, e)">
+                                    {{ p.name }}
+                                </td>
+
+                            </template>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
         </div>
     </div>
 </template>
@@ -68,6 +94,42 @@ const updateRole = async () => {
     }
 }
 
+const modules = Object.keys(Module).map((module) => {
+    return {
+        name: module,
+        permissions: Object.keys(Permission).map((permission) => {
+            return {
+                name: permission,
+                checked: AuthStore.user?.permissions?.some(
+                    p => p.module === module && p.permission === permission
+                )
+            }
+        })
+    }
+})
+
+const togglePermission = async (module: string, permission: string, event: Event) => {
+    const checked = (event.target as HTMLInputElement).checked
+
+    const data = {
+        userId: id,
+        module,
+        permission
+    }
+
+    change_permission(data, checked);
+}
+
+const change_permission = async (data: any, add: boolean) => {
+    if (add) {
+        await Api.post('/v1/user/add-permission', data)
+    } else {
+        await Api.remove('/v1/user/remove-permission', data)
+    }
+
+    get()
+
+}
 </script>
 
 <style></style>

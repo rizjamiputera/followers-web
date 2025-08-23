@@ -30,7 +30,7 @@ export const useAuthStore = defineStore('auth', {
                 if (["SUPERADMIN", "ADMIN"].includes(state.user.role)) return true;
                 if (!state.user.permissions) return false;
 
-                const find = state.user.permissions.find(p => p.module == Module[module] && p.permission == Permission[permission])
+                const find = state.user.permissions.find(p => p.module == module && p.permission == permission)
 
                 return find != null;
             }

@@ -11,7 +11,7 @@ export interface ApiInterface {
     patch: ApiMethod;
     upload_file: (path: string, file: File, data?: Record<string, any>) => Promise<unknown>;
     upload_file_stream: (path: string, file: File, content_type: string) => Promise<unknown>;
-    remove: (path: string) => Promise<unknown>;
+    remove: (path: string, body?: Record<string, any>) => Promise<unknown>;
     handleError: (error: any) => void;
 }
 
@@ -197,14 +197,15 @@ export const Api: ApiInterface = {
             Api.handleError(error);
         }
     },
-    remove: async (path: string) => {
+    remove: async (path: string, body?: Record<string, any>) => {
         Api.check_maintenance();
 
         const apiUri = useRuntimeConfig().public.apiUri;
         try {
             const data = await $fetch(apiUri + path, {
                 method: 'DELETE',
-                headers: Api.headers()
+                headers: Api.headers(),
+                ...(body && { body })
             });
 
             // RETURN DATA
