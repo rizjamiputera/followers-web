@@ -103,7 +103,7 @@
                                     Open
                                 </ButtonLink>
 
-                                <Button class="btn-sm btn-error" v-if="dt.status == 'PUBLISHED'"
+                                <Button class="btn-sm btn-error" v-if="canPublish && dt.status == 'PUBLISHED'"
                                     @click="selectedEventId = dt.id; showConfirmTakeDown = true">
                                     Take down
                                 </Button>
