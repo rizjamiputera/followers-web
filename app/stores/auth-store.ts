@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { Role, Module, Permission, type User, type UserPermission } from '~/interfaces/user-interface'
+import { Module, Permission, type User, type UserPermission } from '~/interfaces/user-interface'
 
 
 interface LoginResponse {
@@ -27,7 +27,7 @@ export const useAuthStore = defineStore('auth', {
         can: (state) => {
             return (module: Module, permission: Permission): boolean => {
                 if (!state.user) return false;
-                if ([Role.SUPERADMIN, Role.ADMIN].includes(state.user.role)) return true;
+                if (["SUPERADMIN", "ADMIN"].includes(state.user.role)) return true;
                 if (!state.user.permissions) return false;
 
                 const find = state.user.permissions.find(p => p.module == Module[module] && p.permission == Permission[permission])

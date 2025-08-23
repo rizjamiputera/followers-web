@@ -38,7 +38,7 @@
                                 <hr>
                                 <ul class="mt-1 flex flex-col gap-1 text-sm">
                                     <li><a class="rounded-full">Profile</a></li>
-                                    <li v-if="user.role != Role.USER">
+                                    <li v-if="user.role != 'USER'">
                                         <NuxtLink to="/" class="rounded-full justify-between">
                                             Got to home
                                             <LucideArrowRight :size="12" />
@@ -62,7 +62,6 @@
 <script lang="ts" setup>
 import dayjs from 'dayjs';
 import { LucideArrowRight } from 'lucide-vue-next';
-import { Role } from '~/interfaces/user-interface';
 
 const AuthStore = useAuthStore();
 

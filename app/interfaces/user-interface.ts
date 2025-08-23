@@ -2,6 +2,7 @@ export interface User {
     id: string
     name: string
     email: string
+    active: boolean
     avatar?: string
     avatar_md?: string
     role: Role
@@ -9,12 +10,11 @@ export interface User {
     createdAt: string
 }
 
-export enum Role {
-    SUPERADMIN,
-    ADMIN,
-    OPERATOR,
-    USER
-}
+export type Role =
+    "SUPERADMIN" |
+    "ADMIN" |
+    "OPERATOR" |
+    "USER"
 
 export interface UserPermission {
     module: string
