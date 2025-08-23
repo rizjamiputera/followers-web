@@ -65,7 +65,7 @@ import dayjs from 'dayjs';
 import type { Event } from '~/interfaces/event-interface';
 
 const props = defineProps<{
-    data: Event
+    data: Event | Partial<Event>
 }>()
 
 const sameDay = computed<boolean>(() => {

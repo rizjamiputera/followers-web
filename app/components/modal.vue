@@ -7,10 +7,8 @@
                     :class="maxWidth">
                     <div data-theme="light"
                         class="rounded-xl bg-white-main border-1 border-green-main p-4 relative shadow-lg shadow-black/40 h-min max-h-full overflow-y-auto ">
-                        <form method="dialog">
-                            <button @click="$emit('close')"
-                                class="btn btn-xs btn-circle btn-ghost absolute right-2 top-2 bg-gray-500 text-[#171d34]">✕</button>
-                        </form>
+                        <button @click="$emit('close')"
+                            class="fixed right-8 top-12 btn btn-xs btn-circle btn-ghost bg-gray-500 text-[#171d34]">✕</button>
                         <slot />
                     </div>
                 </div>
