@@ -15,26 +15,35 @@
     </details>
 </li> -->
 <template>
-    <ul ref="drawerMenu" class="menu bg-base-200 text-base-content min-h-full w-60 p-4 text-base">
-        <!-- Sidebar content here -->
-        <ClientOnly>
-            <li v-if="can(Module.ARTICLE, Permission.READ)">
-                <NuxtLink to="/cp/articles" prefetch-on="interaction">Articles</NuxtLink>
-            </li>
-            <li v-if="can(Module.ARTICLE, Permission.CREATE)">
-                <NuxtLink to="/cp/my-articles" prefetch-on="interaction">My Articles</NuxtLink>
-            </li>
-            <li v-if="can(Module.EVENT, Permission.READ)">
-                <NuxtLink to="/cp/events" prefetch-on="interaction">Events</NuxtLink>
-            </li>
-            <li v-if="can(Module.EVENT, Permission.CREATE)">
-                <NuxtLink to="/cp/my-events" prefetch-on="interaction">My Events</NuxtLink>
-            </li>
-            <li v-if="can(Module.USER, Permission.READ)">
-                <NuxtLink to="/cp/users" prefetch-on="interaction">Users</NuxtLink>
-            </li>
-        </ClientOnly>
-    </ul>
+    <div ref="drawerMenu" class="menu bg-base-200 text-base-content min-h-full w-60 p-4 text-base">
+        <ul class="">
+            <!-- Sidebar content here -->
+            <ClientOnly>
+                <li v-if="can(Module.ARTICLE, Permission.READ)">
+                    <NuxtLink to="/cp/articles" prefetch-on="interaction">Articles</NuxtLink>
+                </li>
+                <li v-if="can(Module.EVENT, Permission.READ)">
+                    <NuxtLink to="/cp/events" prefetch-on="interaction">Events</NuxtLink>
+                </li>
+                <li v-if="can(Module.USER, Permission.READ)">
+                    <NuxtLink to="/cp/users" prefetch-on="interaction">Users</NuxtLink>
+                </li>
+            </ClientOnly>
+        </ul>
+
+        <hr class="my-4">
+        <ul class="">
+            <!-- Sidebar content here -->
+            <ClientOnly>
+                <li v-if="can(Module.ARTICLE, Permission.CREATE)">
+                    <NuxtLink to="/cp/my-articles" prefetch-on="interaction">My Articles</NuxtLink>
+                </li>
+                <li v-if="can(Module.EVENT, Permission.CREATE)">
+                    <NuxtLink to="/cp/my-events" prefetch-on="interaction">My Events</NuxtLink>
+                </li>
+            </ClientOnly>
+        </ul>
+    </div>
 </template>
 
 <script lang="ts" setup>

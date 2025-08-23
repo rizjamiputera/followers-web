@@ -22,17 +22,17 @@ export interface UserPermission {
 }
 
 export enum Module {
-    ARTICLE = 'Article',
-    EVENT = 'Event',
-    USER = 'User',
-    COMMENT = 'Comment'
+    ARTICLE = 'ARTICLE',
+    EVENT = 'EVENT',
+    USER = 'USER',
+    COMMENT = 'COMMENT'
 }
 
 export enum Permission {
-    READ = 'Read',
-    CREATE = 'Create',
-    EDIT = 'Edit',
-    DELETE = 'Delete',
-    APPROVE = 'Approve', // can approve, publish or take down article
+    READ = 'READ',
+    CREATE = 'CREATE',
+    EDIT = 'EDIT',
+    DELETE = 'DELETE',
+    APPROVE = 'APPROVE', // can approve, publish or take down article
 
 }
