@@ -1,8 +1,9 @@
 <template>
     <!-- ARTICLE IMAGE -->
     <div class="flex flex-col gap-1">
-        <div class="text-2xl md:text-3xl font-semibold mb-2">{{ title }}</div>
-        <Image v-if="image" :src="image" :alt="title" class-name="w-full aspect-video bg-cover rounded-2xl" />
+        <div class="text-2xl md:text-3xl font-semibold mb-2">{{ data.title }}</div>
+        <Image v-if="data.image" :src="data.image" :alt="data.title"
+            class-name="w-full aspect-video bg-cover rounded-2xl" />
         <div v-else class-name="w-full aspect-video bg-green-main rounded-2xl" />
         <div class="flex flex-wrap justify-center sm:justify-between gap-2">
             <!-- <LazyAvatarName v-if="author" :user="author" avatar_width="w-10 h-10" /> -->
@@ -34,17 +35,17 @@
         </div>
 
         <!-- content -->
-        <div v-if="content" class="prose max-w-none">
-            <WysiwygRenderer :content="content" />
+        <div v-if="data.content" class="prose max-w-none">
+            <WysiwygRenderer :content="data.content.content" />
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
+import type { Article } from '~/interfaces/article-interface';
+
 defineProps<{
-    image?: string | null
-    title: string
-    content: Record<string, any>
+    data: Article | Partial<Article>
 }>()
 
 </script>

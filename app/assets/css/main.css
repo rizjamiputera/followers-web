@@ -33,6 +33,10 @@ body {
     @apply bg-green-main hover:bg-green-secondary text-white;
 }
 
+.btn-outline-green {
+    @apply btn-outline border-green-main/20 text-green-main;
+}
+
 .badge-white {
     @apply bg-[#F6F6F6];
 }

@@ -100,7 +100,7 @@ import { useEditor, EditorContent } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
 import { LucideCode2, LucideImage, LucideQuote, LucideRedo2, LucideStrikethrough, LucideUndo2 } from 'lucide-vue-next';
-import type { PhotoContent } from '~/interfaces/article-interface';
+import type { PhotoContent } from '~/interfaces/content-interface';
 
 const props = defineProps<{
     modelValue?: any

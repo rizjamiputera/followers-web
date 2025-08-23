@@ -22,20 +22,28 @@
             </div>
         </div>
 
-        <Input v-model="title" label="Title" @keyup="checkTitleChange" />
+        <Input v-model="dataDto.title" label="Title" @keyup="checkTitleChange" />
         <div>
             <div class="flex gap-1 items-center mb-2">
                 <label class="text-sm font-medium">Slug</label>
-                <div v-if="slug != article?.slug">
+                <div v-if="dataDto.slug != article?.slug">
                     <LucideLoader v-if="checkingSlug" :size="24" class="stroke-green-main animate-spin" />
                     <LucideCheckCircle2 v-else-if="slugAvailable" :size="24" class="stroke-green-main" />
-                    <LucideXCircle v-else-if="title != ''" :size="24" class="stroke-red-800" />
+                    <LucideXCircle v-else-if="dataDto.title != ''" :size="24" class="stroke-red-800" />
                 </div>
             </div>
 
-            <div class="join w-full">
-                <button class="btn join-item rounded-l-full btn-active font-light">{{ webUri }}/read/</button>
-                <Input class="join-item rounded-l-none flex-1" v-model="slug" @keyup="checkSlugChange" />
+            <div class="flex gap-2">
+                <div class="join w-full">
+                    <button class="btn join-item rounded-l-full btn-active font-light">{{ webUri }}/read/</button>
+                    <Input class="join-item rounded-l-none flex-1" v-model="dataDto.slug" @keyup="checkSlugChange" />
+                </div>
+
+                <!-- button link -->
+                <template v-if="article ? article.status == 'PUBLISHED' : false">
+                    <ButtonLink :to="`${webUri}/read/${dataDto.slug}`" target="_blank" class="btn-outline-green">Open
+                    </ButtonLink>
+                </template>
             </div>
         </div>
 
@@ -46,7 +54,7 @@
                         <label class="text-sm font-medium">Image</label>
                         <ButtonChangePhotos @uploaded="handleNewPhoto" />
                     </div>
-                    <LazyImage v-if="image" :src="image" alt="main image"
+                    <LazyImage v-if="dataDto.image" :src="dataDto.image" alt="main image"
                         class="w-full max-w-100 aspect-video bg-cover rounded-xl" />
                     <div v-else class="bg-green-main/40 w-full max-w-60 aspect-video rounded-xl"></div>
                 </div>
@@ -56,7 +64,7 @@
                     <p class="text-xs font-light mb-1">
                         Berisi maksimal 100 karakter punchline untuk menarik perhatian pembaca
                     </p>
-                    <Textarea v-model="excerpt" />
+                    <Textarea v-model="dataDto.excerpt" />
                 </div>
             </div>
 
@@ -69,19 +77,19 @@
                 <label class="text-sm font-medium">Preview</label>
                 <div class="w-full min-w-65 flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
                     <!-- image -->
-                    <Image v-if="image" :src="image"
+                    <Image v-if="dataDto.image" :src="dataDto.image"
                         class="flex-shrink-0 w-full aspect-4/3 sm:aspect-video rounded-lg bg-cover bg-no-repeat" />
                     <div v-else class="flex-shrink-0 w-full aspect-4/3 sm:aspect-video rounded-lg bg-green-main/20" />
                     <div class="flex-1 min-w-0">
                         <div class="flex flex-col gap-2 w-full">
                             <!-- title -->
-                            <DefaultBody v-if="title" class="line-clamp-1 font-bold">
-                                {{ title }}
+                            <DefaultBody v-if="dataDto.title" class="line-clamp-1 font-bold">
+                                {{ dataDto.title }}
                             </DefaultBody>
                             <div v-else class="h-5 w-3/4 rounded-full bg-green-main/20"></div>
                             <!-- exerpt -->
-                            <DefaultBody v-if="excerpt" class="line-clamp-3">
-                                {{ excerpt }}
+                            <DefaultBody v-if="dataDto.excerpt" class="line-clamp-3">
+                                {{ dataDto.excerpt }}
                             </DefaultBody>
                             <template v-else>
                                 <div class="h-3 w-full rounded-full bg-green-main/20 mt-3"></div>
@@ -94,8 +102,8 @@
             </div>
         </div>
 
-        <div>
-            <TiptapEditor v-model="content" />
+        <div v-if="dataDto.content">
+            <TiptapEditor v-model="dataDto.content.content" />
         </div>
 
         <div class="flex justify-end gap-1">
@@ -158,7 +166,7 @@
 
     <LazyModal v-if="show_preview" :show="show_preview" @close="show_preview = false" max-width="max-w-4xl">
         <div class="p-4">
-            <ArticlePreview :title :image :content />
+            <ArticlePreview :data="dataDto" />
         </div>
     </LazyModal>
 </template>
@@ -186,17 +194,12 @@ let id = route.query.id as string | undefined;
 const show_preview = ref<boolean>(false)
 
 const article = ref<Article | undefined>(undefined)
-const title = ref<string>('')
-const slug = ref<string>('')
-const excerpt = ref<string>('')
-const content = ref<any>("")
+const dataDto = ref<Partial<Article>>({});
 
-const image = ref<string | null>(null)
 const newPhotos = ref<PhotoContent[] | null>(null)
 
 const get = async () => {
     if (!id) return;
-    // const id = route.params.id as string;
 
     article.value = await Api.get('/v1/article/my/' + id + '?includes=content') as Article;
 
@@ -209,23 +212,24 @@ onMounted(get);
 // Watch for article updates and sync into dataDto
 watch(article, (newArticle) => {
     if (newArticle) {
-        title.value = newArticle.title
-        slug.value = newArticle.slug
-        excerpt.value = newArticle.excerpt
+        dataDto.value.title = newArticle.title
+        dataDto.value.slug = newArticle.slug
+        dataDto.value.excerpt = newArticle.excerpt
 
-        image.value = newArticle.image
-        content.value = newArticle.content?.content || null
+        dataDto.value.image = newArticle.image
+        dataDto.value.image_md = newArticle.image_md
+        dataDto.value.content = newArticle.content
     }
 }, { immediate: true })
 
 
 
 const checkTitleChange = () => {
-    slug.value = slugify(title.value)
+    dataDto.value.slug = slugify(dataDto.value.title ?? '')
     checkSlug();
 }
 const checkSlugChange = () => {
-    slug.value = slugify(slug.value)
+    dataDto.value.slug = slugify(dataDto.value.slug ?? '')
     checkSlug();
 }
 
@@ -233,14 +237,14 @@ const checkSlugChange = () => {
 const handleNewPhoto = (photos: PhotoContent[]) => {
     newPhotos.value = photos;
 
-    image.value = photos[0]?.path ?? '';
+    dataDto.value.image = photos[0]?.path ?? '';
 }
 
 const checkingSlug = ref<boolean>(false);
 const slugAvailable = ref<boolean>(false);
 let checkSlugTimeout: NodeJS.Timeout | null = null;
 const checkSlug = () => {
-    if (slug.value) {
+    if (dataDto.value.slug) {
         checkingSlug.value = true;
         if (checkSlugTimeout) {
             clearTimeout(checkSlugTimeout);
@@ -249,12 +253,12 @@ const checkSlug = () => {
         checkSlugTimeout = setTimeout(async () => {
             try {
                 if (article.value) {
-                    if (slug.value != article.value.slug) {
-                        const response = await Api.get('/v1/article/slug/check?slug=' + slug.value);
+                    if (dataDto.value.slug != article.value.slug) {
+                        const response = await Api.get('/v1/article/slug/check?slug=' + dataDto.value.slug);
                         slugAvailable.value = response == 'true';
                     }
                 } else {
-                    const response = await Api.get('/v1/article/slug/check?slug=' + slug.value);
+                    const response = await Api.get('/v1/article/slug/check?slug=' + dataDto.value.slug);
                     slugAvailable.value = response == 'true';
 
                 }
@@ -301,19 +305,9 @@ const validate = () => {
     showConfirmPublish.value = false;
     showConfirmDraftOrReview.value = false;
 
-    const dataDto: Partial<Article> = {
-        title: title.value,
-        slug: slug.value,
-        excerpt: excerpt.value,
-        ...((newPhotos.value && newPhotos.value.length == 2) && {
-            image: newPhotos.value[0]?.path,
-            image_md: newPhotos.value[1]?.path,
-        }),
-        content: content.value
-    };
-
     try {
-        validatedData.value = Validate(id ? isEditArticle : isCreateArticle, dataDto);
+        validatedData.value = Validate(id ? isEditArticle : isCreateArticle, dataDto.value);
+        validatedData.value.content = validatedData.value.content.content;
 
         if (status.value == "PUBLISHED") {
             // validatedData.value.status = "PUBLISHED"
@@ -330,7 +324,6 @@ const validate = () => {
 
 const publishedAt = ref<string | null>(null)
 const submit = async () => {
-    // if (!article.value) return;
     if (!slugAvailable.value) return;
     if (isSubmitting.value) return;
 
@@ -339,8 +332,6 @@ const submit = async () => {
 
 
     try {
-        // const data = Validate(isArticle, dataDto);
-
         if (id) {
             // update
             await Api.patch('/v1/article/' + id, validatedData.value);
@@ -385,12 +376,10 @@ const submit = async () => {
             }
         }
 
-        // showConfirm.value = false;
         toastSuccess('Success')
 
         // emit('close');
     } catch (error) {
-        console.log(error)
         toastError(error)
     } finally {
         isSubmitting.value = false;
