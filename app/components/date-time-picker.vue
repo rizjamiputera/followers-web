@@ -1,7 +1,7 @@
 <template>
     <ClientOnly>
         <!-- <Calendar /> -->
-        <DatePicker v-model="_value" mode="dateTime">
+        <DatePicker v-model="_value" mode="dateTime" is24hr>
             <template #default="{ togglePopover }">
                 <Button class="btn btn-outline border-neutral/25 btn-sm font-normal text-nowrap" @click="togglePopover">
                     <div class="flex justify-between gap-2 items-center">

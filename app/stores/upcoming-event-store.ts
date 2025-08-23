@@ -29,7 +29,7 @@ export const useUpcomingEventStore = defineStore('upcoming-event', {
                     limit: state.parameters.limit,
                     page: state.parameters.page,
                     includes: state.parameters.includes.join(','),
-                    sortBy: 'publishedAt',
+                    sortBy: 'start_at',
                     order: OrderBy.ASC
                 },
             });

@@ -29,10 +29,10 @@
         </div>
     </template>
     <template v-else>
-        <div class="badge badge-outline-green">
+        <div class="badge badge-outline-green text-nowrap">
             <LucideClock :size="14" /> <span class="min-w-12">Dari</span> : {{ formatDateTimeTz(data.start_at) }}
         </div>
-        <div class="badge badge-outline-green" v-if="data.end_at">
+        <div class="badge badge-outline-green text-nowrap" v-if="data.end_at">
             <LucideClock :size="14" /> <span class="min-w-12">Sampai</span> : {{ formatDateTimeTz(data.end_at) }}
         </div>
     </template>
