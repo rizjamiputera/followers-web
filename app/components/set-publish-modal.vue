@@ -30,7 +30,7 @@ const props = defineProps<{
     show: boolean
 }>()
 
-const publishedAt = ref<string | null>(new Date().toDateString())
+const publishedAt = ref<string | null>(new Date().toISOString())
 const isSubmitting = ref<boolean>(false);
 const submit = async () => {
     if (isSubmitting.value) return;
