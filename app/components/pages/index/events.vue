@@ -4,10 +4,10 @@
 
         <div v-if="first_event"
             class="w-full flex max-sm:flex-col gap-2 max-sm:border border-green-main/30 max-sm:bg-green-main/3 rounded-xl">
-            <div class="sm:w-1/3 max-sm:p-3">
+            <NuxtLink :to="'/event/' + first_event.slug" prefetch-on="interaction" class="sm:w-1/3 max-sm:p-3">
                 <Image :src="first_event.image_md"
                     class="aspect-3/4 rounded-lg bg-cover bg-no-repeat bg-green-main/30" />
-            </div>
+            </NuxtLink>
             <div class="sm:w-2/3">
                 <div
                     class="w-full h-full flex flex-col gap-2 sm:border border-green-main/30 sm:bg-green-main/3 rounded-xl p-3">
