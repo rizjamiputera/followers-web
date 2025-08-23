@@ -306,7 +306,7 @@ const isSubmitting = ref<boolean>(false);
 const validatedData = ref<Record<string, any>>({});
 
 const status = ref<ContentStatus>('DRAFT');
-const publishedAt = ref<string | null>(null)
+const publishedAt = ref<string | null>(new Date().toDateString())
 
 const validate = () => {
     if (!slugAvailable.value) return;
