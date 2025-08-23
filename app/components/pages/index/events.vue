@@ -2,14 +2,15 @@
     <section v-if="first_event" class="flex flex-col gap-4">
         <DefaultTitle class="text-green-main">Event</DefaultTitle>
 
-        <div v-if="first_event" class="w-full flex gap-2">
-            <div class="w-1/3 ">
+        <div v-if="first_event"
+            class="w-full flex max-sm:flex-col gap-2 max-sm:border border-green-main/30 max-sm:bg-green-main/3 rounded-xl">
+            <div class="sm:w-1/3 max-sm:p-3">
                 <Image :src="first_event.image_md"
                     class="aspect-3/4 rounded-lg bg-cover bg-no-repeat bg-green-main/30" />
             </div>
-            <div class="w-2/3">
+            <div class="sm:w-2/3">
                 <div
-                    class="w-full h-full flex sm:flex-col gap-2 border border-green-main/30 bg-green-main/3 rounded-xl p-3">
+                    class="w-full h-full flex flex-col gap-2 sm:border border-green-main/30 sm:bg-green-main/3 rounded-xl p-3">
                     <DefaultBody class="line-clamp-1 font-bold">{{ first_event.title }}</DefaultBody>
                     <EventLocationSchedule :data="first_event" />
                     <DefaultBody class="flex-1 line-clamp-3">{{ first_event.excerpt }}</DefaultBody>
