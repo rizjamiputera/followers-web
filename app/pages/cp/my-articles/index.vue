@@ -26,7 +26,7 @@
                     <tr>
                         <th>No</th>
                         <th>Title</th>
-                        <th class="text-center">Created At</th>
+                        <!-- <th class="text-center">Created At</th> -->
                         <th class="text-center">Status</th>
                         <th class="text-center">Publish</th>
                         <th class="text-center">Action</th>
@@ -66,7 +66,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="text-center">{{ dayjs(dt.createdAt).format('DD-MMM-YY') }}</td>
+                        <!-- <td class="text-center">{{ dayjs(dt.createdAt).format('DD MMM YY') }}</td> -->
                         <td class="text-center">
                             <StatusBade :status="dt.status" />
                         </td>
@@ -94,6 +94,10 @@
                         <td class="text-center">
                             <div class="flex gap-1 justify-center">
                                 <Button class="btn-sm" @click="get_preview(dt.id)">Preview</Button>
+                                <ButtonLink v-if="dt.status == 'PUBLISHED'" :to="`/read/${dt.slug}`" target="_blank"
+                                    class="btn-sm btn-outline-green">
+                                    Open
+                                </ButtonLink>
                                 <ButtonLink :to="`/cp/my-articles/form?id=${dt.id}`" class="btn-sm btn-green">
                                     Edit
                                 </ButtonLink>

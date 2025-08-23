@@ -18,14 +18,13 @@
                 <template v-if="data">
                     <!-- EVENT IMAGE -->
                     <div class="flex flex-col gap-1">
-                        <div class="text-2xl md:text-3xl font-semibold mb-1">{{ data.title }}</div>
                         <div class="flex justify-end items-center gap-1 text-xs font-light">
                             <LucideClock :size="12" /> {{ data.publishedAt ? getRelativeTime(data.publishedAt) : '-' }}
                             <div class="">{{ stats.readCount }} views</div>
                         </div>
                         <Image :src="data.image" :alt="data.title" class-name="aspect-video bg-cover rounded-2xl" />
-                        <div class="flex flex-wrap justify-center sm:justify-between gap-2">
-                            <LazyAvatarName v-if="data.author" :user="data.author" avatar_width="w-10 h-10" />
+                        <div class="text-2xl md:text-3xl font-semibold mb-1">{{ data.title }}</div>
+                        <div class="flex flex-wrap justify-center sm:justify-end gap-2">
 
                             <div class="flex items-center gap-2">
                                 <div class="join join-horizontal">
@@ -53,7 +52,46 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="text-sm">
+                            <div v-if="data.location" class="flex gap-1">
+                                <span class="min-w-16">Lokasi</span>
+                                : {{ data.location }}
+                            </div>
+                            <div v-if="data.address" class="flex gap-1">
+                                <span class="min-w-16">Alamat</span>
+                                : {{ data.address }}
+                            </div>
+
+                            <div v-if="data.start_at">
+                                <template v-if="sameDay">
+                                    <template v-if="data.end_at">
+                                        <div class="flex gap-1">
+                                            <span class="min-w-16">Tanggal</span>
+                                            : {{ dayjs(data.start_at).format('DD-MMM-YY') }}
+                                        </div>
+                                        <div class="flex gap-1">
+                                            <span class="min-w-16">Waktu</span>: {{ formatTime(data.start_at) }} sd {{
+                                                formatTime(data.end_at) }} {{
+                                                userTimezone() }}
+                                        </div>
+                                    </template>
+                                    <div v-else class="flex gap-1"><span class="min-w-16">Waktu</span>: {{
+                                        formatDateTimeTz(data.start_at)
+                                        }}</div>
+                                </template>
+                                <template v-else>
+                                    <div class="flex gap-1">
+                                        <span class="min-w-16">Dari</span>: {{ formatDateTimeTz(data.start_at) }}
+                                    </div>
+                                    <div class="flex gap-1">
+                                        <span class="min-w-16">Sampai</span>: {{ formatDateTimeTz(data.end_at) }}
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
                     </div>
+
 
                     <!-- content -->
                     <div v-if="content" class="prose max-w-none">
@@ -84,6 +122,7 @@
 </template>
 
 <script lang="ts" setup>
+import dayjs from 'dayjs';
 import { LucideBookmark, LucideClock, LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
 import type { Event } from '~/interfaces/event-interface';
 import { useReadEventStore } from '~/stores/read-event-store';
@@ -156,6 +195,17 @@ const shareToWhatsApp = () => {
 
     window.open(whatsappUrl, '_blank');
 };
+
+const sameDay = computed<boolean>(() => {
+    if (!data?.value) return true;
+    if (!data.value.start_at) return true;
+    if (!data.value.end_at) return true;
+
+    const startDay = dayjs(data.value.start_at).format('dd-mm-yyyy');
+    const endDay = dayjs(data.value.end_at).format('dd-mm-yyyy');
+
+    return startDay == endDay;
+})
 </script>
 
 <style></style>

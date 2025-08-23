@@ -48,7 +48,7 @@
         </div>
 
         <div class="w-full flex flex-wrap gap-4 items-stretch">
-            <div class="flex-1 max-md:w-full">
+            <div class="flex-1 max-sm:w-full">
                 <div>
                     <div class="flex gap-1 items-center mb-1">
                         <label class="text-sm font-medium">Image</label>
@@ -68,14 +68,14 @@
                 </div>
             </div>
 
-            <div class="max-md:hidden py-3">
+            <div class="max-sm:hidden py-3">
                 <div class="h-full w-px bg-green-main/10"></div>
             </div>
 
             <!-- Preview -->
-            <div class="max-md:w-full">
+            <div class="max-sm:w-full">
                 <label class="text-sm font-medium">Preview</label>
-                <div class="w-full min-w-65 flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
+                <div class="w-65 flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
                     <!-- image -->
                     <Image v-if="dataDto.image" :src="dataDto.image"
                         class="flex-shrink-0 w-full aspect-4/3 sm:aspect-video rounded-lg bg-cover bg-no-repeat" />
@@ -101,6 +101,23 @@
                 </div>
             </div>
         </div>
+
+        <!-- location, address, start_at, end_at -->
+        <Input v-model="dataDto.location" label="Lokasi" />
+        <Textarea v-model="dataDto.address" label="Alamat" />
+
+        <!-- {{ dataDto.start_at }} - {{ dataDto.end_at }} -->
+        <div class="flex flex-col gap-2">
+            <div class="flex gap-1 items-center">
+                <div class="w-10">Start</div>
+                <DateTimePicker label="Start" v-model="dataDto.start_at" />
+            </div>
+            <div class="flex gap-1 items-center">
+                <div class="w-10">End</div>
+                <DateTimePicker label="End" v-model="dataDto.end_at" />
+            </div>
+        </div>
+
 
         <div v-if="dataDto.content">
             <TiptapEditor v-model="dataDto.content.content" />
@@ -219,6 +236,11 @@ watch(event, (newEvent) => {
         dataDto.value.image = newEvent.image
         dataDto.value.image_md = newEvent.image_md
         dataDto.value.content = newEvent.content
+
+        dataDto.value.location = newEvent.location
+        dataDto.value.address = newEvent.address
+        dataDto.value.start_at = newEvent.start_at
+        dataDto.value.end_at = newEvent.end_at
     }
 }, { immediate: true })
 
@@ -281,6 +303,10 @@ const isCreateEvent = Joi.object({
     image_md: IsString,
     excerpt: IsString.label('Ringkasan'),
     content: Joi.object(),
+    location: IsString.optional(),
+    address: IsString.optional(),
+    start_at: Joi.date().optional(),
+    end_at: Joi.date().optional(),
 })
 const isEditEvent = Joi.object({
     title: IsString,
@@ -289,6 +315,10 @@ const isEditEvent = Joi.object({
     image_md: IsString.optional().allow(null, ''),
     excerpt: IsString.label('Ringkasan'),
     content: Joi.object(),
+    location: IsString.optional(),
+    address: IsString.optional(),
+    start_at: Joi.date().optional(),
+    end_at: Joi.date().optional(),
 })
 
 const confirm_cancel = ref<boolean>(false);
@@ -307,6 +337,7 @@ const validate = () => {
     showConfirmDraftOrReview.value = false;
 
     try {
+        console.log(dataDto.value)
         validatedData.value = Validate(id ? isEditEvent : isCreateEvent, dataDto.value);
         validatedData.value.content = validatedData.value.content.content;
 

@@ -1,26 +1,40 @@
 <template>
     <!-- ARTICLE IMAGE -->
     <div class="flex flex-col gap-1">
-        <div class="flex gap-3">
-            <Image v-if="data.image" :full-image="true" :src="data.image" :alt="data.title"
-                class-name="w-7/10 rounded-2xl" />
-            <div v-else class-name="w-7/10 aspect-3/4 bg-green-main rounded-2xl" />
+        <Image v-if="data.image" :full-image="true" :src="data.image" :alt="data.title"
+            class-name="w-full rounded-2xl" />
+        <div v-else class-name="w-full aspect-3/4 bg-green-main rounded-2xl" />
 
+        <div class="text-lg md:text-2xl font-semibold mb-2">{{ data.title }}</div>
 
-            <div class="w-3/10">
-                <div class="text-lg md:text-2xl font-semibold mb-2">{{ data.title }}</div>
-                <div v-if="data.location || data.address">
-                    <div v-if="data.location">Lokasi: {{ data.location }}</div>
-                    <p v-if="data.address">{{ data.address }}</p>
-                </div>
+        <!-- location & schedule time -->
+        <div class="text-sm">
+            <div v-if="data.location || data.address">
+                <div v-if="data.location">Lokasi: {{ data.location }}</div>
+                <p v-if="data.address">{{ data.address }}</p>
+            </div>
 
-                <div v-if="data.start_at">
-                    <div v-if="sameDay && data.end_at">
-                        Waktu: {{ dayjs(data.start_at).format('DD-MMM-YY') }}
-                        {{ formatTimeTz(data.start_at) }} sd {{ formatTimeTz(data.end_at) }} {{ userTimezone() }}
-                    </div>
+            <div v-if="data.start_at">
+                <template v-if="sameDay">
+                    <template v-if="data.end_at">
+                        <div>
+                            Tanggal: {{ dayjs(data.start_at).format('DD-MMM-YY') }}
+                        </div>
+                        <div>
+                            Waktu: {{ formatTime(data.start_at) }} sd {{ formatTime(data.end_at) }} {{ userTimezone() }}
+                        </div>
+                    </template>
                     <div v-else>Waktu: {{ formatDateTimeTz(data.start_at) }}</div>
-                </div>
+                </template>
+                <template v-else>
+                    <div>
+                        Dari: {{ formatDateTimeTz(data.start_at) }}
+                    </div>
+                    <div>
+                        Sampai: {{ formatDateTimeTz(data.end_at) }}
+                    </div>
+
+                </template>
             </div>
         </div>
 

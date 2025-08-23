@@ -23,7 +23,7 @@ import { DatePicker } from 'v-calendar';
 import 'v-calendar/style.css';
 
 interface Props {
-    modelValue: string | null,
+    modelValue: string | null | undefined,
     label?: string
 }
 
@@ -32,7 +32,11 @@ const props = withDefaults(defineProps<Props>(), {
     label: 'Pilih tanggal',
 })
 
-const _value = ref<string>(props.modelValue || "");
+const _value = ref<string>();
+
+watchEffect(() => {
+    _value.value = props.modelValue ?? '';
+})
 
 watch(_value, (newValue) => {
     emit('update:modelValue', newValue);

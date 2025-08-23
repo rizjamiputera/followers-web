@@ -75,7 +75,7 @@
             <!-- Preview -->
             <div class="max-md:w-full">
                 <label class="text-sm font-medium">Preview</label>
-                <div class="w-full min-w-65 flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
+                <div class="w-65 flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
                     <!-- image -->
                     <Image v-if="dataDto.image" :src="dataDto.image"
                         class="flex-shrink-0 w-full aspect-4/3 sm:aspect-video rounded-lg bg-cover bg-no-repeat" />
