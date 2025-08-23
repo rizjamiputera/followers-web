@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { defineStore } from 'pinia'
 import queryString from 'query-string'
 import { OrderBy, type Paginate, type PaginationParameters } from '~/interfaces/app-interface'
@@ -30,7 +31,8 @@ export const useUpcomingEventStore = defineStore('upcoming-event', {
                     page: state.parameters.page,
                     includes: state.parameters.includes.join(','),
                     sortBy: 'start_at',
-                    order: OrderBy.ASC
+                    order: OrderBy.ASC,
+                    start_from: dayjs().startOf('day').toISOString()
                 },
             });
         },
