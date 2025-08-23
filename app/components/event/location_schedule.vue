@@ -2,7 +2,8 @@
     <div class="badge badge-outline-green">
         <LucideMapPin :size="14" /> {{ data.location }}
     </div>
-    <div class="border-1 border-green-main/30 rounded-lg text-sm font-light w-min whitespace-pre py-2 px-3">
+    <div v-if="!skipAddress"
+        class="border-1 border-green-main/30 rounded-lg text-sm font-light w-min whitespace-pre py-2 px-3">
         {{ data.address }}
     </div>
 
@@ -44,6 +45,7 @@ import type { Event } from '~/interfaces/event-interface';
 
 const props = defineProps<{
     data: Event | Partial<Event>
+    skipAddress?: boolean
 }>()
 
 const sameDay = computed<boolean>(() => {

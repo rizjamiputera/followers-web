@@ -22,7 +22,7 @@
                             <LucideClock :size="12" /> {{ data.publishedAt ? getRelativeTime(data.publishedAt) : '-' }}
                             <div class="">{{ stats.readCount }} views</div>
                         </div>
-                        <Image :src="data.image" :alt="data.title" class-name="aspect-video bg-cover rounded-2xl" />
+                        <Image :src="data.image" :alt="data.title" class-name="aspect-3/4 bg-cover rounded-2xl" />
                         <div class="text-2xl md:text-3xl font-semibold mb-1">{{ data.title }}</div>
                         <div class="flex flex-wrap justify-center sm:justify-end gap-2">
 
@@ -76,10 +76,10 @@
 
             </div>
             <!-- SIDE RIGHT -->
-            <div class="col-span-full md:col-span-3">
+            <div class="col-span-full md:col-span-3 flex flex-col gap-6">
 
-                <LazyArticleLatestSm v-if="data" :authorId="data.authorId" :authorName="data.author?.name"
-                    :exclude_slug="data.slug" />
+                <LazyEventLatestSm :excludeSlug="data?.slug" />
+                <LazyArticleLatestSm />
             </div>
         </div>
     </section>

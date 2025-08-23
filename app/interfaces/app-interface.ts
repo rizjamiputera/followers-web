@@ -10,3 +10,9 @@ export interface PaginationParameters {
     page: number
     includes: string[]
 }
+
+
+export enum OrderBy {
+    ASC = "asc",
+    DESC = "desc",
+}

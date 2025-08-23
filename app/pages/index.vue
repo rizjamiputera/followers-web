@@ -3,6 +3,7 @@
         <!-- <div class="h-screen bg-green-main">
             <div class="text-6xl font-extrabold text-white text-center">TEST TEST TEST</div>
         </div> -->
+        <PagesIndexEvents />
         <PagesIndexLatest />
     </div>
 </template>

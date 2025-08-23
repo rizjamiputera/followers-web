@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import queryString from 'query-string'
-import type { Paginate, PaginationParameters } from '~/interfaces/app-interface'
+import { OrderBy, type Paginate, type PaginationParameters } from '~/interfaces/app-interface'
 import type { ContentStatus } from '~/interfaces/content-interface'
 import type { Event } from '~/interfaces/event-interface'
 
@@ -10,6 +10,8 @@ interface EventsStoreState {
     search: string
     status?: ContentStatus
     authorId?: string
+    sortBy: string
+    order: OrderBy
     isLoading: boolean
     isError: boolean
 }
@@ -25,6 +27,8 @@ export const useEventsStore = defineStore('events', {
         search: '',
         status: undefined,
         authorId: undefined,
+        sortBy: 'createdAt',
+        order: OrderBy.DESC,
         isLoading: false,
         isError: false
     }),
@@ -39,7 +43,7 @@ export const useEventsStore = defineStore('events', {
                     search: state.search,
                     authorId: state.authorId,
                     status: state.status,
-                    sortBy: 'createdAt',
+                    sortBy: state.sortBy,
                     order: 'desc'
                 },
             });
