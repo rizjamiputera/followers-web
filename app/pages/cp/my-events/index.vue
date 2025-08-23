@@ -24,7 +24,6 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>No</th>
                         <th>Title</th>
                         <th class="text-center">Start</th>
                         <th class="text-center">End</th>
@@ -41,7 +40,6 @@
                         </td>
                     </tr>
                     <tr v-else-if="!isLoading" v-for="(dt, n) in events" ::key="dt.id">
-                        <td>{{ n + 1 }}</td>
                         <td>
                             <div>
                                 <div class="line-clamp-1 text-nowrap">{{ dt.title }}</div>

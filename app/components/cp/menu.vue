@@ -15,7 +15,7 @@
     </details>
 </li> -->
 <template>
-    <ul ref="drawerMenu" class="menu bg-base-200 text-base-content min-h-full w-60 p-4">
+    <ul ref="drawerMenu" class="menu bg-base-200 text-base-content min-h-full w-60 p-4 text-base">
         <!-- Sidebar content here -->
         <ClientOnly>
             <li v-if="can(Module.ARTICLE, Permission.READ)">
@@ -29,6 +29,9 @@
             </li>
             <li v-if="can(Module.EVENT, Permission.CREATE)">
                 <NuxtLink to="/cp/my-events" prefetch-on="interaction">My Events</NuxtLink>
+            </li>
+            <li v-if="can(Module.USER, Permission.READ)">
+                <NuxtLink to="/cp/users" prefetch-on="interaction">Users</NuxtLink>
             </li>
         </ClientOnly>
     </ul>

@@ -1,6 +1,6 @@
 <template>
     <div>
-
+        DAHSBOARD
     </div>
 </template>
 
