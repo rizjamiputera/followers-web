@@ -1,0 +1,15 @@
+# services / containers
+services:
+    # express app
+    web-followers:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: web-followers
+        image: web-followers-dev:1.0.0
+        restart: always
+        ports:
+            - 3333:3000
+        environment:
+            NUXT_PUBLIC_WEB_URI: https://followersbicara.com
+            NUXT_PUBLIC_API_URI: https://api.followersbicara.com
