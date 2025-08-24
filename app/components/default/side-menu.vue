@@ -32,7 +32,7 @@
                     </li>
                     <li v-if="user?.role != 'USER'">
                         <NuxtLink to="/cp" prefetch-on="interaction" class="text-nowrap text-white-main"
-                            @click="$emit('close')">Got to admin</NuxtLink>
+                            @click="$emit('close')">Go to admin</NuxtLink>
                     </li>
                 </ClientOnly>
                 <template v-if="false">

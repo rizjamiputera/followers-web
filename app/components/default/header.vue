@@ -64,7 +64,7 @@
                                     </li>
                                     <li v-if="user.role != 'USER'">
                                         <NuxtLink to="/cp" class="rounded-full justify-between">
-                                            Got to admin
+                                            Go to admin
                                             <LucideArrowRight :size="12" />
                                         </NuxtLink>
                                     </li>
