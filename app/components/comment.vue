@@ -10,9 +10,9 @@
                 <span v-if="comment.mentioned" class="badge badge-sm badge-soft badge-success">
                     @{{ comment.mentioned.name }}
                 </span>
-                {{ comment.content }}
+                {{ comment.comment }}
             </div>
-            <div class="flex items-center gap-2 mt-1">
+            <div class="flex items-center gap-2 mt-1" v-if="false">
                 <div class="flex items-center text-xs">
                     <button @click="" class="btn btn-xs btn-circle btn-ghost">
                         <LucideThumbsUp :size="14" />
@@ -38,7 +38,7 @@
 
 <script lang="ts" setup>
 import { LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
-import type { Comment } from '~/interfaces/article-interface';
+import type { Comment } from '~/interfaces/content-interface';
 import { getRelativeTime } from '~/utils/get-relative-time';
 
 defineProps<{

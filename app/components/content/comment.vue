@@ -4,22 +4,22 @@
             <span>{{ `${stats.commentCount} ` }}</span>Comments
         </div>
         <hr class="bg-green-main/30 mb-5">
-        <div class="mb-4">
+
+        <!-- Write Comment -->
+        <div class="mb-4" v-if="user">
             <Textarea placeholder="Type comment here.." />
             <div class="flex justify-end mt-1">
                 <Button class="btn-green">Submit</Button>
             </div>
         </div>
-        <div v-if="isLoading" class="loading">
-            Loading comments...
-        </div>
+        <ButtonLink to="/auth/login" class="btn-green w-full">Login to write comment</ButtonLink>
 
-        <div v-else-if="ArticleCommentsStore.comments.length === 0" class="no-comments">
+        <div v-if="CommentsStore.comments.length === 0" class="no-comments">
             No comments yet
         </div>
 
         <div v-else class="flex flex-col gap-1">
-            <div v-for="comment in ArticleCommentsStore.comments" :key="comment.id">
+            <div v-for="comment in CommentsStore.comments" :key="comment.id">
                 <Comment :comment />
 
                 <!-- Second level comments (replies) -->
@@ -29,26 +29,36 @@
                     </template>
                 </div>
             </div>
+
+            <CommentSkeleton v-if="isLoading" v-for="n in 3" :key="n" />
+
+            <div class="flex justify-center" v-if="stats.commentCount > CommentsStore.comments.length">
+                <Button class="btn-sm btn-green text-nowrap w-min" @click="loadMore">Load more comments</Button>
+            </div>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
+import type { ContentStats } from '~/interfaces/content-interface';
+import Comment from '../comment.vue';
+const { user } = useAuthStore();
+
 const sectionRef = ref<HTMLElement>();
 const props = defineProps<{
     contentId: string
+    stats: ContentStats
 }>()
-const ReadArticleStore = useReadArticleStore();
-const { stats } = storeToRefs(ReadArticleStore);
 
-const ArticleCommentsStore = useArticleCommentsStore();
-const { get } = ArticleCommentsStore;
+const CommentsStore = useCommentsStore();
+const { get } = CommentsStore;
 
-const { isLoading } = storeToRefs(ArticleCommentsStore);
-ArticleCommentsStore.contentId = props.contentId;
-ArticleCommentsStore.parameters.page = 1;
+const { isLoading } = storeToRefs(CommentsStore);
+const { loadMore } = CommentsStore;
+CommentsStore.contentId = props.contentId;
+CommentsStore.parameters.page = 1;
 
-onMounted(get)
+onMounted(get);
 </script>
 
 <style scoped></style>

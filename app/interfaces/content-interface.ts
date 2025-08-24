@@ -46,7 +46,7 @@ export interface Tag {
 export interface Comment {
     id: string
     user?: User
-    content: string
+    comment: string
     parent?: Comment
     mentioned?: User
     createdAt: string
