@@ -30,6 +30,7 @@
 <script lang="ts" setup>
 import { LucideKey } from 'lucide-vue-next';
 
+onMounted(recordVisit);
 
 const AuthStore = useAuthStore();
 const { user } = storeToRefs(AuthStore)
