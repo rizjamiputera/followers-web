@@ -45,11 +45,9 @@ export const useLatestArticleStore = defineStore('latest-article', {
     },
     actions: {
         async get() {
-            console.log('get START')
             this.reset();
             this.isLoading = true;
 
-            console.log({ LOADING: this.isLoading })
             try {
                 await new Promise((resolve) => setTimeout(resolve, 400));
                 this.data = await Api.get(this.apiPath) as Paginate<Article[]>
@@ -57,7 +55,6 @@ export const useLatestArticleStore = defineStore('latest-article', {
                 this.isError = true
             } finally {
                 this.isLoading = false;
-                console.log('get DONE')
             }
         },
         reset() {

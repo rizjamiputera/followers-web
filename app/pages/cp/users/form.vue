@@ -2,9 +2,7 @@
     <div>
         <div class="flex gap-3">
             <!-- avatar -->
-            <img v-if="user && user.avatar_md"
-                class="w-20 h-20 rounded-full object-cover object-center bg-green-main/20" :src="user.avatar_md" />
-            <div v-else class="w-20 h-20 rounded-full bg-green-main/20"></div>
+            <Avatar :avatar="user?.avatar_md" :name="user?.name" class="w-20 h-20" />
 
             <!-- profile -->
             <div class="flex flex-col gap-1">
@@ -25,7 +23,7 @@
                         <option value="USER">User</option>
                     </select>
                 </div>
-                <div>
+                <div v-else>
                     <div class="badget badge-sm badge-green rounded-full text-sm w-min">SUPERADMIN</div>
                 </div>
 

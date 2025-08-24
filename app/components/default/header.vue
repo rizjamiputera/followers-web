@@ -57,7 +57,11 @@
                                 </div>
                                 <hr>
                                 <ul class="mt-1 flex flex-col gap-1 text-sm">
-                                    <li><a class="rounded-full">Profile</a></li>
+                                    <li>
+                                        <NuxtLink to="/profile" class="rounded-full">
+                                            Profile
+                                        </NuxtLink>
+                                    </li>
                                     <li v-if="user.role != 'USER'">
                                         <NuxtLink to="/cp" class="rounded-full justify-between">
                                             Got to admin
