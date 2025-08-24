@@ -95,6 +95,14 @@ export const useReadEventStore = defineStore('read-event', {
             } catch (error) {
             }
         },
+        recordShare() {
+            try {
+                if (!this.data) return;
+                const id = this.data.id
+                Api.post('/v1/event/share/' + id);
+            } catch (error) {
+            }
+        },
         reset() {
             this.data = undefined;
             this.isLoading = false;

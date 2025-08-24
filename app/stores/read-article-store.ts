@@ -95,6 +95,14 @@ export const useReadArticleStore = defineStore('read-article', {
             } catch (error) {
             }
         },
+        recordShare() {
+            try {
+                if (!this.data) return;
+                const id = this.data.id
+                Api.post('/v1/article/share/' + id);
+            } catch (error) {
+            }
+        },
         reset() {
             this.data = undefined;
             this.isLoading = false;

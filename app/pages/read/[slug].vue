@@ -126,6 +126,8 @@ useSeoMeta({
 const handleShare = async () => {
     if (!data?.value) return;
 
+    ReadArticleStore.recordShare();
+
     const shareData = {
         title: data.value.title,
         text: data.value.title,
@@ -150,6 +152,7 @@ const handleShare = async () => {
 
 const shareToWhatsApp = () => {
     if (!data?.value) return;
+    ReadArticleStore.recordShare();
 
     const text = encodeURIComponent(`${data.value.title} ${window.location.href}`);
     const whatsappUrl = `https://wa.me/?text=${text}`;
