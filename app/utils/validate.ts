@@ -47,3 +47,28 @@ export const IsNumberOptional = Joi.number().optional().allow(null, '');
 export const IsBoolean = Joi.boolean().required();
 export const IsStringOpt = Joi.string().optional().allow('', null).trim();
 export const IsUrl = Joi.string().uri().trim();
+export const IsContent = Joi.object({
+    content: Joi.object({
+        content: Joi.array()
+            .items(
+                Joi.object({
+                    type: Joi.string().required(),
+                    content: Joi.array().items(Joi.object()).optional(),
+                })
+            ).min(1).custom((arr, helpers) => {
+                // Check if at least one item has non-empty content
+                const hasContent = arr.some(
+                    (node: any) => Array.isArray(node.content) && node.content.length > 0
+                );
+                if (!hasContent) {
+                    return helpers.error('any.custom', { message: 'Minimal satu paragraf harus berisi konten' });
+                }
+                return arr;
+            }, 'At least one non-empty content')
+            .messages({
+                'array.min': 'Konten tidak boleh kosong',
+                'any.custom': 'Minimal satu paragraf harus berisi konten',
+            }),
+        type: Joi.string().required(),
+    }).required(),
+}).required();

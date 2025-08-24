@@ -62,7 +62,7 @@
                 <div>
                     <label class="text-sm font-medium">Ringkasan</label>
                     <p class="text-xs font-light mb-1">
-                        Berisi maksimal 100 karakter punchline untuk menarik perhatian pembaca
+                        Berisi maksimal 250 karakter punchline untuk menarik perhatian pembaca
                     </p>
                     <Textarea v-model="dataDto.excerpt" />
                 </div>
@@ -225,11 +225,10 @@ watch(article, (newArticle) => {
 
         dataDto.value.image = newArticle.image
         dataDto.value.image_md = newArticle.image_md
-        dataDto.value.content = newArticle.content
+
+        dataDto.value.content = { content: newArticle.content!.content };
     }
 }, { immediate: true })
-
-
 
 const checkTitleChange = () => {
     dataDto.value.slug = slugify(dataDto.value.title ?? '')
@@ -279,23 +278,23 @@ const checkSlug = () => {
     }
 }
 
-
 // HANDLE SUBMIT
 const isCreateArticle = Joi.object({
-    title: IsString,
-    slug: IsString,
+    title: IsString.max(255),
+    slug: IsString.max(255),
     image: IsString,
     image_md: IsString,
-    excerpt: IsString.label('Ringkasan'),
-    content: Joi.object(),
+    excerpt: IsString.max(250).label('Ringkasan'),
+    content: IsContent
 })
+
 const isEditArticle = Joi.object({
-    title: IsString,
-    slug: IsString,
+    title: IsString.max(255),
+    slug: IsString.max(255),
     image: IsString.optional().allow(null, ''),
     image_md: IsString.optional().allow(null, ''),
-    excerpt: IsString.label('Ringkasan'),
-    content: Joi.object(),
+    excerpt: IsString.max(250).label('Ringkasan'),
+    content: IsContent
 })
 
 const confirm_cancel = ref<boolean>(false);

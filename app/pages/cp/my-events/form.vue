@@ -62,7 +62,7 @@
                 <div>
                     <label class="text-sm font-medium">Ringkasan</label>
                     <p class="text-xs font-light mb-1">
-                        Berisi maksimal 100 karakter punchline untuk menarik perhatian pembaca
+                        Berisi maksimal 500 karakter punchline untuk menarik perhatian pembaca
                     </p>
                     <Textarea v-model="dataDto.excerpt" />
                 </div>
@@ -245,7 +245,7 @@ watch(event, (newEvent) => {
 
         dataDto.value.image = newEvent.image
         dataDto.value.image_md = newEvent.image_md
-        dataDto.value.content = newEvent.content
+        dataDto.value.content = { content: newEvent.content!.content };
 
         dataDto.value.location = newEvent.location
         dataDto.value.address = newEvent.address
@@ -305,27 +305,26 @@ const checkSlug = () => {
     }
 }
 
-
 // HANDLE SUBMIT
 const isCreateEvent = Joi.object({
-    title: IsString,
-    slug: IsString,
+    title: IsString.max(255),
+    slug: IsString.max(255),
     image: IsString,
     image_md: IsString,
-    excerpt: IsString.label('Ringkasan'),
-    content: Joi.object(),
+    excerpt: IsString.max(500).label('Ringkasan'),
+    content: IsContent,
     location: IsString.optional(),
     address: IsString.optional(),
     start_at: Joi.date().optional(),
     end_at: Joi.date().optional(),
 })
 const isEditEvent = Joi.object({
-    title: IsString,
-    slug: IsString,
+    title: IsString.max(255),
+    slug: IsString.max(255),
     image: IsString.optional().allow(null, ''),
     image_md: IsString.optional().allow(null, ''),
-    excerpt: IsString.label('Ringkasan'),
-    content: Joi.object(),
+    excerpt: IsString.max(500).label('Ringkasan'),
+    content: IsContent,
     location: IsString.optional(),
     address: IsString.optional(),
     start_at: Joi.date().optional(),
@@ -365,7 +364,6 @@ const validate = () => {
     } catch (error) {
         toastError(error);
     }
-
 }
 
 const submit = async () => {
@@ -374,7 +372,6 @@ const submit = async () => {
 
     // set loading state
     isSubmitting.value = true;
-
 
     try {
         if (id) {
