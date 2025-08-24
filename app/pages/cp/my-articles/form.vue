@@ -7,18 +7,18 @@
                     {{ article.status.replace('_', ' ') }}
                 </div>
             </div>
-            <div class="flex gap-1">
-                <Button class="mr-4" @click="show_preview = true">Preview</Button>
-                <Button @click="confirm_cancel = true">Cancel</Button>
+            <div class="flex flex-wrap gap-1">
+                <Button class="max-sm:btn-sm mr-4" @click="show_preview = true">Preview</Button>
+                <Button class="max-sm:btn-sm" @click="confirm_cancel = true">Cancel</Button>
                 <ClientOnly>
-                    <Button class="btn-green" v-if="canPublish" @click="status = 'PUBLISHED'; validate()">
+                    <Button class="max-sm:btn-sm btn-green" v-if="canPublish" @click="status = 'PUBLISHED'; validate()">
                         Simpan & Publish
                     </Button>
-                    <Button class="btn-green" v-else @click="status = 'ON_REVIEW'; validate()">
+                    <Button class="max-sm:btn-sm btn-green" v-else @click="status = 'ON_REVIEW'; validate()">
                         Simpan & Ajukan Approval
                     </Button>
                 </ClientOnly>
-                <Button class="btn-black" @click="status = 'DRAFT'; validate()">Simpan Draft</Button>
+                <Button class="max-sm:btn-sm btn-black" @click="status = 'DRAFT'; validate()">Simpan Draft</Button>
             </div>
         </div>
 
@@ -33,10 +33,14 @@
                 </div>
             </div>
 
+            <span class="sm:hidden text-sm text-gray-600">{{ webUri }}/read/</span>
             <div class="flex gap-2">
                 <div class="join w-full">
-                    <button class="btn join-item rounded-l-full btn-active font-light">{{ webUri }}/read/</button>
-                    <Input class="join-item rounded-l-none flex-1" v-model="dataDto.slug" @keyup="checkSlugChange" />
+                    <button class="max-sm:hidden btn join-item rounded-l-full btn-active font-light">
+                        {{ webUri }}/read/
+                    </button>
+                    <Input class="sm:join-item rounded-full sm:rounded-l-none flex-1" v-model="dataDto.slug"
+                        @keyup="checkSlugChange" />
                 </div>
 
                 <!-- button link -->
@@ -106,18 +110,18 @@
             <TiptapEditor v-model="dataDto.content.content" />
         </div>
 
-        <div class="flex justify-end gap-1">
-            <Button class="mr-4" @click="show_preview = true">Preview</Button>
-            <Button @click="confirm_cancel = true">Cancel</Button>
+        <div class="flex flex-wrap justify-end gap-1">
+            <Button class="max-sm:btn-sm mr-4" @click="show_preview = true">Preview</Button>
+            <Button class="max-sm:btn-sm" @click="confirm_cancel = true">Cancel</Button>
             <ClientOnly>
-                <Button class="btn-green" v-if="canPublish" @click="status = 'PUBLISHED'; validate()">
+                <Button class="max-sm:btn-sm btn-green" v-if="canPublish" @click="status = 'PUBLISHED'; validate()">
                     Simpan & Publish
                 </Button>
-                <Button class="btn-green" v-else @click="status = 'ON_REVIEW'; validate()">
+                <Button class="max-sm:btn-sm btn-green" v-else @click="status = 'ON_REVIEW'; validate()">
                     Simpan & Ajukan Approval
                 </Button>
             </ClientOnly>
-            <Button class="btn-black" @click="status = 'DRAFT'; validate()">Simpan Draft</Button>
+            <Button class="max-sm:btn-sm btn-black" @click="status = 'DRAFT'; validate()">Simpan Draft</Button>
         </div>
     </div>
 
