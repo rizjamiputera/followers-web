@@ -13,7 +13,7 @@
                     class="w-full h-full flex flex-col gap-2 sm:border border-green-main/30 sm:bg-green-main/3 rounded-xl p-3">
                     <DefaultBody class="line-clamp-1 font-bold">{{ first_event.title }}</DefaultBody>
                     <EventLocationSchedule :data="first_event" />
-                    <DefaultBody class="flex-1 line-clamp-3">{{ first_event.excerpt }}</DefaultBody>
+                    <DefaultBody class="flex-1 line-clamp-3 whitespace-pre-wrap">{{ first_event.excerpt }}</DefaultBody>
                     <ButtonLink :to="'/event/' + first_event.slug" class="btn-green">Baca Selengkapnya</ButtonLink>
                 </div>
             </div>

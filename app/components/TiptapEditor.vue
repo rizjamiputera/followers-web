@@ -84,7 +84,7 @@
                 <LucideImage :size="14" /> Image
             </Button> -->
             <Button @click="fileInput?.click()">
-                <LucideImage :size="15" /> Image 2
+                <LucideImage :size="15" /> Upload Image
             </Button>
         </div>
         <EditorContent :editor="editor" class="prose max-w-none p-4 min-h-[300px] focus:outline-none"
