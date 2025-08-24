@@ -30,12 +30,11 @@
 
 <script lang="ts" setup>
 import Input from '~/components/input.vue';
-
-
-
 definePageMeta({
     layout: 'auth'
-})
+});
+
+onMounted(recordVisit);
 
 const dataDto = ref({
     email: '',

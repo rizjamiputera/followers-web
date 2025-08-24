@@ -35,11 +35,11 @@
 import Joi from 'joi';
 import Input from '~/components/input.vue';
 
-
-
 definePageMeta({
     layout: 'auth'
-})
+});
+
+onMounted(recordVisit);
 
 const dataDto = ref({
     name: '',

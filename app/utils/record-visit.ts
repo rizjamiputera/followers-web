@@ -1,5 +1,6 @@
-export default async (path: string) => {
+export default async () => {
     const apiUri = useRuntimeConfig().public.apiUri;
+    const { path } = useRoute();
 
     try {
         const auth = useAuthStore();
