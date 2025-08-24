@@ -10,7 +10,7 @@
             <div class="flex flex-col gap-1">
                 <div class="text-sm">{{ user?.name }}</div>
                 <div class="text-sm">{{ user?.email }}</div>
-                <div class="flex gap-2 items-center">
+                <div class="flex gap-2 items-center" v-if="role != 'SUPERADMIN'">
                     <div class="text-sm">Role</div>
                     <select v-model="role" @change="updateRole"
                         class="select w-40 select-sm rounded-full focus:outline-green-main/40 border-green-main/20">
@@ -24,6 +24,9 @@
                         </option>
                         <option value="USER">User</option>
                     </select>
+                </div>
+                <div>
+                    <div class="badget badge-sm badge-green rounded-full text-sm w-min">SUPERADMIN</div>
                 </div>
 
             </div>

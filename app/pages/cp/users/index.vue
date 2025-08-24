@@ -40,7 +40,7 @@
                     </tr>
                     <tr v-else-if="!isLoading" v-for="(dt, n) in users" ::key="dt.id">
                         <td>
-                            <img class="w-12 h-12 rounded-full object-cover object-center" :src="dt.avatar_md" />
+                            <Avatar :avatar="dt.avatar_md" :name="dt.name" class="w-12 h-12" />
                         </td>
                         <td>{{ dt.name }}</td>
                         <td>{{ dt.email }}</td>

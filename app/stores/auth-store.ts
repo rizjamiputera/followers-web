@@ -64,6 +64,7 @@ export const useAuthStore = defineStore('auth', {
 
                 navigateTo('/');
             } catch (e: any) {
+                toastError(e)
             } finally {
                 this.isLoading = false;
             }
@@ -94,6 +95,8 @@ export const useAuthStore = defineStore('auth', {
                 this.setAuth(data as LoginResponse);
 
                 navigateTo('/');
+            } catch (e: any) {
+                toastError(e)
             } finally {
                 this.isLoading = false;
             }
