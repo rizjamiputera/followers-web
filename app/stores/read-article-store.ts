@@ -93,9 +93,7 @@ export const useReadArticleStore = defineStore('read-article', {
                     }
                 })
             } catch (error) {
-
             }
-
         },
         reset() {
             this.data = undefined;

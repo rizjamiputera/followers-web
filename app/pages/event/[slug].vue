@@ -110,6 +110,7 @@ if (eventData.value) {
 // 2. Client-side (full fetch for readers)
 onMounted(() => {
     ReadEventStore.get();
+    ReadEventStore.recordVisit(route.path);
 })
 
 // SEO and META
