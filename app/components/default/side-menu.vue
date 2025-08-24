@@ -25,6 +25,16 @@
                     <NuxtLink to="/" prefetch-on="interaction" class="text-nowrap text-white-main"
                         @click="$emit('close')">Home</NuxtLink>
                 </li>
+                <ClientOnly>
+                    <li v-if="user">
+                        <NuxtLink to="/profile" prefetch-on="interaction" class="text-nowrap text-white-main"
+                            @click="$emit('close')">Profile</NuxtLink>
+                    </li>
+                    <li v-if="user?.role != 'USER'">
+                        <NuxtLink to="/cp" prefetch-on="interaction" class="text-nowrap text-white-main"
+                            @click="$emit('close')">Got to admin</NuxtLink>
+                    </li>
+                </ClientOnly>
                 <template v-if="false">
                     <li>
                         <!-- <details :open="isOpen"> -->

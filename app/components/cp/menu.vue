@@ -15,9 +15,17 @@
     </details>
 </li> -->
 <template>
+    <!-- Sidebar content here -->
     <div ref="drawerMenu" class="menu bg-base-200 text-base-content min-h-full w-60 p-4 text-base">
         <ul class="">
-            <!-- Sidebar content here -->
+            <li>
+                <NuxtLink to="/" prefetch-on="interaction">
+                    <LucideArrowLeft :size="14" /> Back to website
+                </NuxtLink>
+            </li>
+        </ul>
+        <hr class="my-4">
+        <ul class="">
             <ClientOnly>
                 <li v-if="can(Module.ARTICLE, Permission.READ)">
                     <NuxtLink to="/cp/articles" prefetch-on="interaction">Articles</NuxtLink>
@@ -33,7 +41,6 @@
 
         <hr class="my-4">
         <ul class="">
-            <!-- Sidebar content here -->
             <ClientOnly>
                 <li v-if="can(Module.ARTICLE, Permission.CREATE)">
                     <NuxtLink to="/cp/my-articles" prefetch-on="interaction">My Articles</NuxtLink>
@@ -47,6 +54,7 @@
 </template>
 
 <script lang="ts" setup>
+import { LucideArrowLeft } from 'lucide-vue-next';
 import { Module, Permission } from '~/interfaces/user-interface';
 
 const AuthStore = useAuthStore();
