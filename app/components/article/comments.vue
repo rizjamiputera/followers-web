@@ -36,7 +36,7 @@
 <script lang="ts" setup>
 const sectionRef = ref<HTMLElement>();
 const props = defineProps<{
-    articleId: string
+    contentId: string
 }>()
 const ReadArticleStore = useReadArticleStore();
 const { stats } = storeToRefs(ReadArticleStore);
@@ -45,9 +45,10 @@ const ArticleCommentsStore = useArticleCommentsStore();
 const { get } = ArticleCommentsStore;
 
 const { isLoading } = storeToRefs(ArticleCommentsStore);
-ArticleCommentsStore.articleId = props.articleId;
+ArticleCommentsStore.contentId = props.contentId;
 ArticleCommentsStore.parameters.page = 1;
-get();
+
+onMounted(get)
 </script>
 
 <style scoped></style>

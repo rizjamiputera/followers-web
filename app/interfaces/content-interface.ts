@@ -1,6 +1,7 @@
 import type { User } from "./user-interface";
 
 export interface Content {
+    id: string
     content: {
         content: Record<string, any>
         type: string

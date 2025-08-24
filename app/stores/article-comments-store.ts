@@ -4,7 +4,7 @@ import type { Paginate, PaginationParameters } from '~/interfaces/app-interface'
 import type { Comment } from '~/interfaces/content-interface'
 
 interface ArticleCommentsStoreState {
-    articleId?: string
+    contentId?: string
     data?: Paginate<Comment[]>
     parameters: PaginationParameters
     isLoading: boolean
@@ -13,7 +13,7 @@ interface ArticleCommentsStoreState {
 
 export const useArticleCommentsStore = defineStore('article-comments', {
     state: (): ArticleCommentsStoreState => ({
-        articleId: undefined,
+        contentId: undefined,
         data: undefined,
         parameters: {
             limit: 12,
@@ -31,7 +31,7 @@ export const useArticleCommentsStore = defineStore('article-comments', {
                     limit: state.parameters.limit,
                     page: state.parameters.page,
                     includes: state.parameters.includes.join(','),
-                    articleId: state.articleId,
+                    contentId: state.contentId,
                     sortBy: 'createdAt',
                     order: 'desc'
                 },

@@ -33,6 +33,7 @@ export const useReadEventStore = defineStore('read-event', {
             });
         },
         tags: (state) => state.data?.tags ?? [],
+        contentId: (state) => state.data?.content?.id ?? undefined,
         content: (state) => state.data?.content?.content ?? undefined,
         stats: (state): ContentStats => state.data?.stats ?? {
             commentCount: 0,

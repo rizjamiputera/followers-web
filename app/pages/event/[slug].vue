@@ -28,7 +28,7 @@
                                         @click="handleLike">
                                         <LucideThumbsUp :size="14"
                                             :class="{ 'fill-rose-400 stroke-rose-400': auth_reaction == 'like' }" /> {{
-                                        stats.likeCount }}
+                                                stats.likeCount }}
                                     </button>
                                     <button class="btn btn-xs sm:btn-sm join-item font-light rounded-r-full"
                                         @click="handleDislike">
@@ -70,7 +70,7 @@
                         </div>
                     </div>
 
-                    <ArticleComments :articleId="data.id" />
+                    <LazyArticleComments v-if="contentId" :contentId />
                 </template>
 
 
@@ -92,7 +92,7 @@ import { useReadEventStore } from '~/stores/read-event-store';
 
 const route = useRoute();
 const ReadEventStore = useReadEventStore();
-const { data, tags, content, stats, isNotFound, auth_reaction } = storeToRefs(ReadEventStore);
+const { data, tags, content, stats, isNotFound, auth_reaction, contentId } = storeToRefs(ReadEventStore);
 ReadEventStore.slug = route.params.slug as string;
 
 // Server-side data fetching for SEO

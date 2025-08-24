@@ -78,7 +78,7 @@
                         </div>
                     </div>
 
-                    <ArticleComments :articleId="data.id" />
+                    <LazyArticleComments v-if="contentId" :contentId />
                 </template>
 
 
@@ -99,7 +99,7 @@ import type { Article } from '~/interfaces/article-interface';
 
 const route = useRoute();
 const ReadArticleStore = useReadArticleStore();
-const { data, tags, content, stats, isNotFound, auth_reaction, auth_bookmarked } = storeToRefs(ReadArticleStore);
+const { data, tags, content, stats, isNotFound, auth_reaction, auth_bookmarked, contentId } = storeToRefs(ReadArticleStore);
 ReadArticleStore.slug = route.params.slug as string;
 
 // Server-side data fetching for SEO
