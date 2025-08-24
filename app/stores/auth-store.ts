@@ -13,6 +13,7 @@ interface AuthStoreState {
     exp: number
     user?: User
     isLoading: boolean
+    show_request_login: boolean
 }
 
 export const useAuthStore = defineStore('auth', {
@@ -21,6 +22,7 @@ export const useAuthStore = defineStore('auth', {
         exp: 0,
         user: undefined,
         isLoading: false,
+        show_request_login: false,
     }),
     getters: {
         permissions: (state): UserPermission[] => state.user?.permissions ?? [],

@@ -15,14 +15,29 @@
             </div>
         </div>
         <DefaultFooter />
+
+        <LazyModal v-if="show_request_login" :show="show_request_login" @close="show_request_login = false">
+            Anda harus login terlebih dahulu.
+
+            <div class="modal-action">
+                <Button @click="show_request_login = false">Tutup</Button>
+
+                <!-- publish -->
+                <ButtonLink to="/auth/login" @click="show_request_login = false" class="btn-green">
+                    Login
+                </ButtonLink>
+            </div>
+        </LazyModal>
     </main>
 </template>
 
 <script lang="ts" setup>
 import Header from '~/components/default/header.vue'
 
-const show_menu = ref<boolean>(false)
+const AuthStore = useAuthStore();
+const { show_request_login } = storeToRefs(AuthStore);
 
+const show_menu = ref<boolean>(false);
 const menuProduct = [
     {
         title: "Quality Inspections",

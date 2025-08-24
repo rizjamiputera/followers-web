@@ -24,10 +24,12 @@
 
                             <div class="flex items-center gap-2">
                                 <div class="join join-horizontal">
-                                    <button class="btn btn-xs sm:btn-sm join-item font-light rounded-l-full">
+                                    <button class="btn btn-xs sm:btn-sm join-item font-light rounded-l-full"
+                                        @click="handleLike">
                                         <LucideThumbsUp :size="14" /> {{ stats.likeCount }}
                                     </button>
-                                    <button class="btn btn-xs sm:btn-sm join-item font-light rounded-r-full">
+                                    <button class="btn btn-xs sm:btn-sm join-item font-light rounded-r-full"
+                                        @click="handleDislike">
                                         <LucideThumbsDown :size="14" /> {{ stats.dislikeCount }}
                                     </button>
                                 </div>
@@ -158,6 +160,35 @@ const shareToWhatsApp = () => {
 
     window.open(whatsappUrl, '_blank');
 };
+
+const AuthStore = useAuthStore();
+const handleDislike = () => {
+    if (!ReadEventStore.data) return;
+
+    if (!AuthStore.user) {
+        AuthStore.show_request_login = true;
+        return;
+    }
+
+    try {
+        Api.post('/v1/event/react/' + ReadEventStore.data.id, { type: 'dislike' })
+    } catch (error) {
+    }
+}
+
+const handleLike = () => {
+    if (!ReadEventStore.data) return;
+
+    if (!AuthStore.user) {
+        AuthStore.show_request_login = true;
+        return;
+    }
+
+    try {
+        Api.post('/v1/event/react/' + ReadEventStore.data.id, { type: 'like' })
+    } catch (error) {
+    }
+}
 </script>
 
 <style></style>
