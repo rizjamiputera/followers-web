@@ -1,4 +1,4 @@
-import type { Content, ContentStats, ContentStatus, Tag } from "./content-interface"
+import type { Content, ContentStats, ContentStatus, ReactionType, Tag } from "./content-interface"
 import type { User } from "./user-interface"
 
 
@@ -31,10 +31,5 @@ export interface Article {
         type: ReactionType
     },
     authBookmark?: boolean
-}
-
-export enum ReactionType {
-    like = "like",
-    dislike = "dislike",
 }
 

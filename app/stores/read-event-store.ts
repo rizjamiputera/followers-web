@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import queryString from 'query-string'
-import type { Content, ContentStats } from '~/interfaces/content-interface';
+import type { Content, ContentStats, ReactionType } from '~/interfaces/content-interface';
 import type { Event } from '~/interfaces/event-interface';
 
 interface ReadEventStoreState {
@@ -41,6 +41,14 @@ export const useReadEventStore = defineStore('read-event', {
             dislikeCount: 0,
             shareCount: 0,
             bookmarkCount: 0,
+        },
+        auth_reaction: (state): ReactionType | null => {
+            if (state.data) {
+                if (state.data.auth_reaction) {
+                    return state.data.auth_reaction.type
+                }
+            }
+            return null
         },
     },
     actions: {
@@ -95,11 +103,11 @@ export const useReadEventStore = defineStore('read-event', {
             } catch (error) {
             }
         },
-        recordShare() {
+        async recordShare() {
             try {
                 if (!this.data) return;
                 const id = this.data.id
-                Api.post('/v1/event/share/' + id);
+                await Api.post('/v1/event/share/' + id);
             } catch (error) {
             }
         },

@@ -1,4 +1,4 @@
-import type { Content, ContentStats, ContentStatus, Tag } from "./content-interface"
+import type { Content, ContentStats, ContentStatus, ReactionType, Tag } from "./content-interface"
 import type { User } from "./user-interface"
 
 export interface Event {
@@ -28,6 +28,9 @@ export interface Event {
     // updatedAt   DateTime @updatedAt
     // deleted     Boolean @default (false)
     stats?: ContentStats
+    auth_reaction: {
+        type: ReactionType
+    },
     // readStatId: string
     // visitors    Visit[]
 }

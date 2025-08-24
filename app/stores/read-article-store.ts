@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import queryString from 'query-string'
-import type { Article, ReactionType } from '~/interfaces/article-interface';
-import type { ContentStats } from '~/interfaces/content-interface';
+import type { Article } from '~/interfaces/article-interface';
+import type { ContentStats, ReactionType } from '~/interfaces/content-interface';
 
 interface ReadArticleStoreState {
     slug?: string
@@ -9,7 +9,7 @@ interface ReadArticleStoreState {
     parameters: Record<string, any>
     isLoading: boolean
     isError: boolean
-    isNotFound: boolean,
+    isNotFound: boolean
 }
 
 export const useReadArticleStore = defineStore('read-article', {

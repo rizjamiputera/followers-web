@@ -136,7 +136,8 @@ useSeoMeta({
 const handleShare = async () => {
     if (!data?.value) return;
 
-    ReadArticleStore.recordShare();
+    await ReadArticleStore.recordShare();
+    ReadArticleStore.get();
 
     const shareData = {
         title: data.value.title,

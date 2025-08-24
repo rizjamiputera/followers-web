@@ -51,3 +51,8 @@ export interface Comment {
     createdAt: string
     replies?: Comment[]
 }
+
+export enum ReactionType {
+    like = "like",
+    dislike = "dislike",
+}

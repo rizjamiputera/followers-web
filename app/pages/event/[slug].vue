@@ -26,11 +26,15 @@
                                 <div class="join join-horizontal">
                                     <button class="btn btn-xs sm:btn-sm join-item font-light rounded-l-full"
                                         @click="handleLike">
-                                        <LucideThumbsUp :size="14" /> {{ stats.likeCount }}
+                                        <LucideThumbsUp :size="14"
+                                            :class="{ 'fill-rose-400 stroke-rose-400': auth_reaction == 'like' }" /> {{
+                                        stats.likeCount }}
                                     </button>
                                     <button class="btn btn-xs sm:btn-sm join-item font-light rounded-r-full"
                                         @click="handleDislike">
-                                        <LucideThumbsDown :size="14" /> {{ stats.dislikeCount }}
+                                        <LucideThumbsDown :size="14"
+                                            :class="{ 'fill-rose-400 stroke-rose-400': auth_reaction == 'dislike' }" />
+                                        {{ stats.dislikeCount }}
                                     </button>
                                 </div>
                                 <div class="join join-horizontal">
@@ -82,14 +86,13 @@
 </template>
 
 <script lang="ts" setup>
-import dayjs from 'dayjs';
-import { LucideBookmark, LucideCalendar, LucideClock, LucideMapPin, LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
+import { LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
 import type { Event } from '~/interfaces/event-interface';
 import { useReadEventStore } from '~/stores/read-event-store';
 
 const route = useRoute();
 const ReadEventStore = useReadEventStore();
-const { data, tags, content, stats, isNotFound } = storeToRefs(ReadEventStore);
+const { data, tags, content, stats, isNotFound, auth_reaction } = storeToRefs(ReadEventStore);
 ReadEventStore.slug = route.params.slug as string;
 
 // Server-side data fetching for SEO
@@ -126,7 +129,8 @@ useSeoMeta({
 const handleShare = async () => {
     if (!data?.value) return;
 
-    ReadEventStore.recordShare();
+    await ReadEventStore.recordShare();
+    ReadEventStore.get();
 
     const shareData = {
         title: data.value.title,
@@ -150,10 +154,11 @@ const handleShare = async () => {
     }
 };
 
-const shareToWhatsApp = () => {
+const shareToWhatsApp = async () => {
     if (!data?.value) return;
 
-    ReadEventStore.recordShare();
+    await ReadEventStore.recordShare();
+    ReadEventStore.get();
 
     const text = encodeURIComponent(`${data.value.title} ${window.location.href}`);
     const whatsappUrl = `https://wa.me/?text=${text}`;
@@ -162,7 +167,7 @@ const shareToWhatsApp = () => {
 };
 
 const AuthStore = useAuthStore();
-const handleDislike = () => {
+const handleDislike = async () => {
     if (!ReadEventStore.data) return;
 
     if (!AuthStore.user) {
@@ -171,12 +176,13 @@ const handleDislike = () => {
     }
 
     try {
-        Api.post('/v1/event/react/' + ReadEventStore.data.id, { type: 'dislike' })
+        await Api.post('/v1/event/react/' + ReadEventStore.data.id, { type: 'dislike' })
+        ReadEventStore.get();
     } catch (error) {
     }
 }
 
-const handleLike = () => {
+const handleLike = async () => {
     if (!ReadEventStore.data) return;
 
     if (!AuthStore.user) {
@@ -185,7 +191,8 @@ const handleLike = () => {
     }
 
     try {
-        Api.post('/v1/event/react/' + ReadEventStore.data.id, { type: 'like' })
+        await Api.post('/v1/event/react/' + ReadEventStore.data.id, { type: 'like' })
+        ReadEventStore.get();
     } catch (error) {
     }
 }
