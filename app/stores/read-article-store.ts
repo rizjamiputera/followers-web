@@ -10,6 +10,7 @@ interface ReadArticleStoreState {
     isLoading: boolean
     isError: boolean
     isNotFound: boolean
+    stats?: ContentStats
 }
 
 export const useReadArticleStore = defineStore('read-article', {
@@ -21,7 +22,8 @@ export const useReadArticleStore = defineStore('read-article', {
         },
         isLoading: false,
         isError: false,
-        isNotFound: false
+        isNotFound: false,
+        stats: undefined
     }),
     getters: {
         apiPath: (state) => {
@@ -35,14 +37,6 @@ export const useReadArticleStore = defineStore('read-article', {
         tags: (state) => state.data?.tags ?? [],
         contentId: (state) => state.data?.content?.id ?? undefined,
         content: (state) => state.data?.content?.content ?? undefined,
-        stats: (state): ContentStats => state.data?.stats ?? {
-            commentCount: 0,
-            readCount: 0,
-            likeCount: 0,
-            dislikeCount: 0,
-            shareCount: 0,
-            bookmarkCount: 0,
-        },
         auth_reaction: (state): ReactionType | null => {
             if (state.data) {
                 if (state.data.auth_reaction) {
@@ -67,7 +61,10 @@ export const useReadArticleStore = defineStore('read-article', {
             this.isNotFound = false;
             try {
                 await new Promise((resolve) => setTimeout(resolve, 400));
-                this.data = await Api.get(this.apiPath) as Article
+                const { stats, ...data } = await Api.get(this.apiPath) as Article;
+
+                this.data = data;
+                this.stats = stats;
             } catch (error: any) {
                 if (error.status == 404) {
                     this.isNotFound = true
@@ -78,6 +75,13 @@ export const useReadArticleStore = defineStore('read-article', {
             } finally {
                 this.isLoading = false;
             }
+        },
+        async getStats() {
+            if (!this.data) return;
+
+            const statsId = this.data.statsId;
+
+            this.stats = await Api.get('/v1/content-stats/' + statsId) as ContentStats
         },
         async recordVisit(path: string) {
             if (!this.slug) return;

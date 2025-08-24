@@ -21,7 +21,7 @@
                         <div class="text-2xl md:text-3xl font-semibold mb-1">{{ data.title }}</div>
                         <div class="flex justify-end items-center gap-1 text-xs font-light">
                             <LucideClock :size="12" /> {{ data.publishedAt ? getRelativeTime(data.publishedAt) : '-' }}
-                            <div class="">{{ stats.readCount }} views</div>
+                            <div class="">{{ stats?.readCount ?? 0 }} views</div>
                         </div>
                         <Image :src="data.image" :alt="data.title" class-name="aspect-video bg-cover rounded-2xl" />
                         <div class="flex flex-wrap justify-center sm:justify-between gap-2">
@@ -33,20 +33,20 @@
                                         @click="handleLike">
                                         <LucideThumbsUp :size="14"
                                             :class="{ 'fill-rose-400 stroke-rose-400': auth_reaction == 'like' }" /> {{
-                                                stats.likeCount }}
+                                                stats?.likeCount ?? 0 }}
                                     </button>
                                     <button class="btn btn-xs sm:btn-sm join-item font-light rounded-r-full"
                                         @click="handleDislike">
                                         <LucideThumbsDown :size="14"
                                             :class="{ 'fill-rose-400 stroke-rose-400': auth_reaction == 'dislike' }" />
                                         {{
-                                            stats.dislikeCount }}
+                                            stats?.dislikeCount ?? 0 }}
                                     </button>
                                 </div>
                                 <div class="join join-horizontal">
                                     <button @click="handleShare"
                                         class="btn btn-xs sm:btn-sm join-item font-light rounded-l-full">
-                                        <LucideShare2 :size="14" /> {{ stats.shareCount }}
+                                        <LucideShare2 :size="14" /> {{ stats?.shareCount ?? 0 }}
                                     </button>
                                     <button @click="shareToWhatsApp" class="btn btn-xs sm:btn-sm join-item font-light">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
@@ -58,7 +58,7 @@
                                         @click="handleBookmark">
                                         <LucideBookmark :size="14"
                                             :class="{ 'fill-rose-400 stroke-rose-400': auth_bookmarked }" />
-                                        {{ stats.bookmarkCount }}
+                                        {{ stats?.bookmarkCount ?? 0 }}
                                     </button>
                                 </div>
                             </div>
@@ -78,7 +78,7 @@
                         </div>
                     </div>
 
-                    <LazyContentComments v-if="contentId" :contentId :stats />
+                    <LazyContentComments v-if="contentId" :contentId :stats @add-comment="getStats" />
                 </template>
             </div>
             <!-- SIDE RIGHT -->
@@ -98,6 +98,7 @@ import type { Article } from '~/interfaces/article-interface';
 const route = useRoute();
 const ReadArticleStore = useReadArticleStore();
 const { data, tags, content, stats, isNotFound, auth_reaction, auth_bookmarked, contentId } = storeToRefs(ReadArticleStore);
+const { get, getStats, recordVisit } = ReadArticleStore;
 ReadArticleStore.slug = route.params.slug as string;
 
 // Server-side data fetching for SEO
@@ -113,8 +114,8 @@ if (articleData.value) {
 
 // 2. Client-side (full fetch for readers)
 onMounted(() => {
-    ReadArticleStore.get();
-    ReadArticleStore.recordVisit(route.path);
+    get();
+    recordVisit(route.path);
 })
 
 // SEO and META
@@ -135,7 +136,7 @@ const handleShare = async () => {
     if (!data?.value) return;
 
     await ReadArticleStore.recordShare();
-    ReadArticleStore.get();
+    getStats();
 
     const shareData = {
         title: data.value.title,
@@ -162,7 +163,7 @@ const handleShare = async () => {
 const shareToWhatsApp = async () => {
     if (!data?.value) return;
     await ReadArticleStore.recordShare();
-    ReadArticleStore.get();
+    getStats();
 
     const text = encodeURIComponent(`${data.value.title} ${window.location.href}`);
     const whatsappUrl = `https://wa.me/?text=${text}`;
@@ -185,7 +186,7 @@ const handleBookmark = async () => {
         } else {
             await Api.post('/v1/article/unbookmark/' + ReadArticleStore.data.id)
         }
-        ReadArticleStore.get();
+        getStats();
     } catch (error) {
     }
 }
@@ -200,7 +201,7 @@ const handleDislike = async () => {
 
     try {
         await Api.post('/v1/article/react/' + ReadArticleStore.data.id, { type: 'dislike' });
-        ReadArticleStore.get();
+        getStats();
     } catch (error) {
     }
 }
@@ -215,7 +216,7 @@ const handleLike = async () => {
 
     try {
         await Api.post('/v1/article/react/' + ReadArticleStore.data.id, { type: 'like' });
-        ReadArticleStore.get();
+        getStats();
     } catch (error) {
     }
 }

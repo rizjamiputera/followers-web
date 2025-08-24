@@ -25,6 +25,7 @@ export interface Article {
     // updatedAt   DateTime @updatedAt
     // deleted     Boolean @default (false)
     stats?: ContentStats
+    statsId: string
     // readStatId: string
     // visitors    Visit[]
     auth_reaction: {

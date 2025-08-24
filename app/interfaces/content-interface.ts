@@ -24,6 +24,7 @@ export const contentStatuses: ContentStatus[] = [
 ];
 
 export interface ContentStats {
+    id: string
     // lastReadAt: string
     commentCount: number
     readCount: number

@@ -2,7 +2,7 @@
     <div ref="sectionRef">
         <div class="text-2xl md:text-3xl font-semibold text-green-main">
             <!-- TODO CONTENT STATS, buat content store, supaya bisa update comment count tanpa memikirkan dari artikel / event -->
-            <span>{{ `${stats.commentCount} ` }}</span>Comments
+            <span v-if="stats">{{ `${stats.commentCount} ` }}</span>Comments
         </div>
         <hr class="bg-green-main/30 mb-5">
 
@@ -33,7 +33,7 @@
 
             <ContentCommentSkeleton v-if="isLoading" v-for="n in 3" :key="n" />
 
-            <div class="flex justify-center" v-if="stats.commentCount > comments.length">
+            <div class="flex justify-center" v-if="stats && (stats.commentCount > comments.length)">
                 <Button class="btn-sm btn-green text-nowrap w-min" @click="loadMore">Load more comments</Button>
             </div>
         </div>
@@ -44,10 +44,11 @@
 import type { Comment, ContentStats } from '~/interfaces/content-interface';
 const { user } = useAuthStore();
 
+const emits = defineEmits(['addComment'])
 const sectionRef = ref<HTMLElement>();
 const props = defineProps<{
     contentId: string
-    stats: ContentStats
+    stats?: ContentStats
 }>()
 
 const CommentsStore = useCommentsStore();
@@ -63,10 +64,12 @@ onMounted(get);
 // FORM
 const comment = ref<string>('');
 const submit = async () => {
+    if (!props.stats) return;
     try {
         const newCommnet: Comment = await Api.post('/v1/comment?includes=user', {
             contentId: props.contentId,
-            comment: comment.value
+            comment: comment.value,
+            statsId: props.stats.id
         }) as Comment;
 
         comments.value = [
@@ -75,6 +78,8 @@ const submit = async () => {
         ]
 
         comment.value = '';
+
+        emits('addComment');
     } catch (error) {
 
     }

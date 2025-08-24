@@ -28,6 +28,7 @@ export interface Event {
     // updatedAt   DateTime @updatedAt
     // deleted     Boolean @default (false)
     stats?: ContentStats
+    statsId: string
     auth_reaction: {
         type: ReactionType
     },

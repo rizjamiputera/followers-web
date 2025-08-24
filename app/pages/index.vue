@@ -23,6 +23,8 @@ const { public: { webUri } } = useRuntimeConfig();
 const title = 'Followers Bicara';
 const description = "Ruang dakwah, tempat para ustadz berbagi ilmu, nasihat, dan inspirasi.";
 
+onMounted(recordVisit);
+
 useSeoMeta({
     title: () => title,
     ogTitle: () => title,
@@ -36,7 +38,4 @@ useSeoMeta({
 
 const { isEmpty } = storeToRefs(useLatestArticleStore());
 const { from_second_events, first_event } = storeToRefs(useUpcomingEventStore());
-
-onMounted(recordVisit);
-
 </script>

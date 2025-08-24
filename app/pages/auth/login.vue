@@ -36,6 +36,22 @@ definePageMeta({
 
 onMounted(recordVisit);
 
+// SEO and META
+const { public: { webUri } } = useRuntimeConfig();
+const title = 'Followers Bicara';
+const description = "Ruang dakwah, tempat para ustadz berbagi ilmu, nasihat, dan inspirasi.";
+
+useSeoMeta({
+    title: () => title,
+    ogTitle: () => title,
+    description: () => description,
+    ogDescription: () => description,
+    ogImage: () => webUri + '/logo-hitam.jpg',
+    twitterCard: 'summary_large_image',
+    ogSiteName: 'FollowersBicara.com',
+    ogUrl: webUri
+});
+
 const dataDto = ref({
     email: '',
     password: ''
@@ -46,7 +62,6 @@ const { handleLogin } = AuthStore;
 const { isLoading } = storeToRefs(AuthStore);
 
 const showConfirm = ref<boolean>(false);
-
 </script>
 
 <style></style>

@@ -28,19 +28,19 @@
                                         @click="handleLike">
                                         <LucideThumbsUp :size="14"
                                             :class="{ 'fill-rose-400 stroke-rose-400': auth_reaction == 'like' }" /> {{
-                                                stats.likeCount }}
+                                                stats?.likeCount ?? 0 }}
                                     </button>
                                     <button class="btn btn-xs sm:btn-sm join-item font-light rounded-r-full"
                                         @click="handleDislike">
                                         <LucideThumbsDown :size="14"
                                             :class="{ 'fill-rose-400 stroke-rose-400': auth_reaction == 'dislike' }" />
-                                        {{ stats.dislikeCount }}
+                                        {{ stats?.dislikeCount ?? 0 }}
                                     </button>
                                 </div>
                                 <div class="join join-horizontal">
                                     <button @click="handleShare"
                                         class="btn btn-xs sm:btn-sm join-item font-light rounded-l-full">
-                                        <LucideShare2 :size="14" /> {{ stats.shareCount }}
+                                        <LucideShare2 :size="14" /> {{ stats?.shareCount ?? 0 }}
                                     </button>
                                     <button @click="shareToWhatsApp"
                                         class="btn btn-xs sm:btn-sm join-item font-light rounded-r-full">
@@ -70,7 +70,7 @@
                         </div>
                     </div>
 
-                    <LazyContentComments v-if="contentId" :contentId :stats />
+                    <LazyContentComments v-if="contentId" :contentId :stats @add-comment="getStats" />
                 </template>
 
 
@@ -93,6 +93,7 @@ import { useReadEventStore } from '~/stores/read-event-store';
 const route = useRoute();
 const ReadEventStore = useReadEventStore();
 const { data, tags, content, stats, isNotFound, auth_reaction, contentId } = storeToRefs(ReadEventStore);
+const { get, getStats, recordVisit } = ReadEventStore;
 ReadEventStore.slug = route.params.slug as string;
 
 // Server-side data fetching for SEO
@@ -108,8 +109,8 @@ if (eventData.value) {
 
 // 2. Client-side (full fetch for readers)
 onMounted(() => {
-    ReadEventStore.get();
-    ReadEventStore.recordVisit(route.path);
+    get();
+    recordVisit(route.path);
 })
 
 // SEO and META
@@ -130,7 +131,7 @@ const handleShare = async () => {
     if (!data?.value) return;
 
     await ReadEventStore.recordShare();
-    ReadEventStore.get();
+    getStats();
 
     const shareData = {
         title: data.value.title,
@@ -158,7 +159,7 @@ const shareToWhatsApp = async () => {
     if (!data?.value) return;
 
     await ReadEventStore.recordShare();
-    ReadEventStore.get();
+    getStats();
 
     const text = encodeURIComponent(`${data.value.title} ${window.location.href}`);
     const whatsappUrl = `https://wa.me/?text=${text}`;
@@ -177,7 +178,7 @@ const handleDislike = async () => {
 
     try {
         await Api.post('/v1/event/react/' + ReadEventStore.data.id, { type: 'dislike' })
-        ReadEventStore.get();
+        getStats();
     } catch (error) {
     }
 }
@@ -192,7 +193,7 @@ const handleLike = async () => {
 
     try {
         await Api.post('/v1/event/react/' + ReadEventStore.data.id, { type: 'like' })
-        ReadEventStore.get();
+        getStats();
     } catch (error) {
     }
 }
