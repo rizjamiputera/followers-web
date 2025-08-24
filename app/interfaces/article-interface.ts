@@ -27,4 +27,14 @@ export interface Article {
     stats?: ContentStats
     // readStatId: string
     // visitors    Visit[]
+    auth_reaction: {
+        type: ReactionType
+    },
+    authBookmark?: boolean
 }
+
+export enum ReactionType {
+    like = "like",
+    dislike = "dislike",
+}
+

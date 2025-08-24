@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import queryString from 'query-string'
-import type { Article } from '~/interfaces/article-interface';
+import type { Article, ReactionType } from '~/interfaces/article-interface';
 import type { ContentStats } from '~/interfaces/content-interface';
 
 interface ReadArticleStoreState {
@@ -9,7 +9,7 @@ interface ReadArticleStoreState {
     parameters: Record<string, any>
     isLoading: boolean
     isError: boolean
-    isNotFound: boolean
+    isNotFound: boolean,
 }
 
 export const useReadArticleStore = defineStore('read-article', {
@@ -42,6 +42,22 @@ export const useReadArticleStore = defineStore('read-article', {
             shareCount: 0,
             bookmarkCount: 0,
         },
+        auth_reaction: (state): ReactionType | null => {
+            if (state.data) {
+                if (state.data.auth_reaction) {
+                    return state.data.auth_reaction.type
+                }
+            }
+            return null
+        },
+        auth_bookmarked: (state): boolean => {
+            if (state.data) {
+                if (state.data.authBookmark) {
+                    return state.data.authBookmark
+                }
+            }
+            return false
+        }
     },
     actions: {
         async get() {
@@ -95,11 +111,11 @@ export const useReadArticleStore = defineStore('read-article', {
             } catch (error) {
             }
         },
-        recordShare() {
+        async recordShare() {
             try {
                 if (!this.data) return;
                 const id = this.data.id
-                Api.post('/v1/article/share/' + id);
+                await Api.post('/v1/article/share/' + id);
             } catch (error) {
             }
         },

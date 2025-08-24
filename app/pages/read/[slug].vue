@@ -31,11 +31,16 @@
                                 <div class="join join-horizontal">
                                     <button class="btn btn-xs sm:btn-sm join-item font-light rounded-l-full"
                                         @click="handleLike">
-                                        <LucideThumbsUp :size="14" /> {{ stats.likeCount }}
+                                        <LucideThumbsUp :size="14"
+                                            :class="{ 'fill-rose-400 stroke-rose-400': auth_reaction == 'like' }" /> {{
+                                                stats.likeCount }}
                                     </button>
                                     <button class="btn btn-xs sm:btn-sm join-item font-light rounded-r-full"
                                         @click="handleDislike">
-                                        <LucideThumbsDown :size="14" /> {{ stats.dislikeCount }}
+                                        <LucideThumbsDown :size="14"
+                                            :class="{ 'fill-rose-400 stroke-rose-400': auth_reaction == 'dislike' }" />
+                                        {{
+                                            stats.dislikeCount }}
                                     </button>
                                 </div>
                                 <div class="join join-horizontal">
@@ -51,7 +56,9 @@
                                     </button>
                                     <button class="btn btn-xs sm:btn-sm join-item font-light rounded-r-full"
                                         @click="handleBookmark">
-                                        <LucideBookmark :size="14" /> {{ stats.bookmarkCount }}
+                                        <LucideBookmark :size="14"
+                                            :class="{ 'fill-rose-400 stroke-rose-400': auth_bookmarked }" />
+                                        {{ stats.bookmarkCount }}
                                     </button>
                                 </div>
                             </div>
@@ -92,7 +99,7 @@ import type { Article } from '~/interfaces/article-interface';
 
 const route = useRoute();
 const ReadArticleStore = useReadArticleStore();
-const { data, tags, content, stats, isNotFound } = storeToRefs(ReadArticleStore);
+const { data, tags, content, stats, isNotFound, auth_reaction, auth_bookmarked } = storeToRefs(ReadArticleStore);
 ReadArticleStore.slug = route.params.slug as string;
 
 // Server-side data fetching for SEO
@@ -153,9 +160,10 @@ const handleShare = async () => {
     }
 };
 
-const shareToWhatsApp = () => {
+const shareToWhatsApp = async () => {
     if (!data?.value) return;
-    ReadArticleStore.recordShare();
+    await ReadArticleStore.recordShare();
+    ReadArticleStore.get();
 
     const text = encodeURIComponent(`${data.value.title} ${window.location.href}`);
     const whatsappUrl = `https://wa.me/?text=${text}`;
@@ -164,7 +172,7 @@ const shareToWhatsApp = () => {
 };
 
 const AuthStore = useAuthStore();
-const handleBookmark = () => {
+const handleBookmark = async () => {
     if (!ReadArticleStore.data) return;
 
     if (!AuthStore.user) {
@@ -173,12 +181,17 @@ const handleBookmark = () => {
     }
 
     try {
-        Api.post('/v1/bookmark/' + ReadArticleStore.data.id)
+        if (!auth_bookmarked.value) {
+            await Api.post('/v1/article/bookmark/' + ReadArticleStore.data.id)
+        } else {
+            await Api.post('/v1/article/unbookmark/' + ReadArticleStore.data.id)
+        }
+        ReadArticleStore.get();
     } catch (error) {
     }
 }
 
-const handleDislike = () => {
+const handleDislike = async () => {
     if (!ReadArticleStore.data) return;
 
     if (!AuthStore.user) {
@@ -187,12 +200,13 @@ const handleDislike = () => {
     }
 
     try {
-        Api.post('/v1/article/react/' + ReadArticleStore.data.id, { type: 'dislike' })
+        await Api.post('/v1/article/react/' + ReadArticleStore.data.id, { type: 'dislike' });
+        ReadArticleStore.get();
     } catch (error) {
     }
 }
 
-const handleLike = () => {
+const handleLike = async () => {
     if (!ReadArticleStore.data) return;
 
     if (!AuthStore.user) {
@@ -201,7 +215,8 @@ const handleLike = () => {
     }
 
     try {
-        Api.post('/v1/article/react/' + ReadArticleStore.data.id, { type: 'like' })
+        await Api.post('/v1/article/react/' + ReadArticleStore.data.id, { type: 'like' });
+        ReadArticleStore.get();
     } catch (error) {
     }
 }
