@@ -62,7 +62,7 @@ export const useReadArticleStore = defineStore('read-article', {
                 this.isLoading = false;
             }
         },
-        async recordVisit() {
+        async recordVisit(path: string) {
             if (!this.slug) return;
             const apiUri = useRuntimeConfig().public.apiUri;
 
@@ -87,7 +87,10 @@ export const useReadArticleStore = defineStore('read-article', {
 
                 await $fetch(`${apiUri}/v1/article/visit/${this.slug}`, {
                     method: 'POST',
-                    headers
+                    headers,
+                    body: {
+                        path
+                    }
                 })
             } catch (error) {
 

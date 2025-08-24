@@ -106,7 +106,7 @@ if (articleData.value) {
 // 2. Client-side (full fetch for readers)
 onMounted(() => {
     ReadArticleStore.get();
-    ReadArticleStore.recordVisit();
+    ReadArticleStore.recordVisit(route.path);
 })
 
 // SEO and META
