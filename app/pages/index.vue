@@ -27,4 +27,9 @@ useSeoMeta({
     ogUrl: webUri
 });
 
+const route = useRoute();
+onMounted(() => {
+    recordVisit(route.path);
+})
+
 </script>
