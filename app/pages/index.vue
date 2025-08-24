@@ -1,6 +1,6 @@
 <template>
     <div class="section-container">
-        <section class="h-screen flex items-center">
+        <section v-if="isEmpty && !first_event && !from_second_events.length" class="h-screen flex items-center">
             <div class="text-green-main font bold text-center text-lg">
                 Website ini akan menjadi ruang dakwah, tempat para ustadz berbagi ilmu, nasihat, dan inspirasi. Konten
                 akan
@@ -33,6 +33,9 @@ useSeoMeta({
     ogSiteName: 'FollowersBicara.com',
     ogUrl: webUri
 });
+
+const { isEmpty } = storeToRefs(useLatestArticleStore());
+const { from_second_events, first_event } = storeToRefs(useUpcomingEventStore());
 
 onMounted(recordVisit);
 

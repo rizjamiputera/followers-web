@@ -1,5 +1,5 @@
 <template>
-    <section ref="sectionRef" v-if="!isEmpty && !isLoading">
+    <section ref="sectionRef" v-if="!isEmpty">
         <div class="flex flex-col gap-4">
             <div class="flex justify-between items-end">
                 <DefaultTitle class="text-green-main">Artikel Terbaru</DefaultTitle>
@@ -27,7 +27,7 @@
                         </div>
                     </NuxtLink>
                 </template>
-                <template v-else v-for="m in 6" :key="m">
+                <template v-if="isLoading" v-for="m in 6" :key="m">
                     <div class="w-full flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
                         <div class="w-33 sm:w-full aspect-4/3 sm:aspect-video rounded-lg bg-green-main/20 skeleton" />
                         <div class="flex-1 flex flex-col gap-1">

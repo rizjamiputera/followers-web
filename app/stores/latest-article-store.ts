@@ -20,7 +20,7 @@ export const useLatestArticleStore = defineStore('latest-article', {
             includes: ['author']
         },
         authorId: undefined,
-        isLoading: false,
+        isLoading: true,
         isError: false
     }),
     getters: {
@@ -41,12 +41,15 @@ export const useLatestArticleStore = defineStore('latest-article', {
         page: (state): number | string => state.data?.page ?? '-',
         last_page: (state): number => state.data?.last_page ?? 0,
         total: (state): number => state.data?.total ?? 0,
-        isEmpty: (state): boolean => (state.data?.data.length ?? true) ? true : false,
+        isEmpty: (state): boolean => state.data ? (state.data.data.length ? false : true) : false,
     },
     actions: {
         async get() {
+            console.log('get START')
             this.reset();
             this.isLoading = true;
+
+            console.log({ LOADING: this.isLoading })
             try {
                 await new Promise((resolve) => setTimeout(resolve, 400));
                 this.data = await Api.get(this.apiPath) as Paginate<Article[]>
@@ -54,11 +57,12 @@ export const useLatestArticleStore = defineStore('latest-article', {
                 this.isError = true
             } finally {
                 this.isLoading = false;
+                console.log('get DONE')
             }
         },
         reset() {
             this.data = undefined;
-            this.isLoading = false;
+            // this.isLoading = false;
             this.isError = false;
         }
     }
