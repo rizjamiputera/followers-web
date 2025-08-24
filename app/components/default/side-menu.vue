@@ -7,7 +7,7 @@
             </NuxtLink>
             <div class="flex gap-5 items-center">
                 <ClientOnly>
-                    <LazyButtonLink v-if="!user" to="#" prefetch-on="interaction" @click="$emit('close')"
+                    <LazyButtonLink v-if="!user" to="/auth/login" prefetch-on="interaction" @click="$emit('close')"
                         class="font-medium h-9">
                         Login
                     </LazyButtonLink>
