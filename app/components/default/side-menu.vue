@@ -25,24 +25,27 @@
                     <NuxtLink to="/" prefetch-on="interaction" class="text-nowrap text-white-main"
                         @click="$emit('close')">Home</NuxtLink>
                 </li>
-                <!-- <li>
-                    <details :open="isOpen">
-                        <summary class="text-white-main">Product</summary>
-                        <div class="pl-12 p-3 flex flex-col gap-4">
-                            <template v-for="(menu, n) in menuProduct" :key="n">
-                                <DefaultProductMenuList :icon="menu.icon" :to="menu.url" @close="$emit('close')">
-                                    <template #title>{{ menu.title }}</template>
-<template #desc>{{ menu.desc }}</template>
-</DefaultProductMenuList>
-</template>
-</div>
-</details>
-</li> -->
-                <li>
-                    <NuxtLink to="#" prefetch-on="interaction" class="text-nowrap text-white-main"
-                        @click="$emit('close')">About us
-                    </NuxtLink>
-                </li>
+                <template v-if="false">
+                    <li>
+                        <!-- <details :open="isOpen"> -->
+                        <details>
+                            <summary class="text-white-main">Product</summary>
+                            <div class="pl-12 p-3 flex flex-col gap-4">
+                                <template v-for="(menu, n) in menuProduct" :key="n">
+                                    <DefaultProductMenuList :icon="menu.icon" :to="menu.url" @close="$emit('close')">
+                                        <template #title>{{ menu.title }}</template>
+                                        <template #desc>{{ menu.desc }}</template>
+                                    </DefaultProductMenuList>
+                                </template>
+                            </div>
+                        </details>
+                    </li>
+                    <li>
+                        <NuxtLink to="#" prefetch-on="interaction" class="text-nowrap text-white-main"
+                            @click="$emit('close')">About us
+                        </NuxtLink>
+                    </li>
+                </template>
             </ul>
         </div>
     </aside>

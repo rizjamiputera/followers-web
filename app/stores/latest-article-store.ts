@@ -41,7 +41,7 @@ export const useLatestArticleStore = defineStore('latest-article', {
         page: (state): number | string => state.data?.page ?? '-',
         last_page: (state): number => state.data?.last_page ?? 0,
         total: (state): number => state.data?.total ?? 0,
-        isEmpty: (state): boolean => state.data ? (state.data.data.length ? false : true) : false,
+        isEmpty: (state): boolean => (state.data?.data.length ?? true) ? true : false,
     },
     actions: {
         async get() {

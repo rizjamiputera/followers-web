@@ -1,5 +1,12 @@
 <template>
     <div class="section-container">
+        <section class="h-screen flex items-center">
+            <div class="text-green-main font bold text-center text-lg">
+                Website ini akan menjadi ruang dakwah, tempat para ustadz berbagi ilmu, nasihat, dan inspirasi. Konten
+                akan
+                segera hadir, insyaAllah.
+            </div>
+        </section>
         <!-- <div class="h-screen bg-green-main">
             <div class="text-6xl font-extrabold text-white text-center">TEST TEST TEST</div>
         </div> -->

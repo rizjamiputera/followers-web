@@ -20,20 +20,22 @@
                                 Home
                             </NuxtLink>
                         </li>
-                        <!-- <li>
-                            <button @click="show_product_menu = !show_product_menu"
-                                class="text-nowrap hover:text-green-main hover:bg-green-50/10 transition-all duration-200 rounded-lg">
-                                Product
-                                <SvgChevronDown :class="show_product_menu ? 'rotate-180' : ''"
-                                    class="w-2 transition-transform duration-300 hover:stroke-green-main" />
-                            </button>
-                        </li> -->
-                        <li>
-                            <NuxtLink to="#" prefetch-on="interaction"
-                                class="text-nowrap hover:text-green-main hover:bg-green-50/10 transition-all duration-200 rounded-lg">
-                                About us
-                            </NuxtLink>
-                        </li>
+                        <template v-if="false">
+                            <li>
+                                <button @click="show_product_menu = !show_product_menu"
+                                    class="text-nowrap hover:text-green-main hover:bg-green-50/10 transition-all duration-200 rounded-lg">
+                                    Product
+                                    <SvgChevronDown :class="show_product_menu ? 'rotate-180' : ''"
+                                        class="w-2 transition-transform duration-300 hover:stroke-green-main" />
+                                </button>
+                            </li>
+                            <li>
+                                <NuxtLink to="#" prefetch-on="interaction"
+                                    class="text-nowrap hover:text-green-main hover:bg-green-50/10 transition-all duration-200 rounded-lg">
+                                    About us
+                                </NuxtLink>
+                            </li>
+                        </template>
                     </ul>
                 </div>
                 <div class="navbar-end gap-5">

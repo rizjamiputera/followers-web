@@ -1,12 +1,12 @@
 <template>
-    <section ref="sectionRef">
+    <section ref="sectionRef" v-if="!isEmpty && !isLoading">
         <div class="flex flex-col gap-4">
             <div class="flex justify-between items-end">
                 <DefaultTitle class="text-green-main">Artikel Terbaru</DefaultTitle>
                 <Pagination :page :last_page @prev="--parameters.page" @next="++parameters.page" />
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-5">
-                <template v-if="isEmpty">
+                <template v-if="isEmpty && !isLoading">
                     <div class="col-span-full text-3xl text-center text-green-main/50">
                         Tidak ada article terbaru
                     </div>
