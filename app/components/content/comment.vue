@@ -1,64 +1,50 @@
 <template>
-    <div ref="sectionRef">
-        <div class="text-2xl md:text-3xl font-semibold text-green-main">
-            <span>{{ `${stats.commentCount} ` }}</span>Comments
-        </div>
-        <hr class="bg-green-main/30 mb-5">
-
-        <!-- Write Comment -->
-        <div class="mb-4" v-if="user">
-            <Textarea placeholder="Type comment here.." />
-            <div class="flex justify-end mt-1">
-                <Button class="btn-green">Submit</Button>
+    <div class="flex gap-2 bg-white p-4 rounded-lg">
+        <Avatar :avatar="comment.user?.avatar_md" :name="comment.user?.name" class="w-8 h-8" />
+        <div class="flex-1">
+            <div class="flex justify-between gap-2 items-end">
+                <span class="font-semibold text-sm">{{ comment.user?.name || 'Anonymous' }}</span>
+                <span class="text-xs">{{ getRelativeTime(comment.createdAt) }}</span>
             </div>
-        </div>
-        <ButtonLink to="/auth/login" class="btn-green w-full">Login to write comment</ButtonLink>
-
-        <div v-if="CommentsStore.comments.length === 0" class="no-comments">
-            No comments yet
-        </div>
-
-        <div v-else class="flex flex-col gap-1">
-            <div v-for="comment in CommentsStore.comments" :key="comment.id">
-                <Comment :comment />
-
-                <!-- Second level comments (replies) -->
-                <div v-if="comment.replies && comment.replies.length > 0" class="flex flex-col gap-1 pl-10">
-                    <template v-for="reply in comment.replies" :key="reply.id">
-                        <Comment :comment="reply" />
-                    </template>
+            <div class="text-xs">
+                <span v-if="comment.mentioned" class="badge badge-sm badge-soft badge-success">
+                    @{{ comment.mentioned.name }}
+                </span>
+                {{ comment.comment }}
+            </div>
+            <div class="flex items-center gap-2 mt-1" v-if="false">
+                <div class="flex items-center text-xs">
+                    <button @click="" class="btn btn-xs btn-circle btn-ghost">
+                        <LucideThumbsUp :size="14" />
+                    </button>
+                    180
                 </div>
-            </div>
-
-            <CommentSkeleton v-if="isLoading" v-for="n in 3" :key="n" />
-
-            <div class="flex justify-center" v-if="stats.commentCount > CommentsStore.comments.length">
-                <Button class="btn-sm btn-green text-nowrap w-min" @click="loadMore">Load more comments</Button>
+                <div class="flex items-center text-xs">
+                    <button @click="" class="btn btn-xs btn-circle btn-ghost">
+                        <LucideThumbsDown :size="14" />
+                    </button>
+                    180
+                </div>
+                <button @click="" class="btn btn-xs btn-circle btn-ghost">
+                    <LucideThumbsDown :size="14" />
+                </button>
+                <button @click="" class="btn btn-xs rounded-full btn-ghost font-light">
+                    Reply
+                </button>
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
-import type { ContentStats } from '~/interfaces/content-interface';
-import Comment from '../comment.vue';
-const { user } = useAuthStore();
+import { LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
+import type { Comment } from '~/interfaces/content-interface';
+import { getRelativeTime } from '~/utils/get-relative-time';
 
-const sectionRef = ref<HTMLElement>();
-const props = defineProps<{
-    contentId: string
-    stats: ContentStats
+defineProps<{
+    comment: Comment
 }>()
 
-const CommentsStore = useCommentsStore();
-const { get } = CommentsStore;
-
-const { isLoading } = storeToRefs(CommentsStore);
-const { loadMore } = CommentsStore;
-CommentsStore.contentId = props.contentId;
-CommentsStore.parameters.page = 1;
-
-onMounted(get);
 </script>
 
-<style scoped></style>
+<style></style>

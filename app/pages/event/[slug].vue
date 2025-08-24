@@ -70,7 +70,7 @@
                         </div>
                     </div>
 
-                    <LazyContentComment v-if="contentId" :contentId :stats />
+                    <LazyContentComments v-if="contentId" :contentId :stats />
                 </template>
 
 

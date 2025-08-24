@@ -78,10 +78,8 @@
                         </div>
                     </div>
 
-                    <LazyContentComment v-if="contentId" :contentId :stats />
+                    <LazyContentComments v-if="contentId" :contentId :stats />
                 </template>
-
-
             </div>
             <!-- SIDE RIGHT -->
             <div class="col-span-full md:col-span-3">
@@ -94,7 +92,6 @@
 </template>
 
 <script lang="ts" setup>
-import { LazyComment } from '#components';
 import { LucideBookmark, LucideClock, LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
 import type { Article } from '~/interfaces/article-interface';
 
