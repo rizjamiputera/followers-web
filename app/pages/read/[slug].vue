@@ -94,6 +94,7 @@
 <script lang="ts" setup>
 import { LucideBookmark, LucideClock, LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
 import type { Article } from '~/interfaces/article-interface';
+import { ReactionType } from '~/interfaces/content-interface';
 
 const route = useRoute();
 const ReadArticleStore = useReadArticleStore();
@@ -183,8 +184,10 @@ const handleBookmark = async () => {
     try {
         if (!auth_bookmarked.value) {
             await Api.post('/v1/article/bookmark/' + ReadArticleStore.data.id)
+            ReadArticleStore.data.authBookmark = true;
         } else {
             await Api.post('/v1/article/unbookmark/' + ReadArticleStore.data.id)
+            ReadArticleStore.data.authBookmark = false;
         }
         getStats();
     } catch (error) {
@@ -202,6 +205,7 @@ const handleDislike = async () => {
     try {
         await Api.post('/v1/article/react/' + ReadArticleStore.data.id, { type: 'dislike' });
         getStats();
+        ReadArticleStore.data.auth_reaction = { type: ReactionType.dislike }
     } catch (error) {
     }
 }
@@ -217,6 +221,7 @@ const handleLike = async () => {
     try {
         await Api.post('/v1/article/react/' + ReadArticleStore.data.id, { type: 'like' });
         getStats();
+        ReadArticleStore.data.auth_reaction = { type: ReactionType.like }
     } catch (error) {
     }
 }

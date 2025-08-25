@@ -87,6 +87,7 @@
 
 <script lang="ts" setup>
 import { LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
+import { ReactionType } from '~/interfaces/content-interface';
 import type { Event } from '~/interfaces/event-interface';
 import { useReadEventStore } from '~/stores/read-event-store';
 
@@ -179,6 +180,7 @@ const handleDislike = async () => {
     try {
         await Api.post('/v1/event/react/' + ReadEventStore.data.id, { type: 'dislike' })
         getStats();
+        ReadEventStore.data.auth_reaction = { type: ReactionType.dislike }
     } catch (error) {
     }
 }
@@ -194,6 +196,7 @@ const handleLike = async () => {
     try {
         await Api.post('/v1/event/react/' + ReadEventStore.data.id, { type: 'like' })
         getStats();
+        ReadEventStore.data.auth_reaction = { type: ReactionType.like }
     } catch (error) {
     }
 }
