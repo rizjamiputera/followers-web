@@ -13,7 +13,8 @@
         <form class="flex flex-col gap-2 mt-10">
             <Input type="text" v-model="dataDto.email" label="Email" placeholder="Email"
                 class="bg-transparent sm:input-lg font-light" />
-            <Input type="password" v-model="dataDto.password" @keyup.prevent.enter="showConfirm = true" label="Password"
+            <Input type="password" v-model="dataDto.password"
+                @keyup.prevent.enter="handleLogin(dataDto.email, dataDto.password)" label="Password"
                 placeholder="Password" class="bg-transparent sm:input-lg font-light" />
         </form>
 
