@@ -1,18 +1,22 @@
 <template>
     <section class="flex flex-col gap-4">
         <div class="flex gap-3">
-            <Avatar :avatar="user?.avatar_md" :name="user?.name" class="w-20 h-20" />
-
-            <div class="flex flex-col gap-1">
-                <div class="text-sm">{{ user?.name }}</div>
-                <div class="text-sm">{{ user?.email }}</div>
-                <div>
-                    <div class="badget badge-sm badge-green rounded-full text-sm w-min">{{ user?.role }}</div>
+            <ClientOnly>
+                <Avatar :avatar="user?.avatar_md" :name="user?.name" class="w-20 h-20" />
+                <div class="flex flex-col gap-1">
+                    <div class="text-sm">{{ user?.name }}</div>
+                    <div class="text-sm">{{ user?.email }}</div>
+                    <div>
+                        <div class="badget badge-sm badge-green rounded-full text-sm w-min">{{ user?.role }}</div>
+                    </div>
                 </div>
-            </div>
+            </ClientOnly>
         </div>
 
         <div class="flex gap-2">
+            <Button class="btn-circle btn-green btn-sm" @click="showChangeProfile = true">
+                <LucidePencil :size="14" />
+            </Button>
             <Button class="btn-green btn-sm" @click="fileInput?.click()">
                 Ganti Foto
             </Button>
@@ -22,18 +26,22 @@
         </div>
     </section>
     <LazyChangePassword v-if="showChangePassword" :show="showChangePassword" @close="showChangePassword = false" />
+    <LazyProfileForm v-if="showChangeProfile" :show="showChangeProfile" @close="showChangeProfile = false" />
 
     <input type="file" ref="fileInput" class="hidden" accept="image/jpg, image/jpeg, image/png"
         @change="handleFileChange" />
 </template>
 
 <script lang="ts" setup>
-import { LucideKey } from 'lucide-vue-next';
+import { LucideKey, LucidePencil } from 'lucide-vue-next';
 
 onMounted(recordVisit);
 
 const AuthStore = useAuthStore();
 const { user } = storeToRefs(AuthStore)
+
+// change profile
+const showChangeProfile = ref<boolean>(false);
 
 // change password
 const showChangePassword = ref<boolean>(false);

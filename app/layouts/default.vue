@@ -33,6 +33,7 @@
 
 <script lang="ts" setup>
 import Header from '~/components/default/header.vue'
+import "vue-toast-notification/dist/theme-sugar.css";
 
 const AuthStore = useAuthStore();
 const { show_request_login } = storeToRefs(AuthStore);

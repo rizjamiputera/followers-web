@@ -74,7 +74,6 @@ const validate = () => {
     } catch (error) {
         toastError(error);
     }
-
 }
 
 const submit = async () => {
