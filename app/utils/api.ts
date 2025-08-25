@@ -260,16 +260,14 @@ export const Api: ApiInterface = {
     },
     handleError: (error: any) => {
         const route = useRoute();
-        // const AuthStore = useAuthStore();
 
-        // TODO remove this check
-        if (['Not authenticated', 'Unauthorized'].includes(error.data.detail)) {
-            // AuthStore.reset();
-            if (route.path != '/') {
-                return navigateTo('/');
-            }
+        // UNAUTHORIZED
+        if (error.status == 401) {
+            const { path } = useRoute();
+            if (path.startsWith('/cp')) navigateTo('/auth/login');
+
+            return;
         }
-
         if (error.status == undefined || error.status == 500) {
             // toastError(new Error('Terjadi kesalahan pada server'));
         }
