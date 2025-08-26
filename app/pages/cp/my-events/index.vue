@@ -27,7 +27,6 @@
                         <th>Title</th>
                         <th class="text-center">Start</th>
                         <th class="text-center">End</th>
-                        <!-- <th class="text-center">Created At</th> -->
                         <th class="text-center">Status</th>
                         <th class="text-center">Publish</th>
                         <th class="text-center">Action</th>
@@ -68,19 +67,21 @@
                         </td>
                         <td class="text-center text-nowrap">{{ dayjs(dt.start_at).format('DD MMM YY HH:mm') }}</td>
                         <td class="text-center text-nowrap">{{ dayjs(dt.end_at).format('DD MMM YY HH:mm') }}</td>
-                        <!-- <td class="text-center text-nowrap">{{ dayjs(dt.createdAt).format('DD MMM YY') }}</td> -->
                         <td class="text-center">
                             <StatusBade :status="dt.status" />
                         </td>
                         <td class="text-center">
                             <div class="flex gap-1 justify-center">
-                                <Button v-if="!canPublish && !['PUBLISHED', 'ON_REVIEW'].includes(dt.status)"
-                                    class="btn-sm" @click="selectedEventId = dt.id; showConfirmRequestReview = true">
-                                    Ajukan Approval
+                                <Button v-if="canApprove && ['ON_REVIEW', 'REJECTED', 'TAKE_DOWN'].includes(dt.status)"
+                                    class="btn-sm btn-primary"
+                                    @click="selectedEventId = dt.id; showConfirmApprove = true">
+                                    Approve
                                 </Button>
+
                                 <Button
-                                    v-else-if="canPublish && (dt.status != 'PUBLISHED' || (dt.status == 'PUBLISHED' && dt.publishedAt == null))"
-                                    class="btn-sm" @click="selectedEventId = dt.id; showConfirmPublish = true">
+                                    v-if="canPublish && (['ON_REVIEW', 'APPROVED', 'REJECTED', 'TAKE_DOWN'].includes(dt.status) || (dt.status == 'PUBLISHED' && dt.publishedAt == null))"
+                                    class="btn-sm btn-success"
+                                    @click="selectedEventId = dt.id; showConfirmPublish = true">
                                     {{
                                         dt.status == 'PUBLISHED' && dt.publishedAt == null
                                             ? 'Atur Jadwal Publish' :
@@ -88,22 +89,28 @@
                                     }}
                                 </Button>
 
-                                <span v-else-if="dt.status == 'PUBLISHED' && dt.publishedAt != null">
+                                <span v-if="dt.status == 'PUBLISHED' && dt.publishedAt != null">
                                     {{ dt.publishedAt ? formatDateTimeTz(dt.publishedAt) : '-' }}
                                 </span>
                             </div>
                         </td>
                         <td class="text-center">
                             <div class="flex gap-1 justify-center">
+                                <!-- preview -->
                                 <Button class="btn-sm" @click="get_preview(dt.id)">Preview</Button>
+
+                                <!-- open event new tab -->
                                 <ButtonLink v-if="dt.status == 'PUBLISHED'" :to="`/event/${dt.slug}`" target="_blank"
                                     class="btn-sm  btn-outline-green">
                                     <LucideLink :size="12" />
                                     Open
                                 </ButtonLink>
-                                <ButtonLink :to="`/cp/my-events/form?id=${dt.id}`" class="btn-sm btn-green">
-                                    Edit
-                                </ButtonLink>
+
+                                <!-- take down -->
+                                <Button class="btn-sm btn-error" v-if="canPublish && dt.status == 'PUBLISHED'"
+                                    @click="selectedEventId = dt.id; showConfirmTakeDown = true">
+                                    Take down
+                                </Button>
                             </div>
                         </td>
                     </tr>
@@ -138,9 +145,20 @@
         </div>
     </LazyModal>
 
+    <!-- approve -->
+    <LazySetApproveModal v-if="canApprove && selectedEventId && showConfirmApprove" :show="showConfirmApprove"
+        type="event" :dataId="selectedEventId" @close="showConfirmApprove = false"
+        @submited="showConfirmApprove = false; get(false)" />
+
+    <!-- publish -->
     <LazySetPublishModal v-if="canPublish && selectedEventId && showConfirmPublish" :show="showConfirmPublish"
         type="event" :dataId="selectedEventId" @close="showConfirmPublish = false"
         @submited="showConfirmPublish = false; get(false)" />
+
+    <!-- take down -->
+    <LazySetTakeDown v-if="canPublish && showConfirmTakeDown && selectedEventId" :show="showConfirmTakeDown"
+        type="event" :dataId="selectedEventId" @close="showConfirmTakeDown = false"
+        @submited="showConfirmTakeDown = false; get(false)" />
 
     <LazySetRequestReview v-if="canWrite && showConfirmRequestReview && selectedEventId"
         :show="showConfirmRequestReview" type="event" :dataId="selectedEventId"
@@ -160,7 +178,8 @@ definePageMeta({
 
 const AuthStore = useAuthStore();
 const canWrite = computed(() => AuthStore.can(Module.EVENT, Permission.CREATE));
-const canPublish = computed(() => AuthStore.can(Module.EVENT, Permission.APPROVE));
+const canApprove = computed(() => AuthStore.can(Module.EVENT, Permission.APPROVE));
+const canPublish = computed(() => AuthStore.can(Module.EVENT, Permission.PUBLISH));
 
 const MyEventsStore = useMyEventsStore()
 const { events, page, last_page, parameters, isEmpty, isLoading, search } = storeToRefs(MyEventsStore);
@@ -233,7 +252,9 @@ const get_preview = async (id: string) => {
 
 // SET PUBLISH
 const selectedEventId = ref<string | null>(null);
+const showConfirmApprove = ref<boolean>(false);
 const showConfirmPublish = ref<boolean>(false);
+const showConfirmTakeDown = ref<boolean>(false);
 const showConfirmRequestReview = ref<boolean>(false);
 </script>
 
