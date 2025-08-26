@@ -45,6 +45,7 @@
         <hr>
         <div class="footer-bottom">
             <div>© {{ new Date().getFullYear() }} Followers Bicara</div>
+            <Version class="text-xs" />
             <div v-if="false" class="footer-bottom-links">
                 <a>Privacy Policy</a>
                 <a>Terms of Service</a>
