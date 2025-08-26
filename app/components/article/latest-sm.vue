@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col gap-4">
         <div class="font-bold text-green-main">Artikel Terbaru {{ authorName }}</div>
-        <template v-if="!isLoading" v-for="(data, n) in latestData" :key="n">
+        <template v-if="!isLoading" v-for="data in latestData" :key="data.id">
             <NuxtLink :to="'/read/' + data.slug" prefetch-on="interaction"
                 class="w-full flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
                 <Image :src="data.image_md"
