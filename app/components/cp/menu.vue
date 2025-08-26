@@ -71,7 +71,7 @@
                     </template>
                 </ClientOnly>
             </div>
-            <Version class="text-white text-center text-xs font-light" />
+            <Version class="text-center text-xs font-light" />
         </div>
     </div>
 </template>
