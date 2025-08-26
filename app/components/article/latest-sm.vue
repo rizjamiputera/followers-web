@@ -38,11 +38,12 @@ const props = defineProps<{
 }>()
 
 const LatestArticleStore = useLatestArticleStore();
-const { get } = LatestArticleStore;
+const { get, reset } = LatestArticleStore;
 
 const { data, isLoading, latest_articles, page, last_page, parameters, authorId } = storeToRefs(LatestArticleStore);
 onMounted(() => {
     if (page.value != 1 || !data?.value || authorId?.value != props.authorId) {
+        reset();
         LatestArticleStore.parameters.page = 1;
         LatestArticleStore.parameters.limit = 6;
         if (props.authorId) {

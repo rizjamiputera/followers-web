@@ -34,8 +34,7 @@
 
 <script lang="ts" setup>
 import dayjs from 'dayjs';
-import { LucideCalendar, LucideClock, LucideMapPin } from 'lucide-vue-next';
-import ButtonLink from '~/components/button-link.vue';
+import { LucideCalendar, LucideMapPin } from 'lucide-vue-next';
 
 const props = defineProps<{
     excludeSlug?: string
