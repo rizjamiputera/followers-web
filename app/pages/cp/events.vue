@@ -71,6 +71,17 @@
                         </td>
                         <td class="text-center">
                             <div class="flex gap-1 justify-center">
+
+                                <Button v-if="canApprove && dt.status == 'ON_REVIEW'" class="btn-sm btn-warning"
+                                    @click="selectedEventId = dt.id; showConfirmReject = true">
+                                    Reject
+                                </Button>
+                                <Button v-if="canApprove && ['ON_REVIEW', 'REJECTED', 'TAKE_DOWN'].includes(dt.status)"
+                                    class="btn-sm btn-primary"
+                                    @click="selectedEventId = dt.id; showConfirmApprove = true">
+                                    Approve
+                                </Button>
+
                                 <Button
                                     v-if="canPublish && (['ON_REVIEW', 'REJECTED', 'TAKE_DOWN'].includes(dt.status) || (dt.status == 'PUBLISHED' && dt.publishedAt == null))"
                                     class="btn-sm btn-success"
@@ -80,11 +91,6 @@
                                             ? 'Atur Jadwal Publish' :
                                             'Publish'
                                     }}
-                                </Button>
-
-                                <Button v-if="canPublish && dt.status == 'ON_REVIEW'" class="btn-sm btn-warning"
-                                    @click="selectedEventId = dt.id; showConfirmReject = true">
-                                    Reject
                                 </Button>
 
                                 <span v-if="dt.status == 'PUBLISHED' && dt.publishedAt != null">
@@ -139,13 +145,17 @@
         </div>
     </LazyModal>
 
+    <LazySetRejectModal v-if="canApprove && selectedEventId && showConfirmReject" :show="showConfirmReject" type="event"
+        :dataId="selectedEventId" @close="showConfirmReject = false"
+        @submited="showConfirmReject = false; get(false)" />
+
+    <LazySetApproveModal v-if="canApprove && selectedEventId && showConfirmApprove" :show="showConfirmApprove"
+        type="event" :dataId="selectedEventId" @close="showConfirmApprove = false"
+        @submited="showConfirmApprove = false; get(false)" />
+
     <LazySetPublishModal v-if="canPublish && selectedEventId && showConfirmPublish" :show="showConfirmPublish"
         type="event" :dataId="selectedEventId" @close="showConfirmPublish = false"
         @submited="showConfirmPublish = false; get(false)" />
-
-    <LazySetRejectModal v-if="canPublish && selectedEventId && showConfirmReject" :show="showConfirmReject" type="event"
-        :dataId="selectedEventId" @close="showConfirmReject = false"
-        @submited="showConfirmReject = false; get(false)" />
 
     <LazySetTakeDown v-if="canPublish && showConfirmTakeDown && selectedEventId" :show="showConfirmTakeDown"
         type="event" :dataId="selectedEventId" @close="showConfirmTakeDown = false"
@@ -164,8 +174,8 @@ definePageMeta({
 });
 
 const AuthStore = useAuthStore();
-const canWrite = computed(() => AuthStore.can(Module.EVENT, Permission.CREATE));
-const canPublish = computed(() => AuthStore.can(Module.EVENT, Permission.APPROVE));
+const canApprove = computed(() => AuthStore.can(Module.EVENT, Permission.APPROVE));
+const canPublish = computed(() => AuthStore.can(Module.EVENT, Permission.PUBLISH));
 
 const EventsStore = useEventsStore()
 const { events, page, last_page, parameters, isEmpty, isLoading, search } = storeToRefs(EventsStore);
@@ -238,8 +248,9 @@ const get_preview = async (id: string) => {
 
 // SET
 const selectedEventId = ref<string | null>(null);
-const showConfirmPublish = ref<boolean>(false);
 const showConfirmReject = ref<boolean>(false);
+const showConfirmApprove = ref<boolean>(false);
+const showConfirmPublish = ref<boolean>(false);
 const showConfirmTakeDown = ref<boolean>(false);
 </script>
 

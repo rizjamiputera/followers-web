@@ -71,8 +71,20 @@
                         </td>
                         <td class="text-center">
                             <div class="flex gap-1 justify-center">
+
+                                <Button v-if="canApprove && dt.status == 'ON_REVIEW'" class="btn-sm btn-warning"
+                                    @click="selectedArticleId = dt.id; showConfirmReject = true">
+                                    Reject
+                                </Button>
+
+                                <Button v-if="canApprove && ['ON_REVIEW', 'REJECTED', 'TAKE_DOWN'].includes(dt.status)"
+                                    class="btn-sm btn-primary"
+                                    @click="selectedArticleId = dt.id; showConfirmApprove = true">
+                                    Approve
+                                </Button>
+
                                 <Button
-                                    v-if="canPublish && (['ON_REVIEW', 'REJECTED', 'TAKE_DOWN'].includes(dt.status) || (dt.status == 'PUBLISHED' && dt.publishedAt == null))"
+                                    v-if="canPublish && (['ON_REVIEW', 'APPROVED', 'REJECTED', 'TAKE_DOWN'].includes(dt.status) || (dt.status == 'PUBLISHED' && dt.publishedAt == null))"
                                     class="btn-sm btn-success"
                                     @click="selectedArticleId = dt.id; showConfirmPublish = true">
                                     {{
@@ -80,11 +92,6 @@
                                             ? 'Atur Jadwal Publish' :
                                             'Publish'
                                     }}
-                                </Button>
-
-                                <Button v-if="canPublish && dt.status == 'ON_REVIEW'" class="btn-sm btn-warning"
-                                    @click="selectedArticleId = dt.id; showConfirmReject = true">
-                                    Reject
                                 </Button>
 
                                 <span v-if="dt.status == 'PUBLISHED' && dt.publishedAt != null">
@@ -138,14 +145,22 @@
         </div>
     </LazyModal>
 
+    <!-- reject -->
+    <LazySetRejectModal v-if="canApprove && selectedArticleId && showConfirmReject" :show="showConfirmReject"
+        type="article" :dataId="selectedArticleId" @close="showConfirmReject = false"
+        @submited="showConfirmReject = false; get(false)" />
+
+    <!-- approve -->
+    <LazySetApproveModal v-if="canApprove && selectedArticleId && showConfirmApprove" :show="showConfirmApprove"
+        type="article" :dataId="selectedArticleId" @close="showConfirmApprove = false"
+        @submited="showConfirmApprove = false; get(false)" />
+
+    <!-- publish -->
     <LazySetPublishModal v-if="canPublish && selectedArticleId && showConfirmPublish" :show="showConfirmPublish"
         type="article" :dataId="selectedArticleId" @close="showConfirmPublish = false"
         @submited="showConfirmPublish = false; get(false)" />
 
-    <LazySetRejectModal v-if="canPublish && selectedArticleId && showConfirmReject" :show="showConfirmReject"
-        type="article" :dataId="selectedArticleId" @close="showConfirmReject = false"
-        @submited="showConfirmReject = false; get(false)" />
-
+    <!-- take down -->
     <LazySetTakeDown v-if="canPublish && showConfirmTakeDown && selectedArticleId" :show="showConfirmTakeDown"
         type="article" :dataId="selectedArticleId" @close="showConfirmTakeDown = false"
         @submited="showConfirmTakeDown = false; get(false)" />
@@ -163,8 +178,8 @@ definePageMeta({
 });
 
 const AuthStore = useAuthStore();
-const canWrite = computed(() => AuthStore.can(Module.ARTICLE, Permission.CREATE));
-const canPublish = computed(() => AuthStore.can(Module.ARTICLE, Permission.APPROVE));
+const canApprove = computed(() => AuthStore.can(Module.ARTICLE, Permission.APPROVE));
+const canPublish = computed(() => AuthStore.can(Module.ARTICLE, Permission.PUBLISH));
 
 const ArticlesStore = useArticlesStore()
 const { articles, page, last_page, parameters, isEmpty, isLoading, search } = storeToRefs(ArticlesStore);
@@ -237,8 +252,9 @@ const get_preview = async (id: string) => {
 
 // SET
 const selectedArticleId = ref<string | null>(null);
-const showConfirmPublish = ref<boolean>(false);
 const showConfirmReject = ref<boolean>(false);
+const showConfirmApprove = ref<boolean>(false);
+const showConfirmPublish = ref<boolean>(false);
 const showConfirmTakeDown = ref<boolean>(false);
 </script>
 

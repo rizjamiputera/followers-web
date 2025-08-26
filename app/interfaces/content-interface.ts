@@ -11,6 +11,7 @@ export interface Content {
 export type ContentStatus =
     "DRAFT" |
     "ON_REVIEW" |
+    "APPROVED" |
     "REJECTED" |
     "PUBLISHED" |
     "TAKE_DOWN";
@@ -18,6 +19,7 @@ export type ContentStatus =
 export const contentStatuses: ContentStatus[] = [
     "DRAFT",
     "ON_REVIEW",
+    "APPROVED",
     "REJECTED",
     "PUBLISHED",
     "TAKE_DOWN",
