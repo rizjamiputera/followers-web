@@ -39,9 +39,10 @@
                         <tr>
                             <th>{{ module.name }}</th>
                             <template v-for="p in module.permissions">
-                                <td v-if="!(!['ARTICLE', 'EVENT'].includes(module.name) && p.name == 'APPROVE')">
+                                <td
+                                    v-if="!(!['ARTICLE', 'EVENT'].includes(module.name) && ['APPROVE', 'PUBLISH'].includes(p.name))">
 
-                                    <input type="checkbox" class="checkbox" :checked="p.checked"
+                                    <input type="checkbox" class="checkbox checkbox-success" :checked="p.checked"
                                         @change="(e) => togglePermission(module.name, p.name, e)">
                                     {{ p.name }}
                                 </td>
@@ -51,6 +52,7 @@
                     </template>
                 </tbody>
             </table>
+
         </div>
     </div>
 </template>
