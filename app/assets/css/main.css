@@ -88,6 +88,10 @@ section,
     @apply w-full max-w-6xl mx-auto max-md:px-5 max-2xl:px-9 px-11;
 }
 
+.main-title {
+    @apply text-3xl font-medium text-green-main;
+}
+
 /* WYSISYG */
 .prose img {
     @apply rounded-xl

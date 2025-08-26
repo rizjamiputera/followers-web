@@ -1,14 +1,14 @@
 <template>
     <div ref="sectionRef" class="flex flex-col gap-4">
         <div class="flex justify-between gap-2 items-center">
-            <div class="text-3xl font-medium text-green-main">Events</div>
+            <div class="main-title">Events</div>
         </div>
 
         <div class="flex justify-between gap-4">
             <pagination :page :last_page @prev="--parameters.page" @next="++parameters.page" />
 
             <div class="flex-1 flex gap-3 justify-end">
-                <Input v-model="search" class="input-sm max-w-xs" />
+                <Input v-model="search" placeholder="Cari event.." class="input-sm max-w-xs" />
                 <select v-model="selectedStatus" @change="updateStatus"
                     class="select w-40 select-sm rounded-full focus:outline-green-main/40 border-green-main/20">
                     <option value="">Semua Status</option>

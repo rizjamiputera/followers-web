@@ -31,7 +31,7 @@
         </div>
         <hr class="my-4">
         <div v-if="user?.role == 'OPERATOR'">
-            <div>Permissions</div>
+            <div class="main-title mb-2">Permissions</div>
 
             <table class="table">
                 <tbody>
