@@ -39,7 +39,7 @@
                     <tr v-else-if="!isLoading" v-for="(dt, n) in articles" ::key="dt.id">
                         <td>
                             <div>
-                                <div class="line-clamp-1 text-nowrap">{{ dt.title }}</div>
+                                <div class="text-nowrap truncate max-w-65 md:max-w-80">{{ dt.title }}</div>
                                 <div class="flex items-center gap-2">
                                     <div class="join join-horizontal">
                                         <div class="badge max-sm:badge-sm join-item font-light rounded-l-full">
@@ -85,7 +85,7 @@
                                     }}
                                 </Button>
 
-                                <span v-if="dt.status == 'PUBLISHED' && dt.publishedAt != null">
+                                <span class="text-nowrap" v-if="dt.status == 'PUBLISHED' && dt.publishedAt != null">
                                     {{ dt.publishedAt ? formatDateTimeTz(dt.publishedAt) : '-' }}
                                 </span>
                             </div>

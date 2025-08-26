@@ -57,7 +57,6 @@ export const useEventsStore = defineStore('events', {
     actions: {
         async get(reset = true) {
             if (reset) {
-                this.reset();
                 this.isLoading = true;
             }
             try {
@@ -70,8 +69,15 @@ export const useEventsStore = defineStore('events', {
         },
         reset() {
             this.data = undefined;
+
+            this.search = '';
+            this.status = undefined;
+            this.authorId = undefined;
             this.isLoading = false;
             this.isError = false;
+
+            this.parameters.limit = 10;
+            this.parameters.page = 1;
         }
     }
 })

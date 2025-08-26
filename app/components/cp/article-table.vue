@@ -1,7 +1,7 @@
 <template>
     <div ref="sectionRef" class="flex flex-col gap-4">
         <div class="flex justify-between gap-2 items-center">
-            <div class="main-title">Articles</div>
+            <div class="main-title">Articles {{ subtitle }}</div>
         </div>
 
         <div class="flex justify-between gap-4">
@@ -9,13 +9,17 @@
 
             <div class="flex-1 flex gap-3 justify-end">
                 <Input v-model="search" placeholder="Cari artikel.." class="input-sm max-w-xs" />
-                <select v-model="selectedStatus" @change="updateStatus"
-                    class="select w-40 select-sm rounded-full focus:outline-green-main/40 border-green-main/20">
-                    <option value="">Semua Status</option>
-                    <option v-for="value in contentStatuses.filter(s => s != 'DRAFT')" :key="value" :value>
-                        {{ value.replace('_', ' ') }}
-                    </option>
-                </select>
+
+                <!-- now no subtitle then show all status, so no need status filter if has subtitle -->
+                <template v-if="!subtitle">
+                    <select v-model="selectedStatus" @change="updateStatus"
+                        class="select w-40 select-sm rounded-full focus:outline-green-main/40 border-green-main/20">
+                        <option value="">Semua Status</option>
+                        <option v-for="value in contentStatuses.filter(s => s != 'DRAFT')" :key="value" :value>
+                            {{ value.replace('_', ' ') }}
+                        </option>
+                    </select>
+                </template>
             </div>
         </div>
 
@@ -40,7 +44,7 @@
                     <tr v-else-if="!isLoading" v-for="(dt, n) in articles" ::key="dt.id">
                         <td>
                             <div>
-                                <div class="line-clamp-1 text-nowrap">{{ dt.title }}</div>
+                                <div class="text-nowrap truncate max-w-65 md:max-w-80">{{ dt.title }}</div>
                                 <div class="flex items-center gap-2">
                                     <div class="join join-horizontal">
                                         <div class="badge max-sm:badge-sm join-item font-light rounded-l-full">
@@ -64,8 +68,8 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="text-center">{{ dt.author?.name }}</td>
-                        <td class="text-center">{{ dayjs(dt.createdAt).format('DD-MMM-YY') }}</td>
+                        <td class="text-center text-nowrap">{{ dt.author?.name }}</td>
+                        <td class="text-center text-nowrap">{{ dayjs(dt.createdAt).format('DD-MMM-YY') }}</td>
                         <td class="text-center">
                             <StatusBade :status="dt.status" />
                         </td>
@@ -94,7 +98,7 @@
                                     }}
                                 </Button>
 
-                                <span v-if="dt.status == 'PUBLISHED' && dt.publishedAt != null">
+                                <span class="text-nowrap" v-if="dt.status == 'PUBLISHED' && dt.publishedAt != null">
                                     {{ dt.publishedAt ? formatDateTimeTz(dt.publishedAt) : '-' }}
                                 </span>
                             </div>
@@ -173,9 +177,9 @@ import type { Article } from '~/interfaces/article-interface';
 import { contentStatuses, type ContentStatus } from '~/interfaces/content-interface';
 import { Module, Permission } from '~/interfaces/user-interface';
 
-definePageMeta({
-    layout: 'control-panel'
-});
+const props = defineProps<{
+    subtitle?: string
+}>()
 
 const AuthStore = useAuthStore();
 const canApprove = computed(() => AuthStore.can(Module.ARTICLE, Permission.APPROVE));
@@ -184,11 +188,6 @@ const canPublish = computed(() => AuthStore.can(Module.ARTICLE, Permission.PUBLI
 const ArticlesStore = useArticlesStore()
 const { articles, page, last_page, parameters, isEmpty, isLoading, search } = storeToRefs(ArticlesStore);
 const { get } = ArticlesStore;
-onMounted(() => {
-    ArticlesStore.status = undefined;
-    ArticlesStore.parameters.page = 1;
-    get();
-})
 
 const sectionRef = ref<HTMLElement>();
 

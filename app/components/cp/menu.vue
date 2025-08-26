@@ -1,19 +1,3 @@
-<!-- <li v-if="can(Module.ARTICLE, Permission.CREATE)">
-    <details open>
-        <summary>My Article</summary>
-        <ul>
-            <li>
-                <NuxtLink to="/cp/my-articles" prefetch-on="interaction">Semua</NuxtLink>
-            </li>
-            <li>
-                <NuxtLink to="/cp/my-articles/published" prefetch-on="interaction">Published</NuxtLink>
-            </li>
-            <li>
-                <NuxtLink to="/cp/my-articles/draft" prefetch-on="interaction">Draft</NuxtLink>
-            </li>
-        </ul>
-    </details>
-</li> -->
 <template>
     <!-- Sidebar content here -->
     <div ref="drawerMenu" class="menu bg-base-200 text-base-content h-full w-60 p-4 text-base">
@@ -31,12 +15,59 @@
                     <ul class="">
                         <div class="font-bold text-gray-400 px-2">Managemen Kontent</div>
                         <ClientOnly>
+
+                            <!-- ARTICLE -->
                             <li v-if="can(Module.ARTICLE, Permission.READ)">
-                                <NuxtLink to="/cp/articles" prefetch-on="interaction">Articles</NuxtLink>
+                                <details open>
+                                    <summary>Article</summary>
+                                    <ul>
+                                        <li>
+                                            <NuxtLink to="/cp/articles" prefetch-on="interaction">Semua</NuxtLink>
+                                        </li>
+                                        <li v-if="can(Module.ARTICLE, Permission.APPROVE)">
+                                            <NuxtLink to="/cp/articles/request-approval" prefetch-on="interaction">
+                                                Request Approval
+                                            </NuxtLink>
+                                        </li>
+                                        <li v-if="can(Module.ARTICLE, Permission.PUBLISH)">
+                                            <NuxtLink to="/cp/articles/request-publish" prefetch-on="interaction">
+                                                Request Publish
+                                            </NuxtLink>
+                                        </li>
+                                        <li v-if="can(Module.ARTICLE, Permission.PUBLISH)">
+                                            <NuxtLink to="/cp/articles/published" prefetch-on="interaction">Published
+                                            </NuxtLink>
+                                        </li>
+                                    </ul>
+                                </details>
                             </li>
+
+                            <!-- EVENT -->
                             <li v-if="can(Module.EVENT, Permission.READ)">
-                                <NuxtLink to="/cp/events" prefetch-on="interaction">Events</NuxtLink>
+                                <details open>
+                                    <summary>Event</summary>
+                                    <ul>
+                                        <li>
+                                            <NuxtLink to="/cp/events" prefetch-on="interaction">Semua</NuxtLink>
+                                        </li>
+                                        <li v-if="can(Module.EVENT, Permission.APPROVE)">
+                                            <NuxtLink to="/cp/events/request-approval" prefetch-on="interaction">
+                                                Request Approval
+                                            </NuxtLink>
+                                        </li>
+                                        <li v-if="can(Module.EVENT, Permission.PUBLISH)">
+                                            <NuxtLink to="/cp/events/request-publish" prefetch-on="interaction">
+                                                Request Publish
+                                            </NuxtLink>
+                                        </li>
+                                        <li v-if="can(Module.EVENT, Permission.PUBLISH)">
+                                            <NuxtLink to="/cp/events/published" prefetch-on="interaction">Published
+                                            </NuxtLink>
+                                        </li>
+                                    </ul>
+                                </details>
                             </li>
+
                             <li v-if="can(Module.USER, Permission.READ)">
                                 <NuxtLink to="/cp/users" prefetch-on="interaction">Users</NuxtLink>
                             </li>
