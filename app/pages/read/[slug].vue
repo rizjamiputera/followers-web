@@ -39,8 +39,6 @@
                                         @click="handleDislike">
                                         <LucideThumbsDown :size="14"
                                             :class="{ 'fill-rose-400 stroke-rose-400': auth_reaction == 'dislike' }" />
-                                        {{
-                                            stats?.dislikeCount ?? 0 }}
                                     </button>
                                 </div>
                                 <div class="join join-horizontal">
