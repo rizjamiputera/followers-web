@@ -1,5 +1,5 @@
 <template>
-    <div>v1.1.3-1</div>
+    <div>v1.2.0</div>
 </template>
 
 <script lang="ts" setup>
