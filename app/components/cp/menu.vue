@@ -26,6 +26,7 @@
         </ul>
         <hr class="my-4">
         <ul class="">
+            <div class="font-bold text-gray-400 px-2">Managemen Kontent</div>
             <ClientOnly>
                 <li v-if="can(Module.ARTICLE, Permission.READ)">
                     <NuxtLink to="/cp/articles" prefetch-on="interaction">Articles</NuxtLink>
@@ -39,17 +40,32 @@
             </ClientOnly>
         </ul>
 
-        <hr class="my-4">
-        <ul class="">
-            <ClientOnly>
-                <li v-if="can(Module.ARTICLE, Permission.CREATE)">
-                    <NuxtLink to="/cp/my-articles" prefetch-on="interaction">My Articles</NuxtLink>
-                </li>
-                <li v-if="can(Module.EVENT, Permission.CREATE)">
-                    <NuxtLink to="/cp/my-events" prefetch-on="interaction">My Events</NuxtLink>
-                </li>
-            </ClientOnly>
-        </ul>
+        <ClientOnly>
+            <template v-if="can(Module.ARTICLE, Permission.CREATE) || can(Module.EVENT, Permission.CREATE)">
+                <hr class="my-4">
+                <div class="font-bold text-gray-400 px-2">Data Saya</div>
+                <ul class="">
+                    <li v-if="can(Module.ARTICLE, Permission.CREATE)">
+                        <NuxtLink to="/cp/my-articles" prefetch-on="interaction">My Articles</NuxtLink>
+                    </li>
+                    <li v-if="can(Module.EVENT, Permission.CREATE)">
+                        <NuxtLink to="/cp/my-events" prefetch-on="interaction">My Events</NuxtLink>
+                    </li>
+                </ul>
+            </template>
+        </ClientOnly>
+
+        <ClientOnly>
+            <template v-if="user?.role == 'SUPERADMIN'">
+                <hr class="my-4">
+                <div class="font-bold text-gray-400 px-2">SUPERADMIN ONLY</div>
+                <ul class="">
+                    <li>
+                        <NuxtLink to="/cp/superadmin/error-log" prefetch-on="interaction">Error Log</NuxtLink>
+                    </li>
+                </ul>
+            </template>
+        </ClientOnly>
     </div>
 </template>
 
@@ -58,7 +74,7 @@ import { LucideArrowLeft } from 'lucide-vue-next';
 import { Module, Permission } from '~/interfaces/user-interface';
 
 const AuthStore = useAuthStore();
-const { can } = storeToRefs(AuthStore);
+const { can, user } = storeToRefs(AuthStore);
 
 const drawerMenu = ref<HTMLElement | null>(null)
 function triggerDrawer() {
