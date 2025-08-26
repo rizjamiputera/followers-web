@@ -56,7 +56,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Module, Permission, type Role, type User } from '~/interfaces/user-interface';
+import { Module, Permission, type Role, type User, type UserPermission } from '~/interfaces/user-interface';
 
 definePageMeta({
     layout: 'control-panel',
@@ -77,11 +77,14 @@ let id = route.query.id as string | undefined;
 
 const user = ref<User | undefined>(undefined);
 const role = ref<Role | null>(null)
+const userPermissions = ref<UserPermission[]>([])
+
 const get = async () => {
     if (!id) return;
 
     user.value = await Api.get('/v1/user/' + id + '?includes=permissions') as User;
     role.value = user.value.role;
+    userPermissions.value = user.value.permissions ?? []
 }
 
 onMounted(get);
@@ -95,19 +98,20 @@ const updateRole = async () => {
     }
 }
 
-const modules = Object.keys(Module).map((module) => {
+const modules = computed(() => Object.keys(Module).map((module) => {
     return {
         name: module,
         permissions: Object.keys(Permission).map((permission) => {
+            console.log(module, permission)
             return {
                 name: permission,
-                checked: AuthStore.user?.permissions?.some(
+                checked: userPermissions.value.some(
                     p => p.module === module && p.permission === permission
                 )
             }
         })
     }
-})
+}))
 
 const togglePermission = async (module: string, permission: string, event: Event) => {
     const checked = (event.target as HTMLInputElement).checked
