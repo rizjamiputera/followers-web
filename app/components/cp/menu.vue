@@ -18,7 +18,7 @@
 
                             <!-- ARTICLE -->
                             <li v-if="can(Module.ARTICLE, Permission.READ)">
-                                <details open>
+                                <details>
                                     <summary>Article</summary>
                                     <ul>
                                         <li>
@@ -44,7 +44,7 @@
 
                             <!-- EVENT -->
                             <li v-if="can(Module.EVENT, Permission.READ)">
-                                <details open>
+                                <details>
                                     <summary>Event</summary>
                                     <ul>
                                         <li>
