@@ -7,8 +7,12 @@
                     :class="maxWidth">
                     <div data-theme="light"
                         class="rounded-xl bg-white-main border-1 border-green-main p-4 relative shadow-lg shadow-black/40 h-min max-h-full overflow-y-auto ">
-                        <button @click="$emit('close')"
-                            class="fixed right-8 top-12 btn btn-xs btn-circle btn-ghost bg-gray-500 text-[#171d34]">✕</button>
+                        <div class="modal-top flex justify-end">
+                            <button @click="$emit('close')"
+                                class="btn btn-xs btn-circle btn-ghost bg-gray-500/60 text-white">
+                                <LucideX :size="14" />
+                            </button>
+                        </div>
                         <slot />
                     </div>
                 </div>
@@ -18,6 +22,8 @@
 </template>
 
 <script lang="ts" setup>
+import { LucideX } from 'lucide-vue-next';
+
 const emit = defineEmits(['close']);
 
 interface Props {
