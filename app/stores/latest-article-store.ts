@@ -9,19 +9,21 @@ interface LatestArticleStoreState {
     authorId?: string
     isLoading: boolean
     isError: boolean
+    latest_articles: Article[]
 }
 
 export const useLatestArticleStore = defineStore('latest-article', {
     state: (): LatestArticleStoreState => ({
         data: undefined,
         parameters: {
-            limit: 12,
+            limit: 9,
             page: 1,
             includes: ['author']
         },
         authorId: undefined,
         isLoading: true,
-        isError: false
+        isError: false,
+        latest_articles: []
     }),
     getters: {
         apiPath: (state) => {
@@ -37,7 +39,6 @@ export const useLatestArticleStore = defineStore('latest-article', {
                 },
             });
         },
-        latest_articles: (state): Article[] => state.data?.data ?? [],
         page: (state): number | string => state.data?.page ?? '-',
         last_page: (state): number => state.data?.last_page ?? 0,
         total: (state): number => state.data?.total ?? 0,
@@ -45,12 +46,18 @@ export const useLatestArticleStore = defineStore('latest-article', {
     },
     actions: {
         async get() {
-            this.reset();
             this.isLoading = true;
+            this.isError = false;
 
             try {
                 await new Promise((resolve) => setTimeout(resolve, 400));
-                this.data = await Api.get(this.apiPath) as Paginate<Article[]>
+                const response = await Api.get(this.apiPath) as Paginate<Article[]>
+                this.data = response;
+
+                this.latest_articles = [
+                    ...this.latest_articles,
+                    ...response.data
+                ]
             } catch (error) {
                 this.isError = true
             } finally {
@@ -58,9 +65,10 @@ export const useLatestArticleStore = defineStore('latest-article', {
             }
         },
         reset() {
-            this.data = undefined;
-            // this.isLoading = false;
+            this.parameters.page = 1;
             this.isError = false;
+            this.data = undefined;
+            this.latest_articles = [];
         }
     }
 })

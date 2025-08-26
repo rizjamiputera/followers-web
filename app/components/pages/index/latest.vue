@@ -1,17 +1,14 @@
 <template>
-    <section ref="sectionRef" v-if="!isEmpty">
+    <section v-if="!isEmpty">
         <div class="flex flex-col gap-4">
-            <div class="flex justify-between items-end">
-                <DefaultTitle class="text-green-main">Artikel Terbaru</DefaultTitle>
-                <Pagination :page :last_page @prev="--parameters.page" @next="++parameters.page" />
-            </div>
+            <DefaultTitle class="text-green-main">Artikel Terbaru</DefaultTitle>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-5">
                 <template v-if="isEmpty && !isLoading">
                     <div class="col-span-full text-3xl text-center text-green-main/50">
                         Tidak ada article terbaru
                     </div>
                 </template>
-                <template v-else-if="!isLoading" v-for="(data, n) in latest_articles" :key="n">
+                <template v-for="(data, n) in latest_articles" :key="n">
                     <NuxtLink :to="'/read/' + data.slug" prefetch-on="interaction"
                         class="w-full flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
                         <Image :src="data.image_md"
@@ -39,8 +36,10 @@
                     </div>
                 </template>
             </div>
-            <div class="flex justify-end items-start">
-                <Pagination :page :last_page @prev="--parameters.page" @next="++parameters.page" />
+            <div class="flex justify-center">
+                <Button class="btn btn-green" v-if="latest_articles.length < total" @click="++parameters.page; get()">
+                    Lihat lebih banyak
+                </Button>
             </div>
         </div>
     </section>
@@ -50,43 +49,19 @@
 import { DefaultBody } from '#components';
 
 const LatestArticleStore = useLatestArticleStore();
-const { get } = LatestArticleStore;
+const { get, reset } = LatestArticleStore;
 
-// Server-side data fetching for SEO
-// const { public: { apiUri } } = useRuntimeConfig();
-// const { data: latestData } = await useFetch(`${apiUri}/v1/article/published`, {
-//     server: true,
-//     query: {
-//         page: 1,
-//         limit: 12
-//     }
-// });
-
-// // Set initial data in store if available
-// if (latestData.value) {
-//     LatestArticleStore.data = latestData.value as any;
-// }
-
-const { isLoading, latest_articles, page, last_page, parameters, isEmpty } = storeToRefs(LatestArticleStore);
+const { isLoading, latest_articles, total, page, last_page, parameters, isEmpty } = storeToRefs(LatestArticleStore);
 LatestArticleStore.authorId = undefined;
 
-const sectionRef = ref<HTMLElement>();
 // load first data
-onMounted(() => get())
+onMounted(() => {
+    reset();
+    get();
+})
 
 watch(() => parameters.value.page, () => {
     get();
-
-    if (sectionRef.value) {
-        const headerOffset = 64 + 40; // pt-16 = 4rem = 64px
-        const elementPosition = sectionRef.value.offsetTop;
-        const offsetPosition = elementPosition - headerOffset;
-
-        window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-        });
-    }
 })
 </script>
 
