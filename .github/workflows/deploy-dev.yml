@@ -23,7 +23,9 @@ jobs:
                   ssh -o StrictHostKeyChecking=no deploy@${{ secrets.VPS_HOST }} "
                     git config --global --add safe.directory /opt/followers/followers-web
                     cd /opt/followers/followers-web && \
-                    git pull origin dev && \
+                    git fetch origin && \
+                    git checkout dev && \
+                    git reset --hard origin/dev && \
                     docker-compose build --no-cache && \
                     docker-compose down && \
                     docker-compose up -d
