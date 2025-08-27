@@ -26,7 +26,8 @@ jobs:
                     git fetch origin && \
                     git checkout dev && \
                     git reset --hard origin/dev && \
-                    docker compose build --no-cache && \
+                    IMAGE_TAG=web-followers-dev:${GITHUB_SHA::8} && \
+                    docker compose build --build-arg IMAGE_TAG=$IMAGE_TAG && \
                     docker compose down && \
                     docker compose up -d
                   "
