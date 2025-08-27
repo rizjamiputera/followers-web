@@ -53,7 +53,6 @@ export const useArticlesStore = defineStore('articles', {
     actions: {
         async get(reset = true) {
             if (reset) {
-                this.reset();
                 this.isLoading = true;
             }
             try {
@@ -66,8 +65,15 @@ export const useArticlesStore = defineStore('articles', {
         },
         reset() {
             this.data = undefined;
+
+            this.search = '';
+            this.status = undefined;
+            this.authorId = undefined;
             this.isLoading = false;
             this.isError = false;
+
+            this.parameters.limit = 10;
+            this.parameters.page = 1;
         }
     }
 })

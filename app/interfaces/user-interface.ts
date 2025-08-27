@@ -25,7 +25,6 @@ export enum Module {
     ARTICLE = 'ARTICLE',
     EVENT = 'EVENT',
     USER = 'USER',
-    COMMENT = 'COMMENT'
 }
 
 export enum Permission {
@@ -33,6 +32,7 @@ export enum Permission {
     CREATE = 'CREATE',
     EDIT = 'EDIT',
     DELETE = 'DELETE',
-    APPROVE = 'APPROVE', // can approve, publish or take down article
+    APPROVE = 'APPROVE', // can approve article
+    PUBLISH = 'PUBLISH', // can publish or take down article
 
 }

@@ -25,7 +25,6 @@
                 <thead>
                     <tr>
                         <th>Title</th>
-                        <!-- <th class="text-center">Created At</th> -->
                         <th class="text-center">Status</th>
                         <th class="text-center">Publish</th>
                         <th class="text-center">Action</th>
@@ -40,7 +39,7 @@
                     <tr v-else-if="!isLoading" v-for="(dt, n) in articles" ::key="dt.id">
                         <td>
                             <div>
-                                <div class="line-clamp-1 text-nowrap">{{ dt.title }}</div>
+                                <div class="text-nowrap truncate max-w-65 md:max-w-80">{{ dt.title }}</div>
                                 <div class="flex items-center gap-2">
                                     <div class="join join-horizontal">
                                         <div class="badge max-sm:badge-sm join-item font-light rounded-l-full">
@@ -64,19 +63,21 @@
                                 </div>
                             </div>
                         </td>
-                        <!-- <td class="text-center">{{ dayjs(dt.createdAt).format('DD MMM YY') }}</td> -->
                         <td class="text-center">
                             <StatusBade :status="dt.status" />
                         </td>
                         <td class="text-center">
                             <div class="flex gap-1 justify-center">
-                                <Button v-if="!canPublish && !['PUBLISHED', 'ON_REVIEW'].includes(dt.status)"
-                                    class="btn-sm" @click="selectedArticleId = dt.id; showConfirmRequestReview = true">
-                                    Ajukan Approval
+                                <Button v-if="canApprove && ['ON_REVIEW', 'REJECTED', 'TAKE_DOWN'].includes(dt.status)"
+                                    class="btn-sm btn-primary"
+                                    @click="selectedArticleId = dt.id; showConfirmApprove = true">
+                                    Approve
                                 </Button>
+
                                 <Button
-                                    v-else-if="canPublish && (dt.status != 'PUBLISHED' || (dt.status == 'PUBLISHED' && dt.publishedAt == null))"
-                                    class="btn-sm" @click="selectedArticleId = dt.id; showConfirmPublish = true">
+                                    v-if="canPublish && (['ON_REVIEW', 'APPROVED', 'REJECTED', 'TAKE_DOWN'].includes(dt.status) || (dt.status == 'PUBLISHED' && dt.publishedAt == null))"
+                                    class="btn-sm btn-success"
+                                    @click="selectedArticleId = dt.id; showConfirmPublish = true">
                                     {{
                                         dt.status == 'PUBLISHED' && dt.publishedAt == null
                                             ? 'Atur Jadwal Publish' :
@@ -84,22 +85,28 @@
                                     }}
                                 </Button>
 
-                                <span v-else-if="dt.status == 'PUBLISHED' && dt.publishedAt != null">
+                                <span class="text-nowrap" v-if="dt.status == 'PUBLISHED' && dt.publishedAt != null">
                                     {{ dt.publishedAt ? formatDateTimeTz(dt.publishedAt) : '-' }}
                                 </span>
                             </div>
                         </td>
                         <td class="text-center">
                             <div class="flex gap-1 justify-center">
+                                <!-- preview -->
                                 <Button class="btn-sm" @click="get_preview(dt.id)">Preview</Button>
+
+                                <!-- open article new tab -->
                                 <ButtonLink v-if="dt.status == 'PUBLISHED'" :to="`/read/${dt.slug}`" target="_blank"
                                     class="btn-sm btn-outline-green">
                                     <LucideLink :size="12" />
                                     Open
                                 </ButtonLink>
-                                <ButtonLink :to="`/cp/my-articles/form?id=${dt.id}`" class="btn-sm btn-green">
-                                    Edit
-                                </ButtonLink>
+
+                                <!-- take down -->
+                                <Button class="btn-sm btn-error" v-if="canPublish && dt.status == 'PUBLISHED'"
+                                    @click="selectedArticleId = dt.id; showConfirmTakeDown = true">
+                                    Take down
+                                </Button>
                             </div>
                         </td>
                     </tr>
@@ -134,9 +141,20 @@
         </div>
     </LazyModal>
 
+    <!-- approve -->
+    <LazySetApproveModal v-if="canApprove && selectedArticleId && showConfirmApprove" :show="showConfirmApprove"
+        type="article" :dataId="selectedArticleId" @close="showConfirmApprove = false"
+        @submited="showConfirmApprove = false; get(false)" />
+
+    <!-- publish -->
     <LazySetPublishModal v-if="canPublish && selectedArticleId && showConfirmPublish" :show="showConfirmPublish"
         type="article" :dataId="selectedArticleId" @close="showConfirmPublish = false"
         @submited="showConfirmPublish = false; get(false)" />
+
+    <!-- take down -->
+    <LazySetTakeDown v-if="canPublish && showConfirmTakeDown && selectedArticleId" :show="showConfirmTakeDown"
+        type="article" :dataId="selectedArticleId" @close="showConfirmTakeDown = false"
+        @submited="showConfirmTakeDown = false; get(false)" />
 
     <LazySetRequestReview v-if="canWrite && showConfirmRequestReview && selectedArticleId" type="article"
         :show="showConfirmRequestReview" :dataId="selectedArticleId" @close="showConfirmRequestReview = false"
@@ -156,7 +174,8 @@ definePageMeta({
 
 const AuthStore = useAuthStore();
 const canWrite = computed(() => AuthStore.can(Module.ARTICLE, Permission.CREATE));
-const canPublish = computed(() => AuthStore.can(Module.ARTICLE, Permission.APPROVE));
+const canApprove = computed(() => AuthStore.can(Module.ARTICLE, Permission.APPROVE));
+const canPublish = computed(() => AuthStore.can(Module.ARTICLE, Permission.PUBLISH));
 
 const MyArticlesStore = useMyArticlesStore()
 const { articles, page, last_page, parameters, isEmpty, isLoading, search } = storeToRefs(MyArticlesStore);
@@ -229,7 +248,9 @@ const get_preview = async (id: string) => {
 
 // SET PUBLISH
 const selectedArticleId = ref<string | null>(null);
+const showConfirmApprove = ref<boolean>(false);
 const showConfirmPublish = ref<boolean>(false);
+const showConfirmTakeDown = ref<boolean>(false);
 const showConfirmRequestReview = ref<boolean>(false);
 </script>
 

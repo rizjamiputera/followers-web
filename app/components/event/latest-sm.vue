@@ -4,7 +4,7 @@
 
 
         <div v-if="drawEvents.length" class="flex flex-col gap-2">
-            <template v-for="data in drawEvents">
+            <template v-for="data in drawEvents" :key="data.id">
                 <NuxtLink :to="'/event/' + data.slug" prefetch-on="interaction"
                     class="w-full flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
                     <Image :src="data.image_md" class="w-33 sm:w-full aspect-3/4 rounded-lg bg-cover bg-no-repeat" />
@@ -34,8 +34,7 @@
 
 <script lang="ts" setup>
 import dayjs from 'dayjs';
-import { LucideCalendar, LucideClock, LucideMapPin } from 'lucide-vue-next';
-import ButtonLink from '~/components/button-link.vue';
+import { LucideCalendar, LucideMapPin } from 'lucide-vue-next';
 
 const props = defineProps<{
     excludeSlug?: string
