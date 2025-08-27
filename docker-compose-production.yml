@@ -6,7 +6,8 @@ services:
             context: .
             dockerfile: Dockerfile
         container_name: web-followers
-        image: web-followers-dev:1.2.0-2
+        # image: followers-dev:1.2.0-2
+        image: ${IMAGE_TAG:-web-followers-main:latest}
         restart: always
         ports:
             - 3333:3000

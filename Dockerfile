@@ -18,7 +18,7 @@ RUN npm install --verbose
 COPY . .
 
 # add a label for the image tag (metadata)
-LABEL image_tag=$IMAGE_TAG
+# LABEL image_tag=$IMAGE_TAG
 
 # Command to run your application
 CMD npm run build && node ./.output/server/index.mjs

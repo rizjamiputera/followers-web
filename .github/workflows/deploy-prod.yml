@@ -23,10 +23,21 @@ jobs:
                   ssh -o StrictHostKeyChecking=no deploy@${{ secrets.VPS_HOST }} "
                     cd /opt/followers/followers-web && \
                     git config --global --add safe.directory /opt/followers/followers-web && \
+
                     git fetch origin && \
                     git checkout main && \
+
                     git reset --hard origin/main && \
+
+                    GITHUB_SHA=\$(git rev-parse HEAD) && \
+                    IMAGE_TAG=web-followers-main:\$(echo \$GITHUB_SHA | cut -c1-7) && \
+
+                    echo Building image = \$IMAGE_TAG && \
+
                     docker compose -f docker-compose-production.yml build --no-cache && \
+                    docker tag web-followers-main:latest \$IMAGE_TAG && \
                     docker compose -f docker-compose-production.yml down && \
-                    docker compose -f docker-compose-production.yml up -d
+                    docker compose -f docker-compose-production.yml up -d && \
+
+                    docker image prune -f --filter \"until=168h\"
                   "
