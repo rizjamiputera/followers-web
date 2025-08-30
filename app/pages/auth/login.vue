@@ -61,8 +61,6 @@ const dataDto = ref({
 const AuthStore = useAuthStore();
 const { handleLogin } = AuthStore;
 const { isLoading } = storeToRefs(AuthStore);
-
-const showConfirm = ref<boolean>(false);
 </script>
 
 <style></style>
