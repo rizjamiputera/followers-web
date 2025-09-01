@@ -51,20 +51,103 @@ export const IsContent = Joi.object({
     content: Joi.object({
         content: Joi.array()
             .items(
-                Joi.object({
-                    type: Joi.string().required(),
-                    content: Joi.array().items(Joi.object()).optional(),
-                })
+                Joi.alternatives().try(
+                    // Image node
+                    Joi.object({
+                        type: Joi.string().valid('image').required(),
+                        attrs: Joi.object({
+                            src: Joi.string().required(),
+                            alt: Joi.string().optional().allow(null),
+                            title: Joi.string().optional().allow(null),
+                            width: Joi.number().optional().allow(null),
+                            height: Joi.number().optional().allow(null)
+                        }).required()
+                    }),
+                    // Heading node
+                    Joi.object({
+                        type: Joi.string().valid('heading').required(),
+                        attrs: Joi.object({
+                            level: Joi.number().valid(1, 2, 3, 4, 5, 6).required()
+                        }).required(),
+                        content: Joi.array().items(Joi.object()).optional()
+                    }),
+                    // Horizontal rule
+                    Joi.object({
+                        type: Joi.string().valid('horizontalRule').required()
+                    }),
+                    // Hard break
+                    Joi.object({
+                        type: Joi.string().valid('hardBreak').required()
+                    }),
+                    // Block nodes (paragraph, blockquote, codeBlock)
+                    Joi.object({
+                        type: Joi.string().valid('paragraph', 'blockquote', 'codeBlock').required(),
+                        content: Joi.array().items(Joi.object()).optional()
+                    }),
+                    // List nodes
+                    Joi.object({
+                        type: Joi.string().valid('bulletList', 'orderedList').required(),
+                        content: Joi.array().items(Joi.object()).optional()
+                    }),
+                    // List item
+                    Joi.object({
+                        type: Joi.string().valid('listItem').required(),
+                        content: Joi.array().items(Joi.object()).optional()
+                    }),
+                    // Text nodes (inline content)
+                    Joi.object({
+                        type: Joi.string().valid('text').required(),
+                        text: Joi.string().required(),
+                        marks: Joi.array().items(
+                            Joi.object({
+                                type: Joi.string().valid('bold', 'italic', 'strike', 'code').required()
+                            })
+                        ).optional()
+                    }),
+                    // Fallback for any other node type
+                    Joi.object({
+                        type: Joi.string().required(),
+                        content: Joi.array().items(Joi.object()).optional(),
+                        attrs: Joi.object().optional(),
+                        marks: Joi.array().items(Joi.object()).optional(),
+                        text: Joi.string().optional()
+                    })
+                )
             ).min(1).custom((arr, helpers) => {
-                // Check if at least one item has non-empty content
-                const hasContent = arr.some(
-                    (node: any) => Array.isArray(node.content) && node.content.length > 0
-                );
+                // Check if at least one item has meaningful content
+                const hasContent = arr.some((node: any) => {
+                    // Self-closing nodes (image, horizontalRule, hardBreak)
+                    if (['image', 'horizontalRule', 'hardBreak'].includes(node.type)) {
+                        return true;
+                    }
+
+                    // Text nodes
+                    if (node.type === 'text' && node.text && node.text.trim()) {
+                        return true;
+                    }
+
+                    // Block nodes with content
+                    if (Array.isArray(node.content) && node.content.length > 0) {
+                        // Recursively check nested content
+                        return node.content.some((child: any) => {
+                            if (child.type === 'text' && child.text && child.text.trim()) {
+                                return true;
+                            }
+                            if (['image', 'horizontalRule', 'hardBreak'].includes(child.type)) {
+                                return true;
+                            }
+                            return Array.isArray(child.content) && child.content.length > 0;
+                        });
+                    }
+
+                    return false;
+                });
+
                 if (!hasContent) {
                     return helpers.error('any.custom', { message: 'Minimal satu paragraf harus berisi konten' });
                 }
                 return arr;
-            }, 'At least one non-empty content')
+            }, 'Setidaknya satu konten bermakna')
             .messages({
                 'array.min': 'Konten tidak boleh kosong',
                 'any.custom': 'Minimal satu paragraf harus berisi konten',

@@ -87,7 +87,7 @@
                                 </Button>
 
                                 <Button
-                                    v-if="canPublish && (['ON_REVIEW', 'REJECTED', 'TAKE_DOWN'].includes(dt.status) || (dt.status == 'PUBLISHED' && dt.publishedAt == null))"
+                                    v-if="canPublish && (['ON_REVIEW', 'APPROVED', 'REJECTED', 'TAKE_DOWN'].includes(dt.status) || (dt.status == 'PUBLISHED' && dt.publishedAt == null))"
                                     class="btn-sm btn-success"
                                     @click="selectedEventId = dt.id; showConfirmPublish = true">
                                     {{
@@ -105,6 +105,11 @@
                         <td class="text-center">
                             <div class="flex gap-1 justify-center">
                                 <Button class="btn-sm" @click="get_preview(dt.id)">Preview</Button>
+                                <ButtonLink v-if="canEdit" :to="`/cp/my-events/form?id=${dt.id}`"
+                                    class="btn-sm btn-neutral">
+                                    Edit
+                                </ButtonLink>
+
                                 <ButtonLink v-if="dt.status == 'PUBLISHED'" :to="`/event/${dt.slug}`" target="_blank"
                                     class="btn-sm  btn-outline-green">
                                     <LucideLink :size="12" />
@@ -178,6 +183,7 @@ const props = defineProps<{
 }>()
 
 const AuthStore = useAuthStore();
+const canEdit = computed(() => AuthStore.can(Module.EVENT, Permission.EDIT));
 const canApprove = computed(() => AuthStore.can(Module.EVENT, Permission.APPROVE));
 const canPublish = computed(() => AuthStore.can(Module.EVENT, Permission.PUBLISH));
 

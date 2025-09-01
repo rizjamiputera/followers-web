@@ -11,7 +11,11 @@
                 <Button class="max-sm:btn-sm mr-4" @click="show_preview = true">Preview</Button>
                 <Button class="max-sm:btn-sm" @click="confirm_cancel = true">Cancel</Button>
                 <ClientOnly>
-                    <Button class="max-sm:btn-sm btn-green" v-if="canPublish" @click="status = 'PUBLISHED'; validate()">
+                    <Button class="max-sm:btn-sm btn-green" v-if="canApprove" @click="status = 'APPROVED'; validate()">
+                        Simpan & Approve
+                    </Button>
+                    <Button class="max-sm:btn-sm btn-green" v-else-if="canPublish"
+                        @click="status = 'PUBLISHED'; validate()">
                         Simpan & Publish
                     </Button>
                     <Button class="max-sm:btn-sm btn-green" v-else @click="status = 'ON_REVIEW'; validate()">
@@ -19,6 +23,7 @@
                     </Button>
                 </ClientOnly>
                 <Button class="max-sm:btn-sm btn-black" @click="status = 'DRAFT'; validate()">Simpan Draft</Button>
+                <Button class="max-sm:btn-sm btn-black" @click="status = null; validate()">Simpan</Button>
             </div>
         </div>
 
@@ -114,7 +119,11 @@
             <Button class="max-sm:btn-sm mr-4" @click="show_preview = true">Preview</Button>
             <Button class="max-sm:btn-sm" @click="confirm_cancel = true">Cancel</Button>
             <ClientOnly>
-                <Button class="max-sm:btn-sm btn-green" v-if="canPublish" @click="status = 'PUBLISHED'; validate()">
+                <Button class="max-sm:btn-sm btn-green" v-if="canApprove" @click="status = 'APPROVED'; validate()">
+                    Simpan & Approve
+                </Button>
+                <Button class="max-sm:btn-sm btn-green" v-else-if="canPublish"
+                    @click="status = 'PUBLISHED'; validate()">
                     Simpan & Publish
                 </Button>
                 <Button class="max-sm:btn-sm btn-green" v-else @click="status = 'ON_REVIEW'; validate()">
@@ -122,6 +131,7 @@
                 </Button>
             </ClientOnly>
             <Button class="max-sm:btn-sm btn-black" @click="status = 'DRAFT'; validate()">Simpan Draft</Button>
+            <Button class="max-sm:btn-sm btn-black" @click="status = null; validate()">Simpan</Button>
         </div>
     </div>
 
@@ -157,7 +167,11 @@
 
     <LazyModal v-if="showConfirmDraftOrReview" :show="showConfirmDraftOrReview"
         @close="showConfirmDraftOrReview = false">
-        {{ status == "ON_REVIEW" ? 'Yakin simpan & ajukan approval?' : 'Yakin simpan sebagai draft?' }}
+        {{
+            status == "ON_REVIEW"
+                ? 'Yakin simpan & ajukan approval?'
+                : status != null ? `Yakin simpan sebagai ${status.toLowerCase().replace('_', ' ')}?` : 'Yakin?'
+        }}
         <div class="modal-action">
             <Button @click="showConfirmDraftOrReview = false" :disabled="isSubmitting">No</Button>
 
@@ -187,7 +201,8 @@ definePageMeta({
 });
 
 const AuthStore = useAuthStore();
-const canPublish = computed(() => AuthStore.can(Module.ARTICLE, Permission.APPROVE));
+const canApprove = computed(() => AuthStore.can(Module.ARTICLE, Permission.APPROVE));
+const canPublish = computed(() => AuthStore.can(Module.ARTICLE, Permission.PUBLISH));
 
 const { public: { webUri } } = useRuntimeConfig();
 
@@ -283,16 +298,7 @@ const checkSlug = () => {
 }
 
 // HANDLE SUBMIT
-const isCreateArticle = Joi.object({
-    title: IsString.max(255),
-    slug: IsString.max(255),
-    image: IsString,
-    image_md: IsString,
-    excerpt: IsString.max(250).label('Ringkasan'),
-    content: IsContent
-})
-
-const isEditArticle = Joi.object({
+const isArticle = Joi.object({
     title: IsString.max(255),
     slug: IsString.max(255),
     image: IsString.optional().allow(null, ''),
@@ -308,7 +314,7 @@ const isSubmitting = ref<boolean>(false);
 
 const validatedData = ref<Record<string, any>>({});
 
-const status = ref<ContentStatus>('DRAFT');
+const status = ref<ContentStatus | null>(null);
 const publishedAt = ref<string | null>(new Date().toISOString())
 
 const validate = () => {
@@ -318,7 +324,8 @@ const validate = () => {
     showConfirmDraftOrReview.value = false;
 
     try {
-        validatedData.value = Validate(id ? isEditArticle : isCreateArticle, dataDto.value);
+        console.log(dataDto.value.content)
+        validatedData.value = Validate(isArticle, dataDto.value);
         validatedData.value.content = validatedData.value.content.content;
 
         if (status.value == "PUBLISHED") {
@@ -359,6 +366,10 @@ const submit = async () => {
                 await Api.post('/v1/article/review/' + id);
             }
             // 3 set as publish
+            if (status.value == "APPROVED" && canApprove.value) {
+                await Api.post('/v1/article/approve/' + id);
+            }
+            // 4 set as publish
             if (status.value == "PUBLISHED" && canPublish.value) {
                 await Api.post('/v1/article/publish/' + id, { publishedAt: publishedAt.value });
             }
@@ -373,10 +384,13 @@ const submit = async () => {
                 if (status.value == "ON_REVIEW") {
                     await Api.post('/v1/article/review/' + newData.id);
                 }
-                // 2 set as publish
-
-                if (status.value == "PUBLISHED" && canPublish.value) {
+                // 2 set as approve
+                if (status.value == "APPROVED" && canApprove.value) {
                     // TODO add published at
+                    await Api.post('/v1/article/approve/' + newData.id);
+                }
+                // 3 set as publish
+                if (status.value == "PUBLISHED" && canPublish.value) {
                     await Api.post('/v1/article/publish/' + newData.id, { publishedAt: publishedAt.value });
                 }
 

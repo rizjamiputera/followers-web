@@ -273,27 +273,28 @@ export const Api: ApiInterface = {
             // toastError(new Error('Terjadi kesalahan pada server'));
         }
 
-        if (error.data.detail && (error.status == 400 || error.status == 422)) {
-            const detail = error.data.detail;
-            if (typeof detail === 'string') {
-                toastError(new Error(detail));
-                return;
-            }
+        if (error.status == 400 || error.status == 422) {
+            // const detail = error.data.message;
+            // if (typeof detail === 'string') {
+            //     toastError(new Error(detail));
+            //     return;
+            // }
 
-            if (typeof detail === 'object' && !Array.isArray(detail)) {
-                for (const key of Object.keys(detail)) {
-                    console.log(key)
-                    if (Array.isArray(detail[key])) {
-                        for (const error_message of detail[key]) {
-                            toastError(new Error(error_message));
-                        }
-                    } else {
-                        toastError(new Error(detail[key]));
-                    }
-                }
-            } else {
-                toastError(new Error(detail));
-            }
+            // if (typeof detail === 'object' && !Array.isArray(detail)) {
+            //     for (const key of Object.keys(detail)) {
+            //         console.log(key)
+            //         if (Array.isArray(detail[key])) {
+            //             for (const error_message of detail[key]) {
+            //                 toastError(new Error(error_message));
+            //             }
+            //         } else {
+            //             toastError(new Error(detail[key]));
+            //         }
+            //     }
+            // } else {
+            //     toastError(new Error(detail));
+            // }
+            toastError(error)
         }
 
         throw error;

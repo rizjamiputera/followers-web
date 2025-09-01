@@ -73,3 +73,11 @@ bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+# When ready for a new release:
+
+```
+npm version patch # 1.2.0 → 1.2.1
+npm version minor # 1.2.0 → 1.3.0
+npm version major # 1.2.0 → 2.0.0
+```
