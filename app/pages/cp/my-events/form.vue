@@ -36,7 +36,7 @@
             <div class="flex gap-2">
                 <div class="join w-full">
                     <button class="max-sm:hidden btn join-item rounded-l-full btn-active font-light">{{ webUri
-                        }}/event/</button>
+                    }}/event/</button>
                     <Input class="sm:join-item rounded-full sm:rounded-l-none flex-1" v-model="dataDto.slug"
                         @keyup="checkSlugChange" />
                 </div>
@@ -309,19 +309,7 @@ const checkSlug = () => {
 }
 
 // HANDLE SUBMIT
-const isCreateEvent = Joi.object({
-    title: IsString.max(255),
-    slug: IsString.max(255),
-    image: IsString,
-    image_md: IsString,
-    excerpt: IsString.max(500).label('Ringkasan'),
-    content: IsContent,
-    location: IsString.optional(),
-    address: IsString.optional(),
-    start_at: Joi.date().optional(),
-    end_at: Joi.date().optional(),
-})
-const isEditEvent = Joi.object({
+const isEvent = Joi.object({
     title: IsString.max(255),
     slug: IsString.max(255),
     image: IsString.optional().allow(null, ''),
@@ -351,7 +339,7 @@ const validate = () => {
     showConfirmDraftOrReview.value = false;
 
     try {
-        validatedData.value = Validate(id ? isEditEvent : isCreateEvent, dataDto.value);
+        validatedData.value = Validate(isEvent, dataDto.value);
         validatedData.value.content = validatedData.value.content.content;
 
         if (status.value == "PUBLISHED") {

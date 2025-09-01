@@ -283,16 +283,7 @@ const checkSlug = () => {
 }
 
 // HANDLE SUBMIT
-const isCreateArticle = Joi.object({
-    title: IsString.max(255),
-    slug: IsString.max(255),
-    image: IsString,
-    image_md: IsString,
-    excerpt: IsString.max(250).label('Ringkasan'),
-    content: IsContent
-})
-
-const isEditArticle = Joi.object({
+const isArticle = Joi.object({
     title: IsString.max(255),
     slug: IsString.max(255),
     image: IsString.optional().allow(null, ''),
@@ -318,7 +309,8 @@ const validate = () => {
     showConfirmDraftOrReview.value = false;
 
     try {
-        validatedData.value = Validate(id ? isEditArticle : isCreateArticle, dataDto.value);
+        console.log(dataDto.value.content)
+        validatedData.value = Validate(isArticle, dataDto.value);
         validatedData.value.content = validatedData.value.content.content;
 
         if (status.value == "PUBLISHED") {

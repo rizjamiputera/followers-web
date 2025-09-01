@@ -94,6 +94,8 @@
                             <div class="flex gap-1 justify-center">
                                 <!-- preview -->
                                 <Button class="btn-sm" @click="get_preview(dt.id)">Preview</Button>
+                                <ButtonLink :to="`/cp/my-articles/form?id=${dt.id}`" class="btn-sm"
+                                    @click="get_preview(dt.id)">Edit</ButtonLink>
 
                                 <!-- open article new tab -->
                                 <ButtonLink v-if="dt.status == 'PUBLISHED'" :to="`/read/${dt.slug}`" target="_blank"
