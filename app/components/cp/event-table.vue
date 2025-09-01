@@ -15,7 +15,7 @@
                     <select v-model="selectedStatus" @change="updateStatus"
                         class="select w-40 select-sm rounded-full focus:outline-green-main/40 border-green-main/20">
                         <option value="">Semua Status</option>
-                        <option v-for="value in contentStatuses.filter(s => s != 'DRAFT')" :key="value" :value>
+                        <option v-for="value in contentStatuses" :key="value" :value>
                             {{ value.replace('_', ' ') }}
                         </option>
                     </select>
