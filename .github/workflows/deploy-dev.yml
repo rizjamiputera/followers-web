@@ -29,8 +29,8 @@ jobs:
 
                     git reset --hard origin/dev && \
 
-                    # For dev, use package.json version + dev suffix + commit hash
-                    VERSION=\$(node -p \"require('./package.json').version\") && \
+                    # Extract version from package.json using grep and sed
+                    VERSION=\$(grep -o '\"version\"[[:space:]]*:[[:space:]]*\"[^\"]*\"' package.json | sed 's/.*\"\([^\"]*\)\"/\1/') && \
                     COMMIT_HASH=\$(git rev-parse HEAD | cut -c1-7) && \
                     IMAGE_TAG=web-followers-dev:\$VERSION-dev-\$COMMIT_HASH && \
 
