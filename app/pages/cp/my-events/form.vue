@@ -10,7 +10,11 @@
                 <Button class="max-sm:btn-sm mr-4" @click="show_preview = true">Preview</Button>
                 <Button class="max-sm:btn-sm" @click="confirm_cancel = true">Cancel</Button>
                 <ClientOnly>
-                    <Button class="max-sm:btn-sm btn-green" v-if="canPublish" @click="status = 'PUBLISHED'; validate()">
+                    <Button class="max-sm:btn-sm btn-green" v-if="canApprove" @click="status = 'APPROVED'; validate()">
+                        Simpan & Approve
+                    </Button>
+                    <Button class="max-sm:btn-sm btn-green" v-else-if="canPublish"
+                        @click="status = 'PUBLISHED'; validate()">
                         Simpan & Publish
                     </Button>
                     <Button class="max-sm:btn-sm btn-green" v-else @click="status = 'ON_REVIEW'; validate()">
@@ -36,7 +40,7 @@
             <div class="flex gap-2">
                 <div class="join w-full">
                     <button class="max-sm:hidden btn join-item rounded-l-full btn-active font-light">{{ webUri
-                    }}/event/</button>
+                        }}/event/</button>
                     <Input class="sm:join-item rounded-full sm:rounded-l-none flex-1" v-model="dataDto.slug"
                         @keyup="checkSlugChange" />
                 </div>
@@ -133,7 +137,11 @@
             <Button class="max-sm:btn-sm mr-4" @click="show_preview = true">Preview</Button>
             <Button class="max-sm:btn-sm" @click="confirm_cancel = true">Cancel</Button>
             <ClientOnly>
-                <Button class="max-sm:btn-sm btn-green" v-if="canPublish" @click="status = 'PUBLISHED'; validate()">
+                <Button class="max-sm:btn-sm btn-green" v-if="canApprove" @click="status = 'APPROVED'; validate()">
+                    Simpan & Approve
+                </Button>
+                <Button class="max-sm:btn-sm btn-green" v-else-if="canPublish"
+                    @click="status = 'PUBLISHED'; validate()">
                     Simpan & Publish
                 </Button>
                 <Button class="max-sm:btn-sm btn-green" v-else @click="status = 'ON_REVIEW'; validate()">
@@ -176,7 +184,11 @@
 
     <LazyModal v-if="showConfirmDraftOrReview" :show="showConfirmDraftOrReview"
         @close="showConfirmDraftOrReview = false">
-        {{ status == "ON_REVIEW" ? 'Yakin simpan & ajukan approval?' : 'Yakin simpan sebagai draft?' }}
+        {{
+            status == "ON_REVIEW"
+                ? 'Yakin simpan & ajukan approval?'
+                : `Yakin simpan sebagai ${status.toLowerCase().replace('_', ' ')}?`
+        }}
         <div class="modal-action">
             <Button @click="showConfirmDraftOrReview = false" :disabled="isSubmitting">No</Button>
 
@@ -206,7 +218,8 @@ definePageMeta({
 });
 
 const AuthStore = useAuthStore();
-const canPublish = computed(() => AuthStore.can(Module.EVENT, Permission.APPROVE));
+const canApprove = computed(() => AuthStore.can(Module.EVENT, Permission.APPROVE));
+const canPublish = computed(() => AuthStore.can(Module.EVENT, Permission.PUBLISH));
 
 const { public: { webUri } } = useRuntimeConfig();
 
@@ -349,7 +362,7 @@ const validate = () => {
             // validatedData.value.status = "PUBLISHED"
             showConfirmPublish.value = true;
         } else {
-            // validatedData.value.status = "DRAFT"
+            // validatedData.value.status = "DRAFT" // APPROVE
             showConfirmDraftOrReview.value = true;
         }
     } catch (error) {
@@ -377,7 +390,11 @@ const submit = async () => {
             if (status.value == "ON_REVIEW" && event.value?.status != "ON_REVIEW") {
                 await Api.post('/v1/event/review/' + id);
             }
-            // 3 set as publish
+            // 3 set as approve
+            if (status.value == "APPROVED" && canApprove.value) {
+                await Api.post('/v1/event/approve/' + id);
+            }
+            // 4 set as publish
             if (status.value == "PUBLISHED" && canPublish.value) {
                 await Api.post('/v1/event/publish/' + id, { publishedAt: publishedAt.value });
             }
@@ -392,10 +409,12 @@ const submit = async () => {
                 if (status.value == "ON_REVIEW") {
                     await Api.post('/v1/event/review/' + newData.id);
                 }
-                // 2 set as publish
-
+                // 2 set as approve
+                if (status.value == "APPROVED" && canApprove.value) {
+                    await Api.post('/v1/event/approve/' + newData.id);
+                }
+                // 3 set as publish
                 if (status.value == "PUBLISHED" && canPublish.value) {
-                    // TODO add published at
                     await Api.post('/v1/event/publish/' + newData.id, { publishedAt: publishedAt.value });
                 }
 

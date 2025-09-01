@@ -87,7 +87,7 @@
                                 </Button>
 
                                 <Button
-                                    v-if="canPublish && (['ON_REVIEW', 'REJECTED', 'TAKE_DOWN'].includes(dt.status) || (dt.status == 'PUBLISHED' && dt.publishedAt == null))"
+                                    v-if="canPublish && (['ON_REVIEW', 'APPROVED', 'REJECTED', 'TAKE_DOWN'].includes(dt.status) || (dt.status == 'PUBLISHED' && dt.publishedAt == null))"
                                     class="btn-sm btn-success"
                                     @click="selectedEventId = dt.id; showConfirmPublish = true">
                                     {{

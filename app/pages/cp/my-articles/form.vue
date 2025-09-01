@@ -11,7 +11,11 @@
                 <Button class="max-sm:btn-sm mr-4" @click="show_preview = true">Preview</Button>
                 <Button class="max-sm:btn-sm" @click="confirm_cancel = true">Cancel</Button>
                 <ClientOnly>
-                    <Button class="max-sm:btn-sm btn-green" v-if="canPublish" @click="status = 'PUBLISHED'; validate()">
+                    <Button class="max-sm:btn-sm btn-green" v-if="canApprove" @click="status = 'APPROVED'; validate()">
+                        Simpan & Approve
+                    </Button>
+                    <Button class="max-sm:btn-sm btn-green" v-else-if="canPublish"
+                        @click="status = 'PUBLISHED'; validate()">
                         Simpan & Publish
                     </Button>
                     <Button class="max-sm:btn-sm btn-green" v-else @click="status = 'ON_REVIEW'; validate()">
@@ -114,7 +118,11 @@
             <Button class="max-sm:btn-sm mr-4" @click="show_preview = true">Preview</Button>
             <Button class="max-sm:btn-sm" @click="confirm_cancel = true">Cancel</Button>
             <ClientOnly>
-                <Button class="max-sm:btn-sm btn-green" v-if="canPublish" @click="status = 'PUBLISHED'; validate()">
+                <Button class="max-sm:btn-sm btn-green" v-if="canApprove" @click="status = 'APPROVED'; validate()">
+                    Simpan & Approve
+                </Button>
+                <Button class="max-sm:btn-sm btn-green" v-else-if="canPublish"
+                    @click="status = 'PUBLISHED'; validate()">
                     Simpan & Publish
                 </Button>
                 <Button class="max-sm:btn-sm btn-green" v-else @click="status = 'ON_REVIEW'; validate()">
@@ -157,7 +165,11 @@
 
     <LazyModal v-if="showConfirmDraftOrReview" :show="showConfirmDraftOrReview"
         @close="showConfirmDraftOrReview = false">
-        {{ status == "ON_REVIEW" ? 'Yakin simpan & ajukan approval?' : 'Yakin simpan sebagai draft?' }}
+        {{
+            status == "ON_REVIEW"
+                ? 'Yakin simpan & ajukan approval?'
+                : `Yakin simpan sebagai ${status.toLowerCase().replace('_', ' ')}?`
+        }}
         <div class="modal-action">
             <Button @click="showConfirmDraftOrReview = false" :disabled="isSubmitting">No</Button>
 
@@ -187,7 +199,8 @@ definePageMeta({
 });
 
 const AuthStore = useAuthStore();
-const canPublish = computed(() => AuthStore.can(Module.ARTICLE, Permission.APPROVE));
+const canApprove = computed(() => AuthStore.can(Module.ARTICLE, Permission.APPROVE));
+const canPublish = computed(() => AuthStore.can(Module.ARTICLE, Permission.PUBLISH));
 
 const { public: { webUri } } = useRuntimeConfig();
 
@@ -351,6 +364,10 @@ const submit = async () => {
                 await Api.post('/v1/article/review/' + id);
             }
             // 3 set as publish
+            if (status.value == "APPROVED" && canApprove.value) {
+                await Api.post('/v1/article/approve/' + id);
+            }
+            // 4 set as publish
             if (status.value == "PUBLISHED" && canPublish.value) {
                 await Api.post('/v1/article/publish/' + id, { publishedAt: publishedAt.value });
             }
@@ -365,10 +382,13 @@ const submit = async () => {
                 if (status.value == "ON_REVIEW") {
                     await Api.post('/v1/article/review/' + newData.id);
                 }
-                // 2 set as publish
-
-                if (status.value == "PUBLISHED" && canPublish.value) {
+                // 2 set as approve
+                if (status.value == "APPROVED" && canApprove.value) {
                     // TODO add published at
+                    await Api.post('/v1/article/approve/' + newData.id);
+                }
+                // 3 set as publish
+                if (status.value == "PUBLISHED" && canPublish.value) {
                     await Api.post('/v1/article/publish/' + newData.id, { publishedAt: publishedAt.value });
                 }
 
