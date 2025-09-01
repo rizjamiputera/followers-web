@@ -24,13 +24,13 @@ jobs:
                     cd /opt/followers/followers-web && \
                     git config --global --add safe.directory /opt/followers/followers-web && \
 
-                    git fetch origin && \
+                    git fetch origin --tags && \
                     git checkout main && \
 
                     git reset --hard origin/main && \
 
-                    GITHUB_SHA=\$(git rev-parse HEAD) && \
-                    IMAGE_TAG=web-followers-main:\$(echo \$GITHUB_SHA | cut -c1-7) && \
+                    VERSION=\$(node -p \"require('./package.json').version\") && \
+                    IMAGE_TAG=web-followers-main:\$VERSION && \
 
                     echo Building image = \$IMAGE_TAG && \
 
