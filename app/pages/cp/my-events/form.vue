@@ -22,6 +22,7 @@
                     </Button>
                 </ClientOnly>
                 <Button class="max-sm:btn-sm btn-black" @click="status = 'DRAFT'; validate()">Simpan Draft</Button>
+                <Button class="max-sm:btn-sm btn-black" @click="status = null; validate()">Simpan</Button>
             </div>
         </div>
 
@@ -40,7 +41,7 @@
             <div class="flex gap-2">
                 <div class="join w-full">
                     <button class="max-sm:hidden btn join-item rounded-l-full btn-active font-light">{{ webUri
-                        }}/event/</button>
+                    }}/event/</button>
                     <Input class="sm:join-item rounded-full sm:rounded-l-none flex-1" v-model="dataDto.slug"
                         @keyup="checkSlugChange" />
                 </div>
@@ -149,6 +150,7 @@
                 </Button>
             </ClientOnly>
             <Button class="max-sm:btn-sm btn-black" @click="status = 'DRAFT'; validate()">Simpan Draft</Button>
+            <Button class="max-sm:btn-sm btn-black" @click="status = null; validate()">Simpan</Button>
         </div>
     </div>
 
@@ -187,7 +189,7 @@
         {{
             status == "ON_REVIEW"
                 ? 'Yakin simpan & ajukan approval?'
-                : `Yakin simpan sebagai ${status.toLowerCase().replace('_', ' ')}?`
+                : status != null ? `Yakin simpan sebagai ${status.toLowerCase().replace('_', ' ')}?` : 'Yakin?'
         }}
         <div class="modal-action">
             <Button @click="showConfirmDraftOrReview = false" :disabled="isSubmitting">No</Button>
@@ -342,7 +344,7 @@ const isSubmitting = ref<boolean>(false);
 
 const validatedData = ref<Record<string, any>>({});
 
-const status = ref<ContentStatus>('DRAFT');
+const status = ref<ContentStatus | null>(null);
 const publishedAt = ref<string | null>(new Date().toISOString())
 
 const validate = () => {

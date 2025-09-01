@@ -106,6 +106,11 @@
                         <td class="text-center">
                             <div class="flex gap-1 justify-center">
                                 <Button class="btn-sm" @click="get_preview(dt.id)">Preview</Button>
+                                <ButtonLink v-if="canEdit" :to="`/cp/my-articles/form?id=${dt.id}`"
+                                    class="btn-sm btn-neutral">
+                                    Edit
+                                </ButtonLink>
+
                                 <ButtonLink v-if="dt.status == 'PUBLISHED'" :to="`/read/${dt.slug}`" target="_blank"
                                     class="btn-sm btn-outline-green">
                                     <LucideLink :size="12" />
@@ -182,6 +187,7 @@ const props = defineProps<{
 }>()
 
 const AuthStore = useAuthStore();
+const canEdit = computed(() => AuthStore.can(Module.ARTICLE, Permission.EDIT));
 const canApprove = computed(() => AuthStore.can(Module.ARTICLE, Permission.APPROVE));
 const canPublish = computed(() => AuthStore.can(Module.ARTICLE, Permission.PUBLISH));
 

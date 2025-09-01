@@ -23,6 +23,7 @@
                     </Button>
                 </ClientOnly>
                 <Button class="max-sm:btn-sm btn-black" @click="status = 'DRAFT'; validate()">Simpan Draft</Button>
+                <Button class="max-sm:btn-sm btn-black" @click="status = null; validate()">Simpan</Button>
             </div>
         </div>
 
@@ -130,6 +131,7 @@
                 </Button>
             </ClientOnly>
             <Button class="max-sm:btn-sm btn-black" @click="status = 'DRAFT'; validate()">Simpan Draft</Button>
+            <Button class="max-sm:btn-sm btn-black" @click="status = null; validate()">Simpan</Button>
         </div>
     </div>
 
@@ -168,7 +170,7 @@
         {{
             status == "ON_REVIEW"
                 ? 'Yakin simpan & ajukan approval?'
-                : `Yakin simpan sebagai ${status.toLowerCase().replace('_', ' ')}?`
+                : status != null ? `Yakin simpan sebagai ${status.toLowerCase().replace('_', ' ')}?` : 'Yakin?'
         }}
         <div class="modal-action">
             <Button @click="showConfirmDraftOrReview = false" :disabled="isSubmitting">No</Button>
@@ -312,7 +314,7 @@ const isSubmitting = ref<boolean>(false);
 
 const validatedData = ref<Record<string, any>>({});
 
-const status = ref<ContentStatus>('DRAFT');
+const status = ref<ContentStatus | null>(null);
 const publishedAt = ref<string | null>(new Date().toISOString())
 
 const validate = () => {
