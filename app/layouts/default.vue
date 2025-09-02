@@ -1,13 +1,13 @@
 <template>
-    <main data-theme="light" class="bg-white-main">
+    <main data-theme="light" class="bg-main">
         <!-- header -->
         <Header :menuProduct @open="show_menu = true" />
 
         <!-- side menu -->
         <DefaultSideMenu :show="show_menu" :menuProduct @close="show_menu = false" />
 
-        <div class="drawer">
-            <div class="drawer-content min-h-screen w-screen max-w-screen overflow-hidden pt-16">
+        <div class="drawer bg-left-right-pattern">
+            <div class="drawer-content min-h-screen w-screen max-w-screen overflow-hidden pt-16 relative">
                 <div class="mt-10">
                     <slot />
                 </div>

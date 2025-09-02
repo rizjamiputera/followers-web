@@ -19,7 +19,8 @@ const props = defineProps<{
 <style scoped>
 @reference "@/assets/css/main.css";
 
+/* @apply rounded-full gap-2 overflow-hidden shadow-none text-nowrap font-medium; */
 .button-link {
-    @apply rounded-full gap-2 overflow-hidden shadow-none text-nowrap font-medium;
+    @apply gap-2 overflow-hidden text-nowrap;
 }
 </style>

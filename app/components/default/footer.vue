@@ -2,7 +2,8 @@
     <div data-theme="light" class="footer-wrapper">
         <footer>
             <div class="footer-brand">
-                <img src="/logo-hitam.webp" alt="Followers Logo" class="h-15">
+                <!-- <img src="/logo-hitam.webp" alt="Followers Logo" class="h-15"> -->
+                <img src="/logo.svg" alt="Followers Logo" class="h-15">
                 <p>كُلُّ نَفْسٍ ذَاۤىِٕقَةُ الْمَوْتِۗ</p>
 
                 <div class="footer-contact">

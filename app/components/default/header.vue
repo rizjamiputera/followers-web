@@ -7,7 +7,8 @@
             <div class="flex justify-between px-2 md:px-12">
                 <div class="navbar-start">
                     <NuxtLink to="/" prefetch-on="interaction">
-                        <img src="/logo-hitam.webp" alt="Followers Logo" class="h-10">
+                        <!-- <img src="/logo-hitam.webp" alt="Followers Logo" class="h-10"> -->
+                        <img src="/logo.svg" alt="Followers Logo" class="h-10">
                     </NuxtLink>
                 </div>
                 <div class="navbar-center hidden lg:flex">
@@ -41,8 +42,9 @@
                 <div class="navbar-end gap-5">
                     <ClientOnly>
                         <LazyButtonLink v-if="!user" to="/auth/login" prefetch-on="interaction"
-                            class="btn-white font-medium h-9">
-                            Login
+                            class="btn-sm btn-success font-medium h-9">
+                            <div>Daftar | Login</div>
+                            <SvgUser class="w-3" />
                         </LazyButtonLink>
                         <div v-else class="dropdown dropdown-bottom dropdown-left">
                             <div tabindex="0" role="button" class="btn btn-active btn-circle bg-indigo-300 border-0">
