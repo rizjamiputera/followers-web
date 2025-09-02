@@ -1,5 +1,5 @@
 <template>
-    <header class="fixed z-50 navbar bg-white/80 backdrop-blur-sm shadow-sm w-screen">
+    <header class="fixed z-50 navbar bg-[rgba(244, 242, 238, 1)]/20 backdrop-blur-sm shadow-sm w-screen">
         <div class="w-full max-w-6xl mx-auto relative">
             <DefaultProductMenu :show="show_product_menu" :menuProduct @close="show_product_menu = false" />
 
@@ -13,7 +13,8 @@
                 </div>
                 <div class="navbar-center hidden lg:flex">
                     <!-- MENU -->
-                    <ul class="menu menu-horizontal px-1">
+                    <ul ref="menuRef" class="menu menu-horizontal px-1">
+                        <div class="sliding-bg"></div>
                         <!-- MENU ITEM -->
                         <li>
                             <NuxtLink to="/" prefetch-on="interaction"
@@ -42,7 +43,7 @@
                 <div class="navbar-end gap-5">
                     <ClientOnly>
                         <LazyButtonLink v-if="!user" to="/auth/login" prefetch-on="interaction"
-                            class="btn-sm btn-success font-medium h-9">
+                            class="btn-sm btn-success bg-success/10 font-medium h-9">
                             <div>Daftar | Login</div>
                             <SvgUser class="w-3" />
                         </LazyButtonLink>
@@ -104,7 +105,43 @@ const { user } = storeToRefs(AuthStore);
 const { handleLogout } = AuthStore;
 
 const show_product_menu = ref<boolean>(false);
+const menuRef = ref<HTMLElement>();
 
+const updateSlidingBackground = () => {
+    if (!menuRef.value) return;
+
+    const activeLink = menuRef.value.querySelector('.router-link-active');
+    const slidingBg = menuRef.value.querySelector('.sliding-bg') as HTMLElement;
+
+    if (!slidingBg) return;
+
+    if (activeLink) {
+        const parentLi = activeLink.closest('li') as HTMLElement;
+        if (parentLi) {
+            const rect = parentLi.getBoundingClientRect();
+            const menuRect = menuRef.value.getBoundingClientRect();
+
+            slidingBg.style.left = `${parentLi.offsetLeft}px`;
+            slidingBg.style.width = `${parentLi.offsetWidth}px`;
+            slidingBg.classList.add('active');
+        }
+    } else {
+        slidingBg.classList.remove('active');
+    }
+};
+
+onMounted(() => {
+    nextTick(() => {
+        updateSlidingBackground();
+    });
+});
+
+// Watch for route changes
+watch(() => useRoute().path, () => {
+    nextTick(() => {
+        updateSlidingBackground();
+    });
+});
 
 // const checkScreenSize = () => {
 //     if (typeof window !== 'undefined') {

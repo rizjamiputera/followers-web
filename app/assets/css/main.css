@@ -25,8 +25,8 @@
     --color-error-content: oklch(27% 0.105 12.094); */
     --color-neutral: #1C1C1C;
     --color-neutral-content: #FCFCFC;
-    /* --color-success: #437F41; */
-    --color-success: rgba(67, 127, 65, 0.1);
+    --color-success: #437F41;
+    /* --color-success: rgba(67, 127, 65, 0.1); */
     /* --color-success-content: #1C1C1C; */
     --color-success-content: rgba(67, 127, 65, 1);
     --radius-selector: 2rem;
@@ -92,10 +92,29 @@ hr {
 }
 
 /* SIDE MENU */
-.navbar .menu .router-link-active,
-.product-menu .router-link-active,
-.side-menu .router-link-active {
-    @apply text-green-main
+.navbar .menu {
+    position: relative;
+}
+
+.navbar .menu .sliding-bg {
+    position: absolute;
+    top: -100vh;
+    bottom: -14px;
+    width: 0;
+    height: calc(100vh + 50px);
+    background-color: var(--color-success);
+    border-radius: 0 0 100px 100px;
+    z-index: -1;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+}
+
+.navbar .menu .sliding-bg.active {
+    opacity: 1;
+}
+
+.navbar .menu .router-link-active {
+    @apply text-[#F4F2EE] relative;
 }
 
 .navbar .menu .router-link-active.group,
