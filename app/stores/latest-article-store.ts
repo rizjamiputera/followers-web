@@ -16,7 +16,7 @@ export const useLatestArticleStore = defineStore('latest-article', {
     state: (): LatestArticleStoreState => ({
         data: undefined,
         parameters: {
-            limit: 9,
+            limit: 6,
             page: 1,
             includes: ['author']
         },

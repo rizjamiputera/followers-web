@@ -37,7 +37,7 @@
                 </template>
             </div>
             <div class="flex justify-center">
-                <Button class="btn btn-green" v-if="latest_articles.length < total" @click="++parameters.page; get()">
+                <Button class="btn btn-green" v-if="latest_articles.length < total" @click="++parameters.page">
                     Lihat lebih banyak
                 </Button>
             </div>
