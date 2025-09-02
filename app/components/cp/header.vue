@@ -26,8 +26,8 @@
                                 <div class="text-green-main text-sm font-medium truncate max-sm:max-w-30">
                                     {{ user.name }}
                                 </div>
-                                <div role="button" class="btn btn-sm btn-active btn-circle bg-indigo-300 border-0">
-                                    <Avatar :avatar="user.avatar_md" :name="user.name" class="w-8 h-8" />
+                                <div role="button" class="btn btn-lg btn-active btn-circle bg-indigo-300 border-0">
+                                    <Avatar :avatar="user.avatar_md" :name="user.name" />
                                 </div>
                             </div>
                             <div tabindex="0"

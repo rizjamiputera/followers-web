@@ -8,8 +8,9 @@
             <div class="flex gap-5 items-center">
                 <ClientOnly>
                     <LazyButtonLink v-if="!user" to="/auth/login" prefetch-on="interaction" @click="$emit('close')"
-                        class="font-medium h-9">
-                        Login
+                        class="btn-sm btn-success bg-success/10 font-medium h-9">
+                        <div>Daftar | Login</div>
+                        <SvgUser class="w-3" />
                     </LazyButtonLink>
                 </ClientOnly>
                 <button @click="$emit('close')"

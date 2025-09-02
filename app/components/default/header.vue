@@ -13,7 +13,7 @@
                 </div>
                 <div class="navbar-center hidden lg:flex">
                     <!-- MENU -->
-                    <ul ref="menuRef" class="menu menu-horizontal px-1">
+                    <ul ref="menuRef" class="menu menu-horizontal px-1 relative">
                         <div class="sliding-bg"></div>
                         <!-- MENU ITEM -->
                         <li>
@@ -43,13 +43,14 @@
                 <div class="navbar-end gap-5">
                     <ClientOnly>
                         <LazyButtonLink v-if="!user" to="/auth/login" prefetch-on="interaction"
-                            class="btn-sm btn-success bg-success/10 font-medium h-9">
+                            class="btn-sm btn-success text-success bg-success/10 font-medium h-9">
                             <div>Daftar | Login</div>
                             <SvgUser class="w-3" />
                         </LazyButtonLink>
                         <div v-else class="dropdown dropdown-bottom dropdown-left">
-                            <div tabindex="0" role="button" class="btn btn-active btn-circle bg-indigo-300 border-0">
-                                <Avatar :avatar="user.avatar_md" :name="user.name" class="w-10 h-10" />
+                            <div tabindex="0" role="button"
+                                class="btn btn-lg btn-active btn-circle bg-indigo-300 border-0">
+                                <Avatar :avatar="user.avatar_md" :name="user.name" />
                             </div>
                             <div tabindex="0"
                                 class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">

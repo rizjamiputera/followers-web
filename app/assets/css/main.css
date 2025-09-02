@@ -27,14 +27,14 @@
     --color-neutral-content: #FCFCFC;
     --color-success: #437F41;
     /* --color-success: rgba(67, 127, 65, 0.1); */
-    /* --color-success-content: #1C1C1C; */
-    --color-success-content: rgba(67, 127, 65, 1);
+    --color-success-content: #fff;
+    /* --color-success-content: rgba(67, 127, 65, 1); */
     --radius-selector: 2rem;
     --radius-field: 0.5rem;
     --radius-box: 0.5rem;
     --size-selector: 0.25rem;
     --size-field: 0.2rem;
-    --border: 0px;
+    --border: 1px;
     --depth: 0;
     --noise: 0;
 }
@@ -89,11 +89,6 @@ body {
 
 hr {
     @apply border-t border-border-main/30;
-}
-
-/* SIDE MENU */
-.navbar .menu {
-    position: relative;
 }
 
 .navbar .menu .sliding-bg {
