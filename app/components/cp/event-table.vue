@@ -31,13 +31,14 @@
                         <th class="text-center">Author</th>
                         <th class="text-center">Created At</th>
                         <th class="text-center">Status</th>
+                        <th class="text-center">Registrations</th>
                         <th class="text-center">Publish</th>
                         <th class="text-center">Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-if="isEmpty">
-                        <td colspan="5" class="text-center text-green-main font-light">
+                        <td colspan="7" class="text-center text-green-main font-light">
                             Empty
                         </td>
                     </tr>
@@ -74,6 +75,17 @@
                             <StatusBade :status="dt.status" />
                         </td>
                         <td class="text-center">
+                            <div v-if="dt.registrationConfig?.isEnabled" class="text-sm">
+                                <div class="badge badge-sm badge-success">
+                                    {{ dt.registeredCount || 0 }}
+                                </div>
+                                <div v-if="dt.registrationConfig.participantLimit" class="text-xs text-gray-500">
+                                    / {{ dt.registrationConfig.participantLimit }}
+                                </div>
+                            </div>
+                            <span v-else class="text-xs text-gray-400">Disabled</span>
+                        </td>
+                        <td class="text-center">
                             <div class="flex gap-1 justify-center">
 
                                 <Button v-if="canApprove && dt.status == 'ON_REVIEW'" class="btn-sm btn-warning"
@@ -108,6 +120,15 @@
                                 <ButtonLink v-if="canEdit" :to="`/cp/my-events/form?id=${dt.id}`"
                                     class="btn-sm btn-neutral">
                                     Edit
+                                </ButtonLink>
+
+                                <ButtonLink 
+                                    v-if="dt.registrationConfig?.isEnabled"
+                                    :to="`/cp/my-events/${dt.id}/registrations`"
+                                    class="btn-sm btn-info btn-outline"
+                                    title="Manage Registrations"
+                                >
+                                    <LucideUsers :size="12" />
                                 </ButtonLink>
 
                                 <ButtonLink v-if="dt.status == 'PUBLISHED'" :to="`/event/${dt.slug}`" target="_blank"
@@ -173,7 +194,7 @@
 
 <script lang="ts" setup>
 import dayjs from 'dayjs';
-import { LucideBookmark, LucideEye, LucideLink, LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
+import { LucideBookmark, LucideEye, LucideLink, LucideShare2, LucideThumbsDown, LucideThumbsUp, LucideUsers } from 'lucide-vue-next';
 import { contentStatuses, type ContentStatus } from '~/interfaces/content-interface';
 import type { Event } from '~/interfaces/event-interface';
 import { Module, Permission } from '~/interfaces/user-interface';
