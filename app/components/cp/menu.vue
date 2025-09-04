@@ -13,6 +13,18 @@
                 <template v-for="n in 1" :key="n">
                     <hr class="my-4">
                     <ul class="">
+                        <div class="font-bold text-gray-400 px-2">Home Page</div>
+                        <li>
+                            <NuxtLink to="/cp" prefetch-on="interaction">Dashboard</NuxtLink>
+                        </li>
+                        <li>
+                            <NuxtLink to="/cp/articles/featured" prefetch-on="interaction">Featured Article</NuxtLink>
+                        </li>
+                        <li>
+                            <NuxtLink to="/cp/events/featured" prefetch-on="interaction">Featured Events</NuxtLink>
+                        </li>
+
+                        <hr class="my-4">
                         <div class="font-bold text-gray-400 px-2">Managemen Kontent</div>
                         <ClientOnly>
 
@@ -78,13 +90,18 @@
                 <ClientOnly>
                     <template v-if="can(Module.ARTICLE, Permission.CREATE) || can(Module.EVENT, Permission.CREATE)">
                         <hr class="my-4">
-                        <div class="font-bold text-gray-400 px-2">Data Saya</div>
+                        <div class="font-bold text-gray-400 px-2">Content Saya</div>
                         <ul class="">
+                            <li>
+                                <NuxtLink to="/cp/creator-dashboard" prefetch-on="interaction">
+                                    Statistics
+                                </NuxtLink>
+                            </li>
                             <li v-if="can(Module.ARTICLE, Permission.CREATE)">
-                                <NuxtLink to="/cp/my-articles" prefetch-on="interaction">My Articles</NuxtLink>
+                                <NuxtLink to="/cp/my-articles" prefetch-on="interaction">Articles</NuxtLink>
                             </li>
                             <li v-if="can(Module.EVENT, Permission.CREATE)">
-                                <NuxtLink to="/cp/my-events" prefetch-on="interaction">My Events</NuxtLink>
+                                <NuxtLink to="/cp/my-events" prefetch-on="interaction">Events</NuxtLink>
                             </li>
                         </ul>
                     </template>

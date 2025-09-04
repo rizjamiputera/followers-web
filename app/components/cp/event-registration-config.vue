@@ -16,6 +16,18 @@
         </div>
 
         <div v-if="configData.isEnabled" class="space-y-6">
+            <!-- Registration Label -->
+            <div class="form-control flex flex-col">
+                <label class="label">
+                    <span class="label-text font-medium">Registration Label</span>
+                </label>
+                <input type="text" v-model="configData.label" placeholder="e.g. Registrasi, Daftar Hadir, Registration"
+                    class="input input-bordered" />
+                <div class="label">
+                    <span class="label-text-alt text-sm">This will be shown as the registration form title</span>
+                </div>
+            </div>
+
             <!-- Registration Settings -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Participant Limit -->
@@ -287,6 +299,7 @@ const emit = defineEmits<{
 // Reactive data
 const configData = ref<{
     isEnabled: boolean
+    label: string
     participantLimit?: number | null
     registrationStart?: string
     registrationEnd?: string
@@ -295,6 +308,7 @@ const configData = ref<{
     confirmationMessage?: string
 }>({
     isEnabled: false,
+    label: 'Registrasi',
     participantLimit: null,
     registrationStart: undefined,
     registrationEnd: undefined,
@@ -366,6 +380,7 @@ watchEffect(() => {
 
         configData.value = {
             isEnabled: props.initialConfig.isEnabled,
+            label: props.initialConfig.label || 'Registrasi',
             participantLimit: props.initialConfig.participantLimit,
             registrationStart: props.initialConfig.registrationStart ?
                 new Date(props.initialConfig.registrationStart).toISOString().slice(0, 16) : undefined,

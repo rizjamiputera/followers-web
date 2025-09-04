@@ -7,9 +7,15 @@
                 segera hadir, insyaAllah.
             </div>
         </section>
-        <!-- <div class="h-screen bg-green-main">
-            <div class="text-6xl font-extrabold text-white text-center">TEST TEST TEST</div>
-        </div> -->
+
+        <!-- Featured Content Section -->
+        <section v-if="!isEmpty || first_event || from_second_events.length" class="py-8">
+            <!-- Featured Content -->
+            <div v-if="combinedFeaturedContent && combinedFeaturedContent.length > 0" class="mb-12">
+                <FeaturedCarousel :items="combinedFeaturedContent" title="Featured Content" :items-per-view="3" />
+            </div>
+        </section>
+
         <PagesIndexEvents />
         <PagesIndexLatest />
     </div>
@@ -38,4 +44,37 @@ useSeoMeta({
 
 const { isEmpty } = storeToRefs(useLatestArticleStore());
 const { from_second_events, first_event } = storeToRefs(useUpcomingEventStore());
+
+// Featured content data
+const featuredArticles = ref<any[]>([])
+const featuredEvents = ref<any[]>([])
+
+// Combined featured content
+const combinedFeaturedContent = computed(() => {
+    const combined = [...featuredArticles.value, ...featuredEvents.value]
+    // Sort by publishedAt for articles and start_at for events
+    return combined.sort((a, b) => {
+        const dateA = new Date(a.publishedAt || a.start_at)
+        const dateB = new Date(b.publishedAt || b.start_at)
+        return dateB.getTime() - dateA.getTime() // Latest first
+    })
+})
+
+// Fetch featured content
+const fetchFeaturedContent = async () => {
+    try {
+        // Use single endpoint for all homepage data
+        const homepageData = await Api.get('/v1/home-page/data')
+
+        featuredArticles.value = Array.isArray(homepageData?.featuredArticles) ? homepageData.featuredArticles : []
+        featuredEvents.value = Array.isArray(homepageData?.featuredEvents) ? homepageData.featuredEvents : []
+    } catch (error) {
+        console.error('Error fetching featured content:', error)
+    }
+}
+
+// Fetch on mount
+onMounted(() => {
+    fetchFeaturedContent()
+})
 </script>
