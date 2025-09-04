@@ -4,13 +4,15 @@
         <!-- <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6"> -->
         <div class="flex items-center gap-2 mb-6">
             <LucideClipboardList class="h-5 w-5 text-green-600" />
-            <h3 v-if="formFields.length" class="text-lg font-semibold text-gray-900">Event Registration Form</h3>
-            <h3 v-else class="text-lg font-semibold text-gray-900">Registrasi</h3>
+            <h3 v-if="formFields.length" class="text-lg font-semibold text-gray-900">
+                Form: {{ registrationConfig.label }}
+            </h3>
+            <h3 v-else class="text-lg font-semibold text-gray-900">Registrasi {{ registrationConfig.label }}</h3>
         </div>
 
         <form v-show="!confirmationMessage" @submit.prevent="handleSubmit" class="space-y-6">
             <p class="text-gray-600 mb-4">
-                Apakah anda yakin untuk melakukan registrasi?
+                Silahkan isi form.
             </p>
             <!-- Dynamic Form Fields -->
             <div v-for="field in formFields" :key="field.key" class="space-y-2">
@@ -118,9 +120,10 @@
 import {
     LucideClipboardList, LucideUserPlus, LucideLoader2, LucideInfo
 } from 'lucide-vue-next'
-import type { FormField, FormFieldType } from '~/interfaces/event-registration-interface'
+import type { EventRegistrationConfig, FormField, FormFieldType } from '~/interfaces/event-registration-interface'
 
 interface Props {
+    registrationConfig: EventRegistrationConfig
     formFields: FormField[]
     initialData?: Record<string, any>
     isUpdating?: boolean

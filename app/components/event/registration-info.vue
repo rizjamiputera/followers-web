@@ -3,7 +3,7 @@
         <div class="card-body">
             <div class="card-title flex items-center gap-2 mb-4">
                 <LucideUsers class="h-5 w-5 text-green-600" />
-                <h3 class="text-lg font-semibold text-gray-900">Registrasi</h3>
+                <h3 class="text-lg font-semibold text-gray-900">{{ registrationConfig.label ?? 'Registrasi' }}</h3>
             </div>
 
             <!-- Registration Status -->
@@ -118,7 +118,7 @@
                 <button v-if="!userRegistration && canRegister" @click="$emit('register')"
                     class="flex-1 btn btn-primary text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-colors">
                     <LucideUserPlus class="h-4 w-4 mr-2" />
-                    Register for Event
+                    Register / Daftar
                 </button>
 
                 <!-- Update Registration Button -->
@@ -127,7 +127,7 @@
                     @click="$emit('update')"
                     class="flex-1 btn btn-outline border-green-600 text-green-600 hover:bg-green-50 font-medium py-3 rounded-lg transition-colors">
                     <LucideEdit class="h-4 w-4 mr-2" />
-                    Update Registration
+                    Update Registrasi
                 </button>
 
                 <!-- Cancel Registration Button -->

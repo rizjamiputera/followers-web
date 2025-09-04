@@ -31,6 +31,7 @@ export interface EventRegistrationConfig {
     id: string
     eventId: string
     isEnabled: boolean
+    label: string
     participantLimit?: number | null
     registrationStart?: string | null
     registrationEnd?: string | null
@@ -75,6 +76,7 @@ export interface RegistrationFormData {
 
 export interface CreateRegistrationConfigData {
     isEnabled: boolean
+    label?: string
     participantLimit?: number | null
     registrationStart?: string
     registrationEnd?: string
