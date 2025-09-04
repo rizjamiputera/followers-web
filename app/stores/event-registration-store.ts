@@ -186,7 +186,7 @@ export const useEventRegistrationStore = defineStore('event-registration', {
                     cancelData.cancellationNote = reason
                 }
 
-                await Api.remove(`/v1/event/registration/${registrationId}`, { data: cancelData })
+                await Api.remove(`/v1/event/registration/${registrationId}`, cancelData)
 
                 if (this.userRegistration) {
                     this.userRegistration.status = 'CANCELLED' as RegistrationStatus

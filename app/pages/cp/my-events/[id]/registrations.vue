@@ -15,17 +15,9 @@
         </div>
 
         <!-- Registration Management -->
-        <CpEventRegistrations
-            :registrations="registrations"
-            :pagination="pagination"
-            :isLoading="isLoading"
-            :isUpdating="isUpdating"
-            @refresh="loadRegistrations"
-            @filter="handleFilter"
-            @confirm="confirmRegistration"
-            @cancel="cancelRegistration"
-            @export="exportRegistrations"
-        />
+        <CpEventRegistrations :registrations="registrations" :pagination="pagination" :isLoading="isLoading"
+            :isUpdating="isUpdating" :isExporting="isExporting" @refresh="loadRegistrations" @filter="handleFilter"
+            @confirm="confirmRegistration" @cancel="cancelRegistration" @export="exportRegistrations" />
     </div>
 </template>
 
@@ -67,12 +59,12 @@ const loadEventDetails = async () => {
 // Load registrations
 const loadRegistrations = async (filters?: any) => {
     if (!eventId) return
-    
+
     isLoading.value = true
-    
+
     try {
         const queryParams = new URLSearchParams()
-        
+
         if (filters?.status) {
             queryParams.append('status', filters.status)
         }
@@ -82,10 +74,10 @@ const loadRegistrations = async (filters?: any) => {
         if (filters?.page) {
             queryParams.append('page', filters.page.toString())
         }
-        
+
         const queryString = queryParams.toString()
         const url = `/v1/event/${eventId}/registrations${queryString ? `?${queryString}` : ''}`
-        
+
         const response = await Api.get(url) as any
         registrations.value = response.data || []
         pagination.value = {
@@ -93,11 +85,11 @@ const loadRegistrations = async (filters?: any) => {
             last_page: response.last_page || 1,
             total: response.total || 0
         }
-        
+
         currentFilters.value = filters || {}
     } catch (error: any) {
         console.error('Failed to load registrations:', error)
-        
+
         // Show error message
         if (error.status === 403) {
             await navigateTo('/cp/my-events')
@@ -115,13 +107,13 @@ const handleFilter = (filters: any) => {
 // Confirm registration
 const confirmRegistration = async (registrationId: string) => {
     isUpdating.value = true
-    
+
     try {
         await Api.post(`/v1/event/registration/${registrationId}/confirm`)
-        
+
         // Reload registrations
         await loadRegistrations(currentFilters.value)
-        
+
         // Show success message
         // You can add a toast notification here
     } catch (error: any) {
@@ -134,14 +126,20 @@ const confirmRegistration = async (registrationId: string) => {
 
 // Cancel registration
 const cancelRegistration = async (registrationId: string) => {
+    // Ask for cancellation reason
+    const cancellationNote = prompt('Please provide a reason for cancellation (optional):')
+
     isUpdating.value = true
-    
+
     try {
-        await Api.remove(`/v1/event/registration/${registrationId}`)
-        
+        // Send cancellation note in the request body
+        await Api.remove(`/v1/event/registration/${registrationId}`, {
+            cancellationNote: cancellationNote || undefined
+        })
+
         // Reload registrations
         await loadRegistrations(currentFilters.value)
-        
+
         // Show success message
         // You can add a toast notification here
     } catch (error: any) {
@@ -153,75 +151,73 @@ const cancelRegistration = async (registrationId: string) => {
 }
 
 // Export registrations
-const exportRegistrations = async () => {
+const isExporting = ref(false)
+
+const exportRegistrations = async (exportType: 'all' | 'confirmed') => {
+    if (!eventId) return
+
+    isExporting.value = true
+
     try {
-        // Create CSV content
-        if (!registrations.value.length) {
-            alert('No registrations to export')
-            return
+        // Build query parameters for current filters
+        const queryParams = new URLSearchParams()
+
+        // Add export type filter
+        if (exportType === 'confirmed') {
+            queryParams.append('status', 'CONFIRMED')
+        } else {
+            // For 'all' type, use existing filters if any
+            if (currentFilters.value.status) {
+                queryParams.append('status', currentFilters.value.status)
+            }
         }
         
-        // Get all unique form fields from registrations
-        const allFormFields = new Set<string>()
-        registrations.value.forEach(reg => {
-            if (reg.formData) {
-                Object.keys(reg.formData).forEach(key => allFormFields.add(key))
-            }
+        if (currentFilters.value.search) {
+            queryParams.append('search', currentFilters.value.search)
+        }
+
+        const queryString = queryParams.toString()
+        const url = `/v1/event/${eventId}/registrations/export${queryString ? `?${queryString}` : ''}`
+
+        // Make request to export endpoint
+        const response = await Api.getBlob(url)
+
+        // Create download link
+        const blob = new Blob([response], {
+            type: 'application/pdf'
         })
-        
-        const formFieldsArray = Array.from(allFormFields)
-        
-        // Create CSV headers
-        const headers = [
-            'Name',
-            'Email',
-            'Status',
-            'Registered Date',
-            'Confirmed Date',
-            'Cancelled Date',
-            'Cancellation Note',
-            ...formFieldsArray.map(field => field.replace(/_/g, ' ').toUpperCase())
-        ]
-        
-        // Create CSV rows
-        const rows = registrations.value.map(reg => {
-            const formData = formFieldsArray.map(field => {
-                const value = reg.formData?.[field]
-                if (Array.isArray(value)) {
-                    return `"${value.join(', ')}"`
-                }
-                return value ? `"${String(value).replace(/"/g, '""')}"` : ''
-            })
-            
-            return [
-                `"${reg.user?.name || ''}"`,
-                `"${reg.user?.email || ''}"`,
-                reg.status,
-                new Date(reg.registeredAt).toLocaleDateString(),
-                reg.confirmedAt ? new Date(reg.confirmedAt).toLocaleDateString() : '',
-                reg.cancelledAt ? new Date(reg.cancelledAt).toLocaleDateString() : '',
-                reg.cancellationNote ? `"${reg.cancellationNote.replace(/"/g, '""')}"` : '',
-                ...formData
-            ]
-        })
-        
-        // Create CSV content
-        const csvContent = [headers.join(','), ...rows.map(row => row.join(','))].join('\n')
-        
-        // Download CSV
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+        const downloadUrl = URL.createObjectURL(blob)
         const link = document.createElement('a')
-        const url = URL.createObjectURL(blob)
-        link.setAttribute('href', url)
-        link.setAttribute('download', `event-registrations-${eventId}-${new Date().toISOString().split('T')[0]}.csv`)
-        link.style.visibility = 'hidden'
+
+        // Generate filename with current date and export type
+        const today = new Date().toISOString().split('T')[0]
+        const typeLabel = exportType === 'confirmed' ? '-confirmed' : ''
+        const filename = `${eventTitle.value?.toLowerCase().replace(/\s+/g, '-') || 'event'}-registrations${typeLabel}-${today}.pdf`
+
+        link.href = downloadUrl
+        link.download = filename
+        link.style.display = 'none'
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
-        
-    } catch (error) {
+
+        // Clean up
+        URL.revokeObjectURL(downloadUrl)
+
+    } catch (error: any) {
         console.error('Failed to export registrations:', error)
-        alert('Failed to export registrations')
+
+        // Show user-friendly error message
+        let errorMessage = 'Failed to export registrations'
+        if (error.status === 403) {
+            errorMessage = 'You do not have permission to export registrations'
+        } else if (error.status === 404) {
+            errorMessage = 'Event not found'
+        }
+
+        alert(errorMessage)
+    } finally {
+        isExporting.value = false
     }
 }
 

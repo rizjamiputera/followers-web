@@ -57,7 +57,7 @@ export interface EventRegistration {
         id: string
         name: string
         email: string
-        avatar?: string
+        avatar_md?: string
     }
     event?: {
         id: string
@@ -83,7 +83,7 @@ export interface CreateRegistrationConfigData {
     confirmationMessage?: string
 }
 
-export interface UpdateRegistrationConfigData extends Partial<CreateRegistrationConfigData> {}
+export interface UpdateRegistrationConfigData extends Partial<CreateRegistrationConfigData> { }
 
 export interface UpdateRegistrationData {
     formData?: Record<string, any>

@@ -7,24 +7,19 @@
                 <h3 class="text-lg font-semibold text-gray-900">Event Registrations</h3>
                 <div class="badge badge-success">{{ totalCount }}</div>
             </div>
-            
+
             <div class="flex gap-2">
                 <!-- Export Button -->
-                <button 
-                    @click="exportRegistrations"
-                    :disabled="!registrations || registrations.length === 0"
-                    class="btn btn-sm btn-outline btn-success"
-                >
-                    <LucideDownload class="h-4 w-4 mr-1" />
-                    Export CSV
+                <button @click="showExportModal = true"
+                    :disabled="!registrations || registrations.length === 0 || isExporting"
+                    class="btn btn-sm btn-outline btn-success">
+                    <LucideDownload v-if="!isExporting" class="h-4 w-4 mr-1" />
+                    <span v-if="isExporting" class="loading loading-spinner loading-xs mr-1"></span>
+                    {{ isExporting ? 'Exporting...' : 'Export PDF' }}
                 </button>
-                
+
                 <!-- Refresh Button -->
-                <button 
-                    @click="$emit('refresh')"
-                    :disabled="isLoading"
-                    class="btn btn-sm btn-outline"
-                >
+                <button @click="$emit('refresh')" :disabled="isLoading" class="btn btn-sm btn-outline">
                     <LucideRefreshCw class="h-4 w-4" :class="{ 'animate-spin': isLoading }" />
                 </button>
             </div>
@@ -56,33 +51,21 @@
                     <option value="CANCELLED">Cancelled</option>
                 </select>
             </div>
-            
+
             <div class="form-control flex-1 max-w-sm">
                 <div class="relative">
-                    <input 
-                        type="text"
-                        v-model="filters.search"
-                        placeholder="Search by name or email..."
-                        class="input input-bordered input-sm w-full pr-10"
-                    />
+                    <input type="text" v-model="filters.search" placeholder="Search by name or email..."
+                        class="input input-bordered input-sm w-full pr-10" />
                     <LucideSearch class="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 </div>
             </div>
 
-            <button 
-                @click="applyFilters"
-                class="btn btn-sm btn-primary"
-                :disabled="isLoading"
-            >
+            <button @click="applyFilters" class="btn btn-sm btn-primary" :disabled="isLoading">
                 <LucideFilter class="h-4 w-4 mr-1" />
                 Filter
             </button>
 
-            <button 
-                v-if="hasActiveFilters"
-                @click="clearFilters"
-                class="btn btn-sm btn-ghost"
-            >
+            <button v-if="hasActiveFilters" @click="clearFilters" class="btn btn-sm btn-ghost">
                 Clear
             </button>
         </div>
@@ -98,19 +81,17 @@
         </div>
 
         <div v-else class="space-y-3">
-            <div 
-                v-for="registration in registrations" 
-                :key="registration.id"
-                class="border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow"
-            >
+            <div v-for="registration in registrations" :key="registration.id"
+                class="border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow">
                 <div class="flex items-start justify-between">
                     <div class="flex items-start gap-3">
                         <!-- User Avatar -->
-                        <div class="avatar">
-                            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                                <span class="text-green-600 font-semibold text-sm">
+                        <div class="avatar" :class="!registration.user?.avatar_md ? 'avatar-placeholder' : ''">
+                            <div class="w-10 h-10 rounded-full bg-green-100 bg-cover bg-center"
+                                :style="{ backgroundImage: `url(${registration.user?.avatar_md})` }">
+                                <div class="text-green-600 font-semibold text-xl" v-if="!registration.user?.avatar_md">
                                     {{ registration.user?.name?.charAt(0).toUpperCase() }}
-                                </span>
+                                </div>
                             </div>
                         </div>
 
@@ -122,9 +103,9 @@
                                     {{ registration.status }}
                                 </div>
                             </div>
-                            
+
                             <p class="text-gray-600 text-sm mb-2">{{ registration.user?.email }}</p>
-                            
+
                             <div class="text-xs text-gray-500">
                                 Registered: {{ formatDate(registration.registeredAt) }}
                                 <span v-if="registration.confirmedAt">
@@ -139,44 +120,29 @@
 
                     <!-- Action Buttons -->
                     <div class="flex gap-2">
-                        <button 
-                            @click="viewRegistration(registration)"
-                            class="btn btn-xs btn-outline"
-                        >
+                        <Button @click="viewRegistration(registration)" class="btn btn-sm btn-circle btn-outline">
                             <LucideEye class="h-3 w-3" />
-                        </button>
+                        </Button>
 
-                        <button 
-                            v-if="registration.status === 'PENDING'"
-                            @click="confirmRegistration(registration.id)"
-                            class="btn btn-xs btn-success"
-                            :disabled="isUpdating"
-                        >
+                        <Button v-if="registration.status === 'PENDING'" @click="confirmRegistration(registration.id)"
+                            class="btn btn-sm btn-circle btn-success" :disabled="isUpdating">
                             <LucideCheck class="h-3 w-3" />
-                        </button>
+                        </Button>
 
-                        <button 
-                            v-if="registration.status !== 'CANCELLED'"
-                            @click="cancelRegistration(registration.id)"
-                            class="btn btn-xs btn-error btn-outline"
-                            :disabled="isUpdating"
-                        >
+                        <Button v-if="registration.status !== 'CANCELLED'" @click="cancelRegistration(registration.id)"
+                            class="btn btn-sm btn-circle btn-error btn-outline" :disabled="isUpdating">
                             <LucideX class="h-3 w-3" />
-                        </button>
+                        </Button>
                     </div>
                 </div>
 
                 <!-- Form Data Preview -->
-                <div v-if="registration.formData && Object.keys(registration.formData).length > 0" 
+                <div v-if="registration.formData && Object.keys(registration.formData).length > 0"
                     class="mt-3 pt-3 border-t border-gray-100">
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
-                        <div 
-                            v-for="(value, key) in registration.formData" 
-                            :key="key"
-                            class="truncate"
-                        >
-                            <span class="text-gray-500 capitalize">{{ key.replace(/_/g, ' ') }}:</span>
-                            <span class="ml-1 font-medium">{{ formatFormValue(value) }}</span>
+                    <div class="flex flex-col gap-2 text-xs">
+                        <div v-for="(value, key) in registration.formData" :key="key" class="flex flex-col gap-1">
+                            <div class="text-gray-500 capitalize">{{ key.replace(/_/g, ' ') }}:</div>
+                            <div class="ml-1 font-medium whitespace-pre">{{ formatFormValue(value) }}</div>
                         </div>
                     </div>
                 </div>
@@ -192,26 +158,21 @@
         <!-- Pagination -->
         <div v-if="pagination && pagination.last_page > 1" class="flex justify-center">
             <div class="btn-group">
-                <button 
-                    v-for="page in paginationPages" 
-                    :key="page"
-                    @click="changePage(page)"
-                    class="btn btn-sm"
-                    :class="{ 'btn-active': page === pagination.page }"
-                >
+                <button v-for="page in paginationPages" :key="page" @click="changePage(page)" class="btn btn-sm"
+                    :class="{ 'btn-active': page === pagination.page }">
                     {{ page }}
                 </button>
             </div>
         </div>
 
         <!-- Registration Detail Modal -->
-        <div v-if="selectedRegistration" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div v-if="selectedRegistration"
+            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                 <div class="p-6">
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-xl font-semibold">Registration Details</h3>
-                        <button @click="selectedRegistration = null" 
-                            class="text-gray-400 hover:text-gray-600">
+                        <button @click="selectedRegistration = null" class="text-gray-400 hover:text-gray-600">
                             <LucideX class="h-6 w-6" />
                         </button>
                     </div>
@@ -239,11 +200,8 @@
                         <div v-if="selectedRegistration.formData" class="border-t pt-4">
                             <h5 class="font-semibold mb-3">Form Responses</h5>
                             <div class="space-y-2">
-                                <div 
-                                    v-for="(value, key) in selectedRegistration.formData" 
-                                    :key="key"
-                                    class="flex flex-col sm:flex-row sm:items-center gap-2"
-                                >
+                                <div v-for="(value, key) in selectedRegistration.formData" :key="key"
+                                    class="flex flex-col sm:flex-row sm:items-center gap-2">
                                     <strong class="text-gray-700 capitalize min-w-32">
                                         {{ key.replace(/_/g, ' ') }}:
                                     </strong>
@@ -265,24 +223,62 @@
 
                         <!-- Actions -->
                         <div class="border-t pt-4 flex gap-2">
-                            <button 
-                                v-if="selectedRegistration.status === 'PENDING'"
+                            <button v-if="selectedRegistration.status === 'PENDING'"
                                 @click="confirmRegistration(selectedRegistration.id); selectedRegistration = null"
-                                class="btn btn-success"
-                                :disabled="isUpdating"
-                            >
+                                class="btn btn-success" :disabled="isUpdating">
                                 <LucideCheck class="h-4 w-4 mr-2" />
                                 Confirm Registration
                             </button>
 
-                            <button 
-                                v-if="selectedRegistration.status !== 'CANCELLED'"
+                            <button v-if="selectedRegistration.status !== 'CANCELLED'"
                                 @click="cancelRegistration(selectedRegistration.id); selectedRegistration = null"
-                                class="btn btn-error btn-outline"
-                                :disabled="isUpdating"
-                            >
+                                class="btn btn-error btn-outline" :disabled="isUpdating">
                                 <LucideX class="h-4 w-4 mr-2" />
                                 Cancel Registration
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Export Options Modal -->
+        <div v-if="showExportModal"
+            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div class="bg-white rounded-lg max-w-md w-full">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-semibold">Export Options</h3>
+                        <button @click="showExportModal = false" class="text-gray-400 hover:text-gray-600">
+                            <LucideX class="h-6 w-6" />
+                        </button>
+                    </div>
+
+                    <div class="space-y-4">
+                        <p class="text-gray-600">Choose which registrations to export:</p>
+                        
+                        <!-- Export Options -->
+                        <div class="space-y-3">
+                            <button @click="exportWithFilter('all')"
+                                class="w-full p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left">
+                                <div class="flex items-center gap-3">
+                                    <LucideUsers class="h-5 w-5 text-gray-600" />
+                                    <div>
+                                        <div class="font-medium">All Registrations</div>
+                                        <div class="text-sm text-gray-500">Export all registrations ({{ totalCount }} total)</div>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <button @click="exportWithFilter('confirmed')"
+                                class="w-full p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left">
+                                <div class="flex items-center gap-3">
+                                    <LucideUserCheck class="h-5 w-5 text-green-600" />
+                                    <div>
+                                        <div class="font-medium">Confirmed Only</div>
+                                        <div class="text-sm text-gray-500">Export only confirmed registrations ({{ confirmedCount }} total)</div>
+                                    </div>
+                                </div>
                             </button>
                         </div>
                     </div>
@@ -293,14 +289,14 @@
 </template>
 
 <script lang="ts" setup>
-import { 
-    LucideUserCheck, LucideDownload, LucideRefreshCw, LucideSearch, 
-    LucideFilter, LucideLoader2, LucideUsers, LucideEye, LucideCheck, 
-    LucideX 
+import {
+    LucideUserCheck, LucideDownload, LucideRefreshCw, LucideSearch,
+    LucideFilter, LucideLoader2, LucideUsers, LucideEye, LucideCheck,
+    LucideX
 } from 'lucide-vue-next'
-import type { 
-    EventRegistration, 
-    RegistrationStatus 
+import type {
+    EventRegistration,
+    RegistrationStatus
 } from '~/interfaces/event-registration-interface'
 
 interface Props {
@@ -312,6 +308,7 @@ interface Props {
     }
     isLoading?: boolean
     isUpdating?: boolean
+    isExporting?: boolean
 }
 
 const props = defineProps<Props>()
@@ -321,7 +318,7 @@ const emit = defineEmits<{
     filter: [filters: { status?: string; search?: string; page?: number }]
     confirm: [registrationId: string]
     cancel: [registrationId: string]
-    export: []
+    export: [exportType: 'all' | 'confirmed']
 }>()
 
 // Reactive data
@@ -332,6 +329,7 @@ const filters = ref({
 })
 
 const selectedRegistration = ref<EventRegistration | null>(null)
+const showExportModal = ref(false)
 
 // Computed properties
 const totalCount = computed(() => props.registrations?.length || 0)
@@ -354,15 +352,15 @@ const hasActiveFilters = computed(() => {
 
 const paginationPages = computed(() => {
     if (!props.pagination) return []
-    
+
     const pages = []
     const current = props.pagination.page
     const last = props.pagination.last_page
-    
+
     for (let i = Math.max(1, current - 2); i <= Math.min(last, current + 2); i++) {
         pages.push(i)
     }
-    
+
     return pages
 })
 
@@ -442,6 +440,11 @@ const changePage = (page: number) => {
 }
 
 const exportRegistrations = () => {
-    emit('export')
+    emit('export', 'all')
+}
+
+const exportWithFilter = (exportType: 'all' | 'confirmed') => {
+    showExportModal.value = false
+    emit('export', exportType)
 }
 </script>

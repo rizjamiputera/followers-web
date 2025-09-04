@@ -21,7 +21,7 @@
                 <!-- Participant Limit -->
                 <div class="form-control">
                     <label class="label">
-                        <span class="label-text font-medium">Participant Limit</span>
+                        <span class="label-text font-medium">Limit Peserta</span>
                     </label>
                     <div class="flex items-center gap-2">
                         <input type="checkbox" v-model="hasParticipantLimit" class="checkbox checkbox-success"
@@ -31,8 +31,13 @@
                             placeholder="e.g. 50" min="1" class="input input-bordered input-sm flex-1 max-w-24" />
                     </div>
                     <div class="label">
-                        <span class="label-text-alt">{{ hasParticipantLimit ? 'Maximum number of participants' :
-                            'Unlimited participants' }}</span>
+                        <span class="label-text-alt">
+                            {{
+                                hasParticipantLimit
+                                    ? 'Jumlah maksimal peserta'
+                                    : 'Unlimited'
+                            }}
+                        </span>
                     </div>
                 </div>
 
@@ -43,13 +48,13 @@
                     </label>
                     <div class="flex items-center gap-2">
                         <input type="checkbox" v-model="configData.requireApproval" class="checkbox checkbox-success" />
-                        <span class="text-sm">Require manual approval</span>
+                        <span class="text-sm">Manual approval</span>
                     </div>
                     <div class="label">
                         <span class="label-text-alt">
                             {{ configData.requireApproval
-                                ? 'Admin must approve each registration'
-                                : 'Auto -confirm registrations'
+                                ? 'Admin harus approve tiap registrasi'
+                                : 'Auto approve'
                             }}
                         </span>
                     </div>
@@ -92,25 +97,26 @@
             </div>
 
             <!-- Confirmation Message -->
-            <div class="form-control">
+            <div class="form-control flex flex-col gap-1">
                 <label class="label">
-                    <span class="label-text font-medium">Confirmation Message</span>
+                    <span class="label-text font-medium">Pesan konfirmasi</span>
                 </label>
                 <textarea v-model="configData.confirmationMessage" class="textarea textarea-bordered"
                     placeholder="Thank you for registering! We'll send you more details soon..." rows="3"></textarea>
                 <div class="label">
-                    <span class="label-text-alt">Message shown to users after successful registration</span>
+                    <span class="label-text-alt text-sm">Pesan akan muncul setelah user berhasil melakukan
+                        registrasi</span>
                 </div>
             </div>
 
             <!-- Form Fields Configuration -->
             <div class="border-t pt-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h4 class="text-md font-semibold text-gray-900">Registration Form Fields</h4>
-                    <button type="button" @click="addFormField" class="btn btn-sm btn-outline btn-success">
+                    <h4 class="text-md font-semibold text-gray-900">Registration Form</h4>
+                    <Button @click="addFormField" class="btn-sm btn-outline btn-success">
                         <LucidePlus class="h-4 w-4 mr-1" />
                         Add Field
-                    </button>
+                    </Button>
                 </div>
 
                 <div v-if="configData.formFields.length === 0" class="text-center py-8 text-gray-500">
@@ -154,7 +160,7 @@
                                     @blur="updateFieldKeyFromLabel(field, field.label)" />
                             </div>
                             <!-- Field Key -->
-                            <div class="form-control" v-if="true">
+                            <div class="form-control opacity-0">
                                 <label class="label">
                                     <span class="label-text text-sm">Field Key <span
                                             class="text-xs text-gray-500">(auto-generated from label)</span></span>

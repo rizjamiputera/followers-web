@@ -89,30 +89,46 @@
         </div>
 
         <!-- Registration Form Modal -->
-        <div v-if="showRegistrationModal"
-            class="fixed inset-0 bg-black/70 bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-                <div class="p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-xl font-semibold text-gray-900">
-                            {{ isUpdatingRegistration ? 'Update Registration' : 'Register for Event' }}
-                        </h2>
-                        <button @click="closeRegistrationModal"
-                            class="text-gray-400 hover:text-gray-600 transition-colors">
-                            <LucideX class="h-6 w-6" />
-                        </button>
-                    </div>
-
-                    <EventRegistrationForm v-if="data?.registrationConfig"
-                        :formFields="data.registrationConfig.formFields" :initialData="registrationFormData"
-                        :isUpdating="isUpdatingRegistration" :confirmationMessage="registrationStore.successMessage"
-                        @submit="handleRegistrationSubmit" @cancel="closeRegistrationModal" />
-                </div>
-            </div>
-        </div>
+        <LazyEventRegistrationForm v-if="data?.registrationConfig" :show="showRegistrationModal"
+            :formFields="data.registrationConfig.formFields" :initialData="registrationFormData"
+            :isUpdating="isUpdatingRegistration" :confirmationMessage="registrationStore.successMessage"
+            @submit="handleRegistrationSubmit" @close="closeRegistrationModal" />
 
         <!-- Cancel Registration Dialog -->
-        <div v-if="showCancelModal"
+        <LazyModal :show="showCancelModal" v-if="showCancelModal" @close="closeCancelModal">
+            <div class="flex items-center gap-3 mb-4">
+                <LucideAlertTriangle class="h-6 w-6 text-amber-500" />
+                <h3 class="text-lg font-semibold text-gray-900">Batalkan Registrasi</h3>
+            </div>
+
+            <p class="text-gray-600 mb-4">
+                Apakah anda yakin untuk membatalkan registrasi?
+            </p>
+
+            <div class="space-y-4">
+                <div>
+                    <label for="cancellation-reason" class="block text-sm font-medium text-gray-700 mb-2">
+                        Alasan (optional)
+                    </label>
+                    <textarea id="cancellation-reason" v-model="cancellationReason" rows="3"
+                        placeholder="Beritahu alasan pembatalan..."
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-vertical"></textarea>
+                </div>
+
+                <div class="flex gap-3">
+                    <button @click="closeCancelModal"
+                        class="flex-1 btn btn-outline border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-2 px-4 rounded-lg transition-colors">
+                        Tetap Register
+                    </button>
+                    <button @click="handleCancelRegistration" :disabled="registrationStore.isSubmitting"
+                        class="flex-1 btn btn-error text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        <LucideLoader2 v-if="registrationStore.isSubmitting" class="h-4 w-4 mr-2 animate-spin" />
+                        Ya, Batalkan
+                    </button>
+                </div>
+            </div>
+        </LazyModal>
+        <!-- <div v-if="showCancelModal"
             class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div class="bg-white rounded-lg max-w-md w-full p-6">
                 <div class="flex items-center gap-3 mb-4">
@@ -147,7 +163,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <!-- Success/Error Toast -->
         <div v-if="registrationStore.successMessage || registrationStore.error"
@@ -343,7 +359,7 @@ const closeCancelModal = () => {
 }
 
 const handleRegistrationSubmit = async (formData: Record<string, any>) => {
-    if (!data.value?.id) return
+    if (!data?.value?.id) return
 
     let success = false
 
@@ -362,12 +378,12 @@ const handleRegistrationSubmit = async (formData: Record<string, any>) => {
         // Close modal after a delay to show success message
         setTimeout(() => {
             closeRegistrationModal()
-        }, 2000)
+            get()
+        }, 5000)
 
         // Refresh the page data to get updated counts
-        setTimeout(() => {
-            get()
-        }, 500)
+        // setTimeout(() => {
+        // }, 500)
     }
 }
 
