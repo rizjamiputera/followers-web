@@ -39,7 +39,7 @@
             </div>
             <div class="footer-section">
                 <h6>Contact</h6>
-                <a>Jl. Jaya Giri No 9J, Dangin Puri Klod, Kec. Denpasar Tim., Kota Denpasar, Bali 80234</a>
+                <a>Jl. Jayagiri No 9J, Dangin Puri Klod, Kec. Denpasar Tim., Kota Denpasar, Bali 80234</a>
                 <a>contact@followersbicara.com</a>
             </div>
         </footer>
