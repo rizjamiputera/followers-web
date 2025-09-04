@@ -13,6 +13,15 @@
                 <template v-for="n in 1" :key="n">
                     <hr class="my-4">
                     <ul class="">
+                        <div class="font-bold text-gray-400 px-2">Home Page</div>
+                        <li>
+                            <NuxtLink to="/cp/articles/featured" prefetch-on="interaction">Featured Article</NuxtLink>
+                        </li>
+                        <li>
+                            <NuxtLink to="/cp/events/featured" prefetch-on="interaction">Featured Events</NuxtLink>
+                        </li>
+
+                        <hr class="my-4">
                         <div class="font-bold text-gray-400 px-2">Managemen Kontent</div>
                         <ClientOnly>
 
