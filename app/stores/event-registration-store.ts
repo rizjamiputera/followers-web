@@ -55,8 +55,8 @@ export const useEventRegistrationStore = defineStore('event-registration', {
             return this.isRegistrationOpen && !this.isRegistrationFull && !this.userRegistration
         },
 
-        canUpdateRegistration: (state): boolean => {
-            if (!state.userRegistration || state.userRegistration.status === 'CANCELLED') return false
+        canUpdateRegistration(): boolean {
+            if (!this.userRegistration || this.userRegistration.status === 'CANCELLED') return false
             return this.isRegistrationOpen
         },
 

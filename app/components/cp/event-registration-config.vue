@@ -223,7 +223,7 @@
                             <div class="space-y-2">
                                 <div v-for="(option, optionIndex) in (field.options || [])" :key="optionIndex"
                                     class="flex items-center gap-2">
-                                    <input type="text" v-model="field.options[optionIndex]" placeholder="Option text"
+                                    <input type="text" v-model="field.options![optionIndex]" placeholder="Option text"
                                         class="input input-bordered input-sm flex-1" />
                                     <button type="button" @click="removeOption(field, optionIndex)"
                                         class="btn btn-xs btn-error btn-outline">
