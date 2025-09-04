@@ -3,7 +3,7 @@
         <Teleport defer to="#__nuxt">
             <input type="checkbox" v-model="_show" class="modal-toggle" />
             <div class="modal" role="dialog">
-                <div class="modal-box w-11/12 py-10 bg-transparent shadow-none h-screen max-h-screen overflow-hidden flex flex-col justify-center"
+                <div class="modal-box w-11/12 py-10 bg-transparent shadow-none max-h-screen overflow-hidden flex flex-col justify-center"
                     :class="maxWidth">
                     <div data-theme="light"
                         class="rounded-xl bg-white-main border-1 border-green-main p-4 relative shadow-lg shadow-black/40 h-min max-h-full overflow-y-auto ">
@@ -16,6 +16,7 @@
                         <slot />
                     </div>
                 </div>
+                <label class="modal-backdrop" @click="$emit('close')">Close</label>
             </div>
         </Teleport>
     </ClientOnly>
