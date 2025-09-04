@@ -90,9 +90,10 @@
 
         <!-- Registration Form Modal -->
         <LazyEventRegistrationForm v-if="data?.registrationConfig" :show="showRegistrationModal"
-            :formFields="data.registrationConfig.formFields" :initialData="registrationFormData"
-            :isUpdating="isUpdatingRegistration" :confirmationMessage="registrationStore.successMessage"
-            @submit="handleRegistrationSubmit" @close="closeRegistrationModal" />
+            :registrationConfig="data.registrationConfig" :formFields="data.registrationConfig.formFields"
+            :initialData="registrationFormData" :isUpdating="isUpdatingRegistration"
+            :confirmationMessage="registrationStore.successMessage" @submit="handleRegistrationSubmit"
+            @close="closeRegistrationModal" />
 
         <!-- Cancel Registration Dialog -->
         <LazyModal :show="showCancelModal" v-if="showCancelModal" @close="closeCancelModal">
@@ -332,7 +333,7 @@ const showRegistrationForm = () => {
 }
 
 const showUpdateForm = () => {
-    if (!data.value?.userRegistration) return
+    if (!data?.value?.userRegistration) return
 
     isUpdatingRegistration.value = true
     registrationFormData.value = { ...data.value.userRegistration.formData }
@@ -388,7 +389,7 @@ const handleRegistrationSubmit = async (formData: Record<string, any>) => {
 }
 
 const handleCancelRegistration = async () => {
-    if (!data.value?.userRegistration) return
+    if (!data?.value?.userRegistration) return
 
     const success = await registrationStore.cancelRegistration(
         data.value.userRegistration.id,
@@ -429,7 +430,7 @@ watch(() => registrationStore.error, (error) => {
 
 // Initialize registration data when event data is loaded
 watchEffect(() => {
-    if (data.value) {
+    if (data?.value) {
         registrationStore.setRegistrationData({
             config: data.value.registrationConfig,
             userRegistration: data.value.userRegistration,
