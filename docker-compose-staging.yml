@@ -11,7 +11,7 @@ services:
         image: web-followers-staging:latest
         restart: always
         ports:
-            - 3111:3000
+            - 3777:3000
         environment:
             NUXT_PUBLIC_WEB_URI: https://stg.followersbicara.com
             NUXT_PUBLIC_API_URI: https://stg-api.followersbicara.com
