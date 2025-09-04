@@ -18,7 +18,7 @@ export const useReadEventStore = defineStore('read-event', {
         slug: undefined,
         data: undefined,
         parameters: {
-            includes: ['content', 'author', 'tags.tag', 'stats']
+            includes: ['content', 'author', 'tags.tag', 'stats', 'registrationConfig']
         },
         isLoading: false,
         isError: false,

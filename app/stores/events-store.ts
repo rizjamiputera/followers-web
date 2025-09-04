@@ -22,7 +22,7 @@ export const useEventsStore = defineStore('events', {
         parameters: {
             limit: 10,
             page: 1,
-            includes: ['stats', 'author']
+            includes: ['stats', 'author', 'registrationConfig']
         },
         search: '',
         status: undefined,

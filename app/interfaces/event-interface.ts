@@ -1,5 +1,6 @@
 import type { Content, ContentStats, ContentStatus, ReactionType, Tag } from "./content-interface"
 import type { User } from "./user-interface"
+import type { EventRegistrationConfig, EventRegistration } from "./event-registration-interface"
 
 export interface Event {
     id: string
@@ -32,6 +33,11 @@ export interface Event {
     auth_reaction: {
         type: ReactionType
     },
+    // Registration data
+    registrationConfig?: EventRegistrationConfig
+    userRegistration?: EventRegistration | null
+    registeredCount?: number
+    availableSpots?: number | null
     // readStatId: string
     // visitors    Visit[]
 }

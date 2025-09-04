@@ -31,13 +31,14 @@
                         <th class="text-center">Author</th>
                         <th class="text-center">Created At</th>
                         <th class="text-center">Status</th>
+                        <th class="text-center">Registrations</th>
                         <th class="text-center">Publish</th>
                         <th class="text-center">Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-if="isEmpty">
-                        <td colspan="5" class="text-center text-green-main font-light">
+                        <td colspan="7" class="text-center text-green-main font-light">
                             Empty
                         </td>
                     </tr>
@@ -74,6 +75,16 @@
                             <StatusBade :status="dt.status" />
                         </td>
                         <td class="text-center">
+                            <div v-if="dt.registrationConfig?.isEnabled" class="text-sm">
+                                <div class="badge badge-sm badge-success">
+                                    {{ dt.registeredCount || 0 }}
+                                    <template v-if="dt.registrationConfig.participantLimit"> / {{
+                                        dt.registrationConfig.participantLimit }}</template>
+                                </div>
+                            </div>
+                            <span v-else class="text-xs text-gray-400">Disabled</span>
+                        </td>
+                        <td class="text-center">
                             <div class="flex gap-1 justify-center">
 
                                 <Button v-if="canApprove && dt.status == 'ON_REVIEW'" class="btn-sm btn-warning"
@@ -108,6 +119,12 @@
                                 <ButtonLink v-if="canEdit" :to="`/cp/my-events/form?id=${dt.id}`"
                                     class="btn-sm btn-neutral">
                                     Edit
+                                </ButtonLink>
+
+                                <ButtonLink v-if="dt.registrationConfig?.isEnabled"
+                                    :to="`/cp/my-events/${dt.id}/registrations`" class="btn-sm btn-info btn-outline"
+                                    title="Manage Registrations">
+                                    <LucideUsers :size="12" />
                                 </ButtonLink>
 
                                 <ButtonLink v-if="dt.status == 'PUBLISHED'" :to="`/event/${dt.slug}`" target="_blank"
@@ -173,7 +190,7 @@
 
 <script lang="ts" setup>
 import dayjs from 'dayjs';
-import { LucideBookmark, LucideEye, LucideLink, LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
+import { LucideBookmark, LucideEye, LucideLink, LucideShare2, LucideThumbsDown, LucideThumbsUp, LucideUsers } from 'lucide-vue-next';
 import { contentStatuses, type ContentStatus } from '~/interfaces/content-interface';
 import type { Event } from '~/interfaces/event-interface';
 import { Module, Permission } from '~/interfaces/user-interface';
@@ -189,6 +206,9 @@ const canPublish = computed(() => AuthStore.can(Module.EVENT, Permission.PUBLISH
 
 const EventsStore = useEventsStore()
 const { events, page, last_page, parameters, isEmpty, isLoading, search } = storeToRefs(EventsStore);
+if (!parameters.value.includes.includes('registeredCount')) {
+    parameters.value.includes.push('registeredCount');
+}
 const { get } = EventsStore;
 
 const sectionRef = ref<HTMLElement>();
@@ -245,7 +265,7 @@ const selectedPreview = ref<Event | null>(null)
 
 const get_preview = async (id: string) => {
     if (!id) return;
-    selectedPreview.value = await Api.get('/v1/event/' + id + '?includes=content') as Event
+    selectedPreview.value = await Api.get('/v1/event/admin/' + id + '?includes=content') as Event
 
     show_preview.value = true;
 
@@ -257,6 +277,13 @@ const showConfirmReject = ref<boolean>(false);
 const showConfirmApprove = ref<boolean>(false);
 const showConfirmPublish = ref<boolean>(false);
 const showConfirmTakeDown = ref<boolean>(false);
+
+
+// reset state
+onBeforeUnmount(() => {
+    // remove registeredCount
+    parameters.value.includes = parameters.value.includes.filter(i => i != 'registeredCount');
+})
 </script>
 
 <style></style>

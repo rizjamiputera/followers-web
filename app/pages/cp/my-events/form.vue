@@ -129,6 +129,27 @@
             </div>
         </div>
 
+        <!-- Event Registration Configuration -->
+        <div class="border-t border-gray-200 pt-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Event Registration</h3>
+                <ButtonLink 
+                    v-if="event?.id && registrationConfig?.isEnabled"
+                    :to="`/cp/my-events/${event.id}/registrations`"
+                    class="btn btn-sm btn-outline btn-primary"
+                >
+                    <LucideUsers class="h-4 w-4 mr-1" />
+                    Manage Registrations
+                </ButtonLink>
+            </div>
+            
+            <CpEventRegistrationConfig
+                :eventId="event?.id"
+                :initialConfig="registrationConfig"
+                :currentRegistrations="currentRegistrations"
+                @update:config="updateRegistrationConfig"
+            />
+        </div>
 
         <div v-if="dataDto.content?.content">
             <TiptapEditor v-model="dataDto.content.content" />
@@ -210,7 +231,7 @@
 
 <script lang="ts" setup>
 import Joi from 'joi';
-import { LucideCheckCircle2, LucideLoader, LucideMapPin, LucideXCircle } from 'lucide-vue-next';
+import { LucideCheckCircle2, LucideLoader, LucideMapPin, LucideXCircle, LucideUsers } from 'lucide-vue-next';
 import type { ContentStatus, PhotoContent } from '~/interfaces/content-interface';
 import type { Event } from '~/interfaces/event-interface';
 import { Module, Permission } from '~/interfaces/user-interface';
@@ -243,13 +264,67 @@ const dataDto = ref<Partial<Event>>({
 
 const newPhotos = ref<PhotoContent[] | null>(null)
 
+// Registration configuration
+const registrationConfig = ref<any>(null)
+const currentRegistrations = ref<any[]>([])
+const registrationConfigData = ref<any>(null)
+
 const get = async () => {
     if (!id) return;
 
-    event.value = await Api.get('/v1/event/my/' + id + '?includes=content') as Event;
+    event.value = await Api.get('/v1/event/my/' + id + '?includes=content,registrationConfig') as Event;
+    
+    // Load registration config if exists
+    if (event.value.registrationConfig) {
+        registrationConfig.value = event.value.registrationConfig
+    }
+    
+    // Load current registrations if event exists and has registration config
+    if (event.value.registrationConfig?.isEnabled) {
+        await loadCurrentRegistrations()
+    }
 
     // initial at edit
     slugAvailable.value = true;
+}
+
+// Registration methods
+const loadCurrentRegistrations = async () => {
+    if (!id) return
+    
+    try {
+        const response = await Api.get(`/v1/event/${id}/registrations`) as any
+        currentRegistrations.value = response.data || []
+    } catch (error) {
+        console.error('Failed to load registrations:', error)
+    }
+}
+
+const updateRegistrationConfig = (config: any) => {
+    registrationConfigData.value = config
+}
+
+const saveRegistrationConfig = async () => {
+    if (!id || !registrationConfigData.value) return
+    
+    try {
+        if (registrationConfig.value) {
+            // Update existing config
+            await Api.patch(`/v1/event/${id}/registration-config`, registrationConfigData.value)
+        } else {
+            // Create new config
+            await Api.post(`/v1/event/${id}/registration-config`, registrationConfigData.value)
+        }
+        
+        // Reload the event data to get updated config
+        await get()
+        
+        // Show success message
+        // You can add a toast notification here
+    } catch (error: any) {
+        console.error('Failed to save registration config:', error)
+        // Show error message
+    }
 }
 
 onMounted(get);
@@ -401,6 +476,11 @@ const submit = async () => {
                 await Api.post('/v1/event/publish/' + id, { publishedAt: publishedAt.value });
             }
 
+            // Save registration configuration if it was updated
+            if (registrationConfigData.value) {
+                await saveRegistrationConfig()
+            }
+
             get()
         } else {
             // create
@@ -426,6 +506,12 @@ const submit = async () => {
                 })
 
                 id = newData.id;
+                
+                // Save registration configuration if it was set
+                if (registrationConfigData.value) {
+                    await saveRegistrationConfig()
+                }
+                
                 get();
             }
         }
