@@ -13,10 +13,12 @@
                 <Button class="btn-green" @click="submit">Submit</Button>
             </div>
         </div>
-        <ButtonLink v-else to="/auth/login" class="btn-green w-full">Login to write comment</ButtonLink>
+        <ButtonLink v-else to="/auth/login" class="btn-green w-full">
+            Login untuk memberikan komentar positif
+        </ButtonLink>
 
-        <div v-if="comments.length === 0" class="no-comments">
-            No comments yet
+        <div v-if="comments.length === 0" class="text-gray-400">
+            Belum ada komentar
         </div>
 
         <div v-else class="flex flex-col gap-1">

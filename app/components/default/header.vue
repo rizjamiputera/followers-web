@@ -50,7 +50,7 @@
                         <div v-else class="dropdown dropdown-bottom dropdown-left">
                             <div tabindex="0" role="button"
                                 class="btn btn-lg btn-active btn-circle bg-indigo-300 border-0">
-                                <Avatar :avatar="user.avatar_md" :name="user.name" />
+                                <Avatar :avatar="user.avatar_md" :name="user.name" class="w-full h-full" />
                             </div>
                             <div tabindex="0"
                                 class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
