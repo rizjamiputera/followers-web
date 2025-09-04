@@ -1,9 +1,14 @@
 <template>
-    <div class="badge badge-outline-green bg-transparent">
-        <LucideMapPin :size="14" /> {{ data.location }}
+    <div class="badge badge-outline-green bg-transparent max-w-full">
+        <div class="max-w-full flex items-center gap-1">
+            <LucideMapPin :size="14" />
+            <div class="flex-1 truncate">{{ data.location }}
+            </div>
+        </div>
     </div>
+
     <div v-if="!skipAddress"
-        class="border-1 border-green-main/30 rounded-lg text-sm font-light w-min whitespace-pre py-2 px-3">
+        class="border-1 border-green-main/30 rounded-lg text-sm font-light max-w-full break-words whitespace-pre-wrap py-2 px-3">
         {{ data.address }}
     </div>
 
@@ -13,11 +18,12 @@
                 <LucideCalendar :size="14" /> {{ dayjs(data.start_at).format('DD MMMM YYYY') }}
             </div>
             <div class="badge badge-outline-green bg-transparent">
-                <LucideClock :size="14" /> {{ formatTime(data.start_at) }} sd {{ formatTime(data.end_at) }}
+                <LucideClock :size="14" />
+                {{ formatTime(data.start_at) }} sd {{ formatTime(data.end_at) }} {{ userTimezone() }}
             </div>
-            <div class="badge badge-outline-green bg-transparent">
+            <!-- <div class="badge badge-outline-green bg-transparent">
                 {{ userTimezone() }}
-            </div>
+            </div> -->
         </div>
         <div v-else class="flex flex-wrap gap-1">
             <div class="badge badge-outline-green bg-transparent">

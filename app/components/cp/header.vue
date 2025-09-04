@@ -27,7 +27,7 @@
                                     {{ user.name }}
                                 </div>
                                 <div role="button" class="btn btn-lg btn-active btn-circle bg-indigo-300 border-0">
-                                    <Avatar :avatar="user.avatar_md" :name="user.name" />
+                                    <Avatar :avatar="user.avatar_md" :name="user.name" class="w-full h-full" />
                                 </div>
                             </div>
                             <div tabindex="0"
