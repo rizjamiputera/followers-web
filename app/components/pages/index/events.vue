@@ -1,6 +1,6 @@
 <template>
     <section v-if="first_event" class="flex flex-col gap-4">
-        <DefaultTitle class="text-green-main">Event</DefaultTitle>
+        <DefaultTitle class="text-green-main">Kegiatan</DefaultTitle>
 
         <div v-if="first_event"
             class="w-full flex max-sm:flex-col gap-2 max-sm:border border-green-main/30 max-sm:bg-green-main/3 rounded-xl">

@@ -9,19 +9,20 @@
         </section>
 
         <!-- Featured Content Section -->
-        <section v-if="!isEmpty || first_event || from_second_events.length" class="py-8 flex gap-5 w-full aspect-21/9">
+        <section v-if="!isEmpty || first_event || from_second_events.length"
+            class="py-8 flex max-md:flex-col gap-5 w-full md:aspect-21/9">
             <!-- Featured Content -->
             <div v-if="combinedFeaturedContent && combinedFeaturedContent.length > 0"
-                class="flex-1 border-bordder-main rounded-xl overflow-hidden">
+                class="md:flex-1 max-md:aspect-3/4 w-full border-bordder-main rounded-xl overflow-hidden">
                 <FeaturedCarousel :items="combinedFeaturedContent" title="Featured Content" :items-per-view="3" />
             </div>
 
-            <div class="w-3/10 max-md:hidden h-full">
+            <div class="w-full md:w-3/10 h-full max-md:hidden">
                 <template v-if="firstFeaturedArticle">
                     <NuxtLink :to="'/read/' + firstFeaturedArticle.slug" prefetch-on="interaction"
-                        class="w-full h-full flex sm:flex-col gap-2 border border-border-main rounded-xl p-3 bg-white/50">
+                        class=" w-full h-full flex flex-col gap-2 border border-border-main rounded-xl p-3 bg-white/50">
                         <Image :src="firstFeaturedArticle.image_md"
-                            class="flex-1 w-full rounded-lg bg-cover bg-no-repeat" />
+                            class="flex-1 max-md:aspect-square w-full rounded-lg bg-cover bg-no-repeat" />
                         <div class="w-full">
                             <AvatarPublishedAt :data="firstFeaturedArticle" class="text-xs" avatar_width="w-5 h-5" />
                             <div class="flex flex-col gap-2 text-xs">
