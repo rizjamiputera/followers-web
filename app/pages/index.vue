@@ -34,7 +34,7 @@
                 </template>
             </div>
         </section>
-        <section v-else class="py-8 flex max-md:flex-col gap-5 w-full md:aspect-21/9">
+        <section v-if="loadingFeatured" class="py-8 flex max-md:flex-col gap-5 w-full md:aspect-21/9">
             <div class="md:flex-1 max-md:aspect-3/4 w-full border-border-main rounded-3xl bg-green-main/20 skeleton">
             </div>
             <div class="w-full md:w-3/10 h-full max-md:hidden rounded-3xl bg-green-main/20 skeleton"></div>
@@ -86,8 +86,10 @@ const combinedFeaturedContent = computed(() => {
 })
 
 // Fetch featured content
+const loadingFeatured = ref<boolean>(true);
 const fetchFeaturedContent = async () => {
     try {
+        loadingFeatured.value = true;
         // Use single endpoint for all homepage data
         const homepageData = await Api.get('/v1/home-page/data')
 
@@ -95,6 +97,8 @@ const fetchFeaturedContent = async () => {
         featuredEvents.value = Array.isArray(homepageData?.featuredEvents) ? homepageData.featuredEvents : []
     } catch (error) {
         console.error('Error fetching featured content:', error)
+    } finally {
+        loadingFeatured.value = false;
     }
 }
 
