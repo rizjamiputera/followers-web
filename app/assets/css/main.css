@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=swap');
+
 @import "tailwindcss";
 @plugin "daisyui";
 @plugin "@tailwindcss/typography";
@@ -40,6 +42,7 @@
 }
 
 @theme {
+    --font-cinzel: "Cinzel Decorative", serif;
     --color-main: rgba(255, 255, 255, 1);
     --color-default: #1C1C1C;
     --color-secondary2: #464646;

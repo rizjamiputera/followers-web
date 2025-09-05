@@ -1,7 +1,10 @@
 <template>
     <section v-if="!isEmpty">
         <div class="flex flex-col gap-4">
-            <DefaultTitle class="text-green-main">Artikel Terbaru</DefaultTitle>
+            <div>
+                <DefaultTitle>Artikel <span class="text-green-main">Terbaru</span></DefaultTitle>
+                <DefaultSubtitle>Pelajari ilmu sebanyka mungkin sebagai bekal kita kelak</DefaultSubtitle>
+            </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-5">
                 <template v-if="isEmpty && !isLoading">
                     <div class="col-span-full text-3xl text-center text-green-main/50">
