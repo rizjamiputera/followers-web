@@ -8,7 +8,7 @@
 
                     <div
                         class="bg-gradient-to-b from-black/0 to-black/50 w-full h-full flex flex-col justify-end p-6 md:p-10 text-white">
-                        <div class="font-cinzel font-semibold">{{ item.title }}</div>
+                        <div class="font-cinzel font-semibold tracking-widest">{{ item.title }}</div>
                         <div class="text-sm font-light max-sm:truncate">{{ item.excerpt }}</div>
 
                         <template v-if="item.location && item.start_at">
