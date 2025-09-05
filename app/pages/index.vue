@@ -1,6 +1,7 @@
 <template>
     <div class="section-container">
-        <section v-if="isEmpty && !first_event && !from_second_events.length" class="h-screen flex items-center">
+        <section v-if="isEmpty && !first_event && !from_second_events.length && !combinedFeaturedContent.length"
+            class="h-screen flex items-center">
             <div class="text-green-main font bold text-center text-lg">
                 Website ini akan menjadi ruang dakwah, tempat para ustadz berbagi ilmu, nasihat, dan inspirasi. Konten
                 akan
@@ -9,20 +10,19 @@
         </section>
 
         <!-- Featured Content Section -->
-        <section v-if="!isEmpty || first_event || from_second_events.length"
+        <section v-if="combinedFeaturedContent && combinedFeaturedContent.length > 0"
             class="py-8 flex max-md:flex-col gap-5 w-full md:aspect-21/9">
             <!-- Featured Content -->
-            <div v-if="combinedFeaturedContent && combinedFeaturedContent.length > 0"
-                class="md:flex-1 max-md:aspect-3/4 w-full border-bordder-main rounded-xl overflow-hidden">
+            <div class="md:flex-1 max-md:aspect-3/4 w-full border-border-main rounded-3xl overflow-hidden">
                 <FeaturedCarousel :items="combinedFeaturedContent" title="Featured Content" :items-per-view="3" />
             </div>
 
             <div class="w-full md:w-3/10 h-full max-md:hidden">
                 <template v-if="firstFeaturedArticle">
                     <NuxtLink :to="'/read/' + firstFeaturedArticle.slug" prefetch-on="interaction"
-                        class=" w-full h-full flex flex-col gap-2 border border-border-main rounded-xl p-3 bg-white/50">
+                        class=" w-full h-full flex flex-col gap-2 border border-border-main rounded-3xl p-6 bg-white/50">
                         <Image :src="firstFeaturedArticle.image_md"
-                            class="flex-1 max-md:aspect-square w-full rounded-lg bg-cover bg-no-repeat" />
+                            class="flex-1 max-md:aspect-square w-full rounded-2xl bg-cover bg-no-repeat" />
                         <div class="w-full">
                             <AvatarPublishedAt :data="firstFeaturedArticle" class="text-xs" avatar_width="w-5 h-5" />
                             <div class="flex flex-col gap-2 text-xs">
@@ -33,6 +33,11 @@
                     </NuxtLink>
                 </template>
             </div>
+        </section>
+        <section v-else class="py-8 flex max-md:flex-col gap-5 w-full md:aspect-21/9">
+            <div class="md:flex-1 max-md:aspect-3/4 w-full border-border-main rounded-3xl bg-green-main/20 skeleton">
+            </div>
+            <div class="w-full md:w-3/10 h-full max-md:hidden rounded-3xl bg-green-main/20 skeleton"></div>
         </section>
 
         <PagesIndexEvents />
