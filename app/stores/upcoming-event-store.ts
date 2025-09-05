@@ -15,7 +15,7 @@ export const useUpcomingEventStore = defineStore('upcoming-event', {
     state: (): UpcomingEventStoreState => ({
         data: undefined,
         parameters: {
-            limit: 4,
+            limit: 3,
             page: 1,
             includes: []
         },
