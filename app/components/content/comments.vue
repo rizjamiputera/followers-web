@@ -1,6 +1,6 @@
 <template>
     <div ref="sectionRef">
-        <div class="text-2xl md:text-3xl font-semibold text-green-main">
+        <div class="font-cinzel tracking-wide text-2xl md:text-3xl font-semibold text-green-main">
             <!-- TODO CONTENT STATS, buat content store, supaya bisa update comment count tanpa memikirkan dari artikel / event -->
             <span v-if="stats">{{ `${stats.commentCount} ` }}</span>Comments
         </div>
@@ -10,7 +10,7 @@
         <div class="mb-4" v-if="user">
             <Textarea v-model="comment" placeholder="Type comment here.." />
             <div class="flex justify-end mt-2">
-                <Button class="btn-green" @click="submit">Submit</Button>
+                <Button class="btn-green font-cinzel tracking-wide" @click="submit">Submit</Button>
             </div>
         </div>
         <ButtonLink v-else to="/auth/login" class="btn-green w-full">

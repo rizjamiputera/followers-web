@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col gap-4" v-if="drawEvents.length">
-        <div class="text-green-main font-bold text-xl">Event Lainnya</div>
+        <div class="font-cinzel tracking-wide text-green-main font-bold text-xl">Event Lainnya</div>
 
         <div class="flex flex-col gap-2">
             <template v-for="data in drawEvents" :key="data.id">
@@ -19,7 +19,8 @@
                             </div>
                         </div>
                         <div class="flex flex-col gap-2">
-                            <DefaultBody class="line-clamp-1 font-bold">{{ data.title }}</DefaultBody>
+                            <DefaultBody class="font-cinzel tracking-wide line-clamp-1 font-bold">{{ data.title }}
+                            </DefaultBody>
                             <DefaultBody class="line-clamp-3">{{ data.excerpt }}</DefaultBody>
                         </div>
                     </div>

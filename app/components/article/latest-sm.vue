@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col gap-4">
-        <div class="font-bold text-green-main">Artikel Terbaru {{ authorName }}</div>
+        <div class="font-cinzel tracking-wide font-bold text-green-main">Artikel Terbaru {{ authorName }}</div>
         <template v-if="!isLoading" v-for="data in latestData" :key="data.id">
             <NuxtLink :to="'/read/' + data.slug" prefetch-on="interaction"
                 class="w-full flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
@@ -9,7 +9,7 @@
                 <div class="flex-1 w-full">
                     <AvatarPublishedAt :data class="text-xs" avatar_width="w-5 h-5" />
                     <div class="flex flex-col gap-2 text-xs">
-                        <div class="line-clamp-1 font-bold">{{ data.title }}</div>
+                        <div class="font-cinzel tracking-wide line-clamp-1 font-bold">{{ data.title }}</div>
                         <div class="line-clamp-2">{{ data.excerpt }}</div>
                     </div>
                 </div>

@@ -43,8 +43,10 @@
                                     formatTime(data.start_at) }}
                             </div>
                         </div>
-                        <div class="flex flex-col gap-2">
-                            <DefaultBody class="line-clamp-1 font-bold">{{ data.title }}</DefaultBody>
+                        <div class="flex flex-col gap-2 mt-2">
+                            <DefaultBody class="font-cinzel tracking-wide line-clamp-1 font-bold">
+                                {{ data.title }}
+                            </DefaultBody>
                             <DefaultBody class="line-clamp-3">{{ data.excerpt }}</DefaultBody>
                         </div>
                     </div>

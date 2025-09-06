@@ -20,8 +20,10 @@
                             <div class="flex justify-start sm:justify-between gap-2 text-xs">
                                 <AvatarPublishedAt :data class="text-xs" avatar_width="w-5 h-5" />
                             </div>
-                            <div class="flex flex-col gap-2">
-                                <DefaultBody class="line-clamp-1 font-bold">{{ data.title }}</DefaultBody>
+                            <div class="flex flex-col gap-2 mt-2">
+                                <DefaultBody class="font-cinzel tracking-wide line-clamp-1 font-bold">
+                                    {{ data.title }}
+                                </DefaultBody>
                                 <DefaultBody class="line-clamp-3">{{ data.excerpt }}</DefaultBody>
                             </div>
                         </div>
@@ -40,7 +42,8 @@
                 </template>
             </div>
             <div class="flex justify-center">
-                <Button class="btn btn-green" v-if="latest_articles.length < total" @click="++parameters.page">
+                <Button class="btn btn-green font-cinzel tracking-wide" v-if="latest_articles.length < total"
+                    @click="++parameters.page">
                     Lihat lebih banyak
                 </Button>
             </div>
