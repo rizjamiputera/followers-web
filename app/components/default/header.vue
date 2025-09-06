@@ -22,6 +22,12 @@
                                 Home
                             </NuxtLink>
                         </li>
+                        <li>
+                            <NuxtLink to="/kegiatan" prefetch-on="interaction"
+                                class="text-nowrapp hover:text-green-main hover:bg-green-50/10 transition-all duration-200 rounded-lg">
+                                Kegiatan
+                            </NuxtLink>
+                        </li>
                         <template v-if="false">
                             <li>
                                 <button @click="show_product_menu = !show_product_menu"
