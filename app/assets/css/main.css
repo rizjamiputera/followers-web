@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=swap');
+
 @import "tailwindcss";
 @plugin "daisyui";
 @plugin "@tailwindcss/typography";
@@ -40,6 +42,7 @@
 }
 
 @theme {
+    --font-cinzel: "Cinzel Decorative", serif;
     --color-main: rgba(255, 255, 255, 1);
     --color-default: #1C1C1C;
     --color-secondary2: #464646;
@@ -49,7 +52,7 @@
     --color-white-main: #FCFCFC;
     --color-green-main: #007426;
     --color-green-secondary: #42E686;
-    --color-border-main: #BDBDBD;
+    --color-border-main: #D4D4D4;
 }
 
 @source inline("w-5 h-5 w-12 h-12 w-10 h-10 badge-neutral badge-accent badge-warning badge-info badge-success badge-error");
@@ -200,4 +203,18 @@ table th {
     -webkit-mask: linear-gradient(to bottom, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0) 100%);
     pointer-events: none;
     /* z-index: 1; */
+}
+
+.carousel {
+    padding: 0;
+    --vc-pgn-background-color: white;
+    --vc-pgn-active-color: red;
+    --vc-pgn-border-radius: 5px;
+    --vc-pgn-height: 7px;
+    --vc-pgn-width: 7px;
+}
+
+.carousel__next svg,
+.carousel__prev svg {
+    fill: white !important;
 }

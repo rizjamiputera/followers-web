@@ -18,7 +18,8 @@
                 <template v-if="data">
                     <!-- EVENT IMAGE -->
                     <div class="flex flex-col gap-1">
-                        <Image :src="data.image" :alt="data.title" class-name="aspect-3/4 bg-cover rounded-2xl" />
+                        <Image :src="data.image_portrait" :alt="data.title"
+                            class-name="aspect-3/4 bg-cover rounded-2xl" />
                         <div class="text-2xl md:text-3xl font-semibold mb-1">{{ data.title }}</div>
                         <div class="flex flex-wrap justify-center sm:justify-end gap-2">
 
@@ -69,6 +70,12 @@
                         </div>
                     </div>
 
+                    <!-- Event Registration Section -->
+                    <EventRegistrationInfo v-if="data" :registrationConfig="data.registrationConfig"
+                        :userRegistration="data.userRegistration" :registeredCount="data.registeredCount"
+                        :availableSpots="data.availableSpots" @register="showRegistrationForm" @update="showUpdateForm"
+                        @cancel="showCancelDialog" />
+
                     <LazyContentComments v-if="contentId" :contentId :stats @add-comment="getStats" />
                 </template>
 
@@ -81,20 +88,132 @@
                 <LazyArticleLatestSm />
             </div>
         </div>
+
+        <!-- Registration Form Modal -->
+        <LazyEventRegistrationForm v-if="data?.registrationConfig" :show="showRegistrationModal"
+            :registrationConfig="data.registrationConfig" :formFields="data.registrationConfig.formFields"
+            :initialData="registrationFormData" :isUpdating="isUpdatingRegistration"
+            :confirmationMessage="registrationStore.successMessage" @submit="handleRegistrationSubmit"
+            @close="closeRegistrationModal" />
+
+        <!-- Cancel Registration Dialog -->
+        <LazyModal :show="showCancelModal" v-if="showCancelModal" @close="closeCancelModal">
+            <div class="flex items-center gap-3 mb-4">
+                <LucideAlertTriangle class="h-6 w-6 text-amber-500" />
+                <h3 class="text-lg font-semibold text-gray-900">Batalkan Registrasi</h3>
+            </div>
+
+            <p class="text-gray-600 mb-4">
+                Apakah anda yakin untuk membatalkan registrasi?
+            </p>
+
+            <div class="space-y-4">
+                <div>
+                    <label for="cancellation-reason" class="block text-sm font-medium text-gray-700 mb-2">
+                        Alasan (optional)
+                    </label>
+                    <textarea id="cancellation-reason" v-model="cancellationReason" rows="3"
+                        placeholder="Beritahu alasan pembatalan..."
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-vertical"></textarea>
+                </div>
+
+                <div class="flex gap-3">
+                    <button @click="closeCancelModal"
+                        class="flex-1 btn btn-outline border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-2 px-4 rounded-lg transition-colors">
+                        Tetap Register
+                    </button>
+                    <button @click="handleCancelRegistration" :disabled="registrationStore.isSubmitting"
+                        class="flex-1 btn btn-error text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        <LucideLoader2 v-if="registrationStore.isSubmitting" class="h-4 w-4 mr-2 animate-spin" />
+                        Ya, Batalkan
+                    </button>
+                </div>
+            </div>
+        </LazyModal>
+        <!-- <div v-if="showCancelModal"
+            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div class="bg-white rounded-lg max-w-md w-full p-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <LucideAlertTriangle class="h-6 w-6 text-amber-500" />
+                    <h3 class="text-lg font-semibold text-gray-900">Cancel Registration</h3>
+                </div>
+
+                <p class="text-gray-600 mb-4">
+                    Are you sure you want to cancel your registration for this event?
+                </p>
+
+                <div class="space-y-4">
+                    <div>
+                        <label for="cancellation-reason" class="block text-sm font-medium text-gray-700 mb-2">
+                            Reason for cancellation (optional)
+                        </label>
+                        <textarea id="cancellation-reason" v-model="cancellationReason" rows="3"
+                            placeholder="Let us know why you're cancelling..."
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-vertical"></textarea>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button @click="closeCancelModal"
+                            class="flex-1 btn btn-outline border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-2 px-4 rounded-lg transition-colors">
+                            Keep Registration
+                        </button>
+                        <button @click="handleCancelRegistration" :disabled="registrationStore.isSubmitting"
+                            class="flex-1 btn btn-error text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            <LucideLoader2 v-if="registrationStore.isSubmitting" class="h-4 w-4 mr-2 animate-spin" />
+                            Cancel Registration
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+        <!-- Success/Error Toast -->
+        <div v-if="registrationStore.successMessage || registrationStore.error"
+            class="fixed bottom-4 right-4 max-w-sm z-50">
+            <div v-if="registrationStore.successMessage"
+                class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg">
+                <div class="flex items-center gap-2">
+                    <LucideCheckCircle class="h-5 w-5" />
+                    <span class="font-medium">{{ registrationStore.successMessage }}</span>
+                </div>
+            </div>
+
+            <div v-if="registrationStore.error"
+                class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg">
+                <div class="flex items-center gap-2">
+                    <LucideXCircle class="h-5 w-5" />
+                    <span class="font-medium">{{ registrationStore.error }}</span>
+                </div>
+            </div>
+        </div>
     </section>
 </template>
 
 <script lang="ts" setup>
-import { LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
+import {
+    LucideShare2, LucideThumbsDown, LucideThumbsUp, LucideX,
+    LucideAlertTriangle, LucideCheckCircle, LucideXCircle, LucideLoader2
+} from 'lucide-vue-next';
 import { ReactionType } from '~/interfaces/content-interface';
 import type { Event } from '~/interfaces/event-interface';
 import { useReadEventStore } from '~/stores/read-event-store';
+import { useEventRegistrationStore } from '~/stores/event-registration-store';
 
 const route = useRoute();
 const ReadEventStore = useReadEventStore();
 const { data, tags, content, stats, isNotFound, auth_reaction, contentId } = storeToRefs(ReadEventStore);
 const { get, getStats, recordVisit } = ReadEventStore;
 ReadEventStore.slug = route.params.slug as string;
+
+// Registration store
+const registrationStore = useEventRegistrationStore()
+
+// Registration modal state
+const showRegistrationModal = ref(false)
+const showCancelModal = ref(false)
+const isUpdatingRegistration = ref(false)
+const registrationFormData = ref<Record<string, any>>({})
+const cancellationReason = ref('')
 
 // Server-side data fetching for SEO
 const { public: { apiUri } } = useRuntimeConfig();
@@ -199,6 +318,127 @@ const handleLike = async () => {
     } catch (error) {
     }
 }
+
+// Registration methods
+const showRegistrationForm = () => {
+    const AuthStore = useAuthStore()
+    if (!AuthStore.user) {
+        AuthStore.show_request_login = true
+        return
+    }
+
+    isUpdatingRegistration.value = false
+    registrationFormData.value = {}
+    showRegistrationModal.value = true
+    registrationStore.clearMessages()
+}
+
+const showUpdateForm = () => {
+    if (!data?.value?.userRegistration) return
+
+    isUpdatingRegistration.value = true
+    registrationFormData.value = { ...data.value.userRegistration.formData }
+    showRegistrationModal.value = true
+    registrationStore.clearMessages()
+}
+
+const showCancelDialog = () => {
+    cancellationReason.value = ''
+    showCancelModal.value = true
+    registrationStore.clearMessages()
+}
+
+const closeRegistrationModal = () => {
+    showRegistrationModal.value = false
+    registrationFormData.value = {}
+    registrationStore.clearMessages()
+}
+
+const closeCancelModal = () => {
+    showCancelModal.value = false
+    cancellationReason.value = ''
+    registrationStore.clearMessages()
+}
+
+const handleRegistrationSubmit = async (formData: Record<string, any>) => {
+    if (!data?.value?.id) return
+
+    let success = false
+
+    if (isUpdatingRegistration.value && data.value.userRegistration) {
+        success = await registrationStore.updateRegistration(data.value.userRegistration.id, formData)
+    } else {
+        success = await registrationStore.register(data.value.id, formData)
+    }
+
+    if (success && data.value) {
+        // Update the event data with the new registration info
+        if (registrationStore.userRegistration) {
+            data.value.userRegistration = registrationStore.userRegistration
+        }
+
+        // Close modal after a delay to show success message
+        setTimeout(() => {
+            closeRegistrationModal()
+            get()
+        }, 5000)
+
+        // Refresh the page data to get updated counts
+        // setTimeout(() => {
+        // }, 500)
+    }
+}
+
+const handleCancelRegistration = async () => {
+    if (!data?.value?.userRegistration) return
+
+    const success = await registrationStore.cancelRegistration(
+        data.value.userRegistration.id,
+        cancellationReason.value || undefined
+    )
+
+    if (success && data.value?.userRegistration) {
+        // Update the event data
+        data.value.userRegistration.status = 'CANCELLED' as any
+        data.value.userRegistration.cancelledAt = new Date().toISOString()
+        data.value.userRegistration.cancellationNote = cancellationReason.value || null
+
+        closeCancelModal()
+
+        // Refresh the page data to get updated counts
+        setTimeout(() => {
+            get()
+        }, 500)
+    }
+}
+
+// Auto-dismiss messages after 5 seconds
+watch(() => registrationStore.successMessage, (message) => {
+    if (message) {
+        setTimeout(() => {
+            registrationStore.clearMessages()
+        }, 5000)
+    }
+})
+
+watch(() => registrationStore.error, (error) => {
+    if (error) {
+        setTimeout(() => {
+            registrationStore.clearMessages()
+        }, 5000)
+    }
+})
+
+// Initialize registration data when event data is loaded
+watchEffect(() => {
+    if (data?.value) {
+        registrationStore.setRegistrationData({
+            config: data.value.registrationConfig,
+            userRegistration: data.value.userRegistration,
+            registeredCount: data.value.registeredCount || 0
+        })
+    }
+})
 </script>
 
 <style></style>

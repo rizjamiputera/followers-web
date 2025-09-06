@@ -55,7 +55,8 @@
                             <div tabindex="0"
                                 class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
                                 <div class="p-2 flex flex-col gap-1">
-                                    <div class="text-green-main font-medium">{{ user.name }}</div>
+                                    <div class="font-cinzel tracking-wide text-green-main font-medium">{{ user.name }}
+                                    </div>
                                     <div class="text-xs">Member since {{ dayjs(user.createdAt).format('DD MMM YYYY') }}
                                     </div>
                                 </div>

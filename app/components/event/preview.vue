@@ -1,7 +1,8 @@
 <template>
     <!-- ARTICLE IMAGE -->
     <div class="flex flex-col gap-1">
-        <Image v-if="data.image" :full-image="true" :src="data.image" :alt="data.title"
+        <Image v-if="data.image_portrait || data.image" :full-image="true"
+            :src="data.image_portrait ? data.image_portrait : data.image!" :alt="data.title"
             class-name="w-full rounded-2xl" />
         <div v-else class-name="w-full aspect-3/4 bg-green-main rounded-2xl" />
 

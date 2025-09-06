@@ -5,6 +5,7 @@ export interface ApiInterface {
     headers: () => Record<string, any>
     get: (path: string) => Promise<unknown>;
     get_blob: (path: string) => Promise<unknown>;
+    getBlob: (path: string) => Promise<ArrayBuffer>;
     post: (path: string, data?: Record<string, any> | FormData) => Promise<unknown>;
     postWithXVar: (path: string, data?: Record<string, any> | FormData) => Promise<unknown>;
     put: ApiMethod;
@@ -74,6 +75,24 @@ export const Api: ApiInterface = {
 
         } catch (error) {
             Api.handleError(error);
+        }
+    },
+    getBlob: async (path: string) => {
+        Api.check_maintenance();
+
+        const apiUri = useRuntimeConfig().public.apiUri;
+        try {
+            const response = await $fetch(apiUri + path, {
+                method: 'GET',
+                headers: Api.headers(),
+                responseType: 'arrayBuffer'
+            });
+
+            return response as ArrayBuffer;
+
+        } catch (error) {
+            Api.handleError(error);
+            throw error;
         }
     },
     post: async (path: string, data?: Record<string, any> | FormData) => {

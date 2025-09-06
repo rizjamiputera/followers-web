@@ -15,15 +15,13 @@
             </div>
 
             <div class="footer-section">
-                <h6>Site Map</h6>
+                <h6 class="font-cinzel tracking-wide">Site Map</h6>
                 <a>Home</a>
-                <a>About Us</a>
-
-
+                <!-- <a>About Us</a> -->
             </div>
 
             <div class="footer-section">
-                <h6>Social Media</h6>
+                <h6 class="font-cinzel tracking-wide">Social Media</h6>
                 <a href="https://www.instagram.com/thefollowersid" target="_blank" class="flex items-center gap-2">
                     <Button class="btn-xsbtn-white btn-circle">
                         <SvgInstagram class="w-5" />
@@ -38,7 +36,7 @@
                 </a>
             </div>
             <div class="footer-section">
-                <h6>Contact</h6>
+                <h6 class="font-cinzel tracking-wide">Contact</h6>
                 <a>Jl. Jayagiri No 9J, Dangin Puri Klod, Kec. Denpasar Tim., Kota Denpasar, Bali 80234</a>
                 <a>contact@followersbicara.com</a>
             </div>

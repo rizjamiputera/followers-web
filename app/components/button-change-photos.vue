@@ -1,5 +1,5 @@
 <template>
-    <Button class="btn-xs btn-circle btn-green" @click="fileInput?.click()">
+    <Button class="btn-sm btn-circle btn-green" @click="fileInput?.click()">
         <LucidePencil :size="12" />
     </Button>
 
