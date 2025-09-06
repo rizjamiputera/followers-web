@@ -31,7 +31,7 @@
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
                 <Stat :icon="LucideUsers" color-class="text-primary" label="Total Visitors"
                     :value1="formatNumber(dashboardData.overview.visitors.total)"
-                    :value2="`${formatNumber(dashboardData.overview.visitors.visitsLast24Hours)} visits today`" />
+                    :value2="`${formatNumber(dashboardData.overview.visitors.visitsLast24Hours)} visits last 24h`" />
 
                 <Stat :icon="LucideFileText" color-class="text-secondary" label="Total Content"
                     :value1="formatNumber(totalContent)"
@@ -55,22 +55,23 @@
                     </h2>
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
                         <!-- All Time -->
-                        <Stat :icon="LucideGlobe" color-class="text-primary" label="All Time"
+                        <Stat :icon="LucideGlobe" color-class="text-primary" label="All Time Visitor"
                             :value1="formatNumber(dashboardData.overview.visitors?.total || 0)"
-                            value2="Total visitors" />
+                            :value2="`${formatNumber(dashboardData.overview.visitors?.totalVisits || 0)} visits`" />
+                        <!-- value2="Total visitors" /> -->
 
                         <!-- This Year -->
-                        <Stat :icon="LucideCalendar" color-class="text-secondary" label="This Year"
+                        <Stat :icon="LucideCalendar" color-class="text-secondary" label="This Year Visitor"
                             :value1="formatNumber(dashboardData.overview.visitors?.thisYear?.visitors || 0)"
                             :value2="`${formatNumber(dashboardData.overview.visitors?.thisYear?.visits || 0)} visits`" />
 
                         <!-- This Month -->
-                        <Stat :icon="LucideCalendarDays" color-class="text-accent" label="This Month"
+                        <Stat :icon="LucideCalendarDays" color-class="text-accent" label="This Month Visitor"
                             :value1="formatNumber(dashboardData.overview.visitors?.thisMonth?.visitors || 0)"
                             :value2="`${formatNumber(dashboardData.overview.visitors?.thisMonth?.visits || 0)} visits`" />
 
                         <!-- Today -->
-                        <Stat :icon="LucideCalendarCheck" color-class="text-info" label="Today"
+                        <Stat :icon="LucideCalendarCheck" color-class="text-info" label="Today Visitor"
                             :value1="formatNumber(dashboardData.overview.visitors?.today?.visitors || 0)"
                             :value2="`${formatNumber(dashboardData.overview.visitors?.today?.visits || 0)} visits`" />
                     </div>
