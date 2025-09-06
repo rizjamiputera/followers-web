@@ -1,7 +1,7 @@
 <template>
     <header class="fixed z-50 navbar bg-[rgba(244, 242, 238, 1)]/20 backdrop-blur-sm shadow-sm w-screen">
         <div class="w-full max-w-6xl mx-auto relative">
-            <DefaultProductMenu :show="show_product_menu" :menuProduct @close="show_product_menu = false" />
+            <!-- <DefaultProductMenu :show="show_product_menu" :menuProduct @close="show_product_menu = false" /> -->
 
 
             <div class="flex justify-between px-2 md:px-12">

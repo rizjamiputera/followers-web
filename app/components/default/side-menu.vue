@@ -26,6 +26,10 @@
                     <NuxtLink to="/" prefetch-on="interaction" class="text-nowrap text-white-main"
                         @click="$emit('close')">Home</NuxtLink>
                 </li>
+                <li>
+                    <NuxtLink to="/kegiatan" prefetch-on="interaction" class="text-nowrap text-white-main"
+                        @click="$emit('close')">Kegiatan</NuxtLink>
+                </li>
                 <ClientOnly>
                     <li v-if="user">
                         <NuxtLink to="/profile" prefetch-on="interaction" class="text-nowrap text-white-main"
