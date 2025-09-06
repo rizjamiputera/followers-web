@@ -9,18 +9,20 @@ interface UpcomingEventStoreState {
     parameters: PaginationParameters
     isLoading: boolean
     isError: boolean
+    isEmpty: boolean
 }
 
 export const useUpcomingEventStore = defineStore('upcoming-event', {
     state: (): UpcomingEventStoreState => ({
         data: undefined,
         parameters: {
-            limit: 3,
+            limit: 6,
             page: 1,
             includes: []
         },
-        isLoading: false,
-        isError: false
+        isLoading: true,
+        isError: false,
+        isEmpty: false
     }),
     getters: {
         apiPath: (state) => {
@@ -58,6 +60,10 @@ export const useUpcomingEventStore = defineStore('upcoming-event', {
             try {
                 await new Promise((resolve) => setTimeout(resolve, 400));
                 this.data = await Api.get(this.apiPath) as Paginate<Event[]>
+
+                if (this.data.data.length) {
+                    this.isEmpty = true;
+                }
             } catch (error) {
                 this.isError = true
             } finally {
