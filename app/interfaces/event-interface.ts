@@ -9,6 +9,8 @@ export interface Event {
     excerpt: string
     image: string
     image_md: string
+    image_portrait: string
+    image_portrait_md: string
     content?: Content
     location?: string
     address?: string

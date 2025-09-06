@@ -35,10 +35,10 @@
         </div>
     </template>
     <template v-else>
-        <div class="badge badge-outline-green bg-transparent text-nowrap">
+        <div class="badge badge-outline-green bg-transparent text-nowrap text-xs">
             <LucideClock :size="14" /> <span class="min-w-12">Dari</span> : {{ formatDateTimeTz(data.start_at) }}
         </div>
-        <div class="badge badge-outline-green bg-transparent text-nowrap" v-if="data.end_at">
+        <div class="badge badge-outline-green bg-transparent text-nowrap text-xs" v-if="data.end_at">
             <LucideClock :size="14" /> <span class="min-w-12">Sampai</span> : {{ formatDateTimeTz(data.end_at) }}
         </div>
     </template>

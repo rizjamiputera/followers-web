@@ -27,7 +27,8 @@
             <template v-for="data in events">
                 <NuxtLink :to="'/event/' + data.slug" prefetch-on="interaction"
                     class="w-full flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
-                    <Image :src="data.image_md" class="w-33 sm:w-full aspect-3/4 rounded-lg bg-cover bg-no-repeat" />
+                    <Image :src="data.image_portrait_md"
+                        class="w-33 sm:w-full aspect-3/4 rounded-lg bg-cover bg-no-repeat" />
                     <div class="flex-1">
                         <div class="flex flex-col gap-2">
                             <!-- <EventLocationSchedule :data :skipAddress="true" /> -->

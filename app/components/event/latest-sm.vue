@@ -1,13 +1,13 @@
 <template>
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-4" v-if="drawEvents.length">
         <div class="text-green-main font-bold text-xl">Event Lainnya</div>
 
-
-        <div v-if="drawEvents.length" class="flex flex-col gap-2">
+        <div class="flex flex-col gap-2">
             <template v-for="data in drawEvents" :key="data.id">
                 <NuxtLink :to="'/event/' + data.slug" prefetch-on="interaction"
                     class="w-full flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
-                    <Image :src="data.image_md" class="w-33 sm:w-full aspect-3/4 rounded-lg bg-cover bg-no-repeat" />
+                    <Image :src="data.image_portrait_md"
+                        class="w-33 sm:w-full aspect-3/4 rounded-lg bg-cover bg-no-repeat" />
                     <div class="flex-1">
                         <div class="flex flex-col gap-2">
                             <!-- <EventLocationSchedule :data :skipAddress="true" /> -->
@@ -26,9 +26,9 @@
                 </NuxtLink>
             </template>
         </div>
-        <div v-else class="text-lg text-center font-light text-green-main/80">
+        <!-- <div v-else class="text-lg text-center font-light text-green-main/80">
             Belum ada Event
-        </div>
+        </div> -->
     </div>
 </template>
 

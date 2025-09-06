@@ -52,29 +52,53 @@
                     </ButtonLink>
                 </template>
             </div>
-
         </div>
 
+        <!-- Image Landscape -->
         <div class="w-full flex flex-wrap gap-4 items-stretch">
-            <div class="flex-1 max-sm:w-full">
-                <div>
+            <div class="flex-1 flex flex-col gap-5 max-sm:w-full">
+                <!-- IMAGE Landscape -->
+                <div class="">
                     <div class="flex gap-1 items-center mb-1">
-                        <label class="text-sm font-medium">Image</label>
+                        <label class="text-sm font-medium">Image Landscape</label>
                         <ButtonChangePhotos @uploaded="handleNewPhoto" />
                     </div>
-                    <LazyImage v-if="dataDto.image" :src="dataDto.image" alt="main image"
-                        class="w-full max-w-100 aspect-3/4 bg-cover rounded-xl" />
-                    <div v-else class="bg-green-main/40 w-full max-w-60 aspect-3/4 rounded-xl"></div>
+
+                    <div class="w-full sm:max-w-xs flex-shrink-0 aspect-video rounded-lg bg-cover bg-center overflow-hidden relative"
+                        :style="{ backgroundImage: `url(${dataDto.image})` }">
+
+                        <div class="bg-gradient-to-b from-black/0 to-black/50 w-full h-full"></div>
+                        <div class="absolute bottom-0 w-full p-3">
+                            <div class="flex flex-col gap-px w-full text-white">
+                                <!-- title -->
+                                <div v-if="dataDto.title" class="line-clamp-1 font-bold text-md">
+                                    {{ dataDto.title }}
+                                </div>
+                                <div v-else class="h-3 w-3/4 rounded-full bg-green-main/20"></div>
+
+                                <!-- exerpt -->
+                                <div v-if="dataDto.excerpt" class="truncate text-sm w-full text-thin">
+                                    {{ dataDto.excerpt }}
+                                </div>
+                                <template v-else>
+                                    <div class="h-3 w-full rounded-full bg-green-main/20"></div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div>
-                    <label class="text-sm font-medium">Ringkasan</label>
-                    <p class="text-xs font-light mb-1">
-                        Berisi maksimal 500 karakter punchline untuk menarik perhatian pembaca
-                    </p>
-                    <Textarea v-model="dataDto.excerpt" />
+                <div class="flex-1">
+                    <div class="flex gap-1 items-center mb-1">
+                        <label class="text-sm font-medium">Image Portrait</label>
+                        <ButtonChangePhotos @uploaded="handleNewPortraitPhoto" />
+                    </div>
+                    <LazyImage v-if="dataDto.image_portrait" :src="dataDto.image_portrait" alt="main image"
+                        class="max-h-85 aspect-3/4 bg-cover rounded-xl" />
+                    <div v-else class="bg-green-main/40 max-h-85 aspect-3/4 rounded-xl"></div>
                 </div>
             </div>
+
 
             <div class="max-sm:hidden py-3">
                 <div class="h-full w-px bg-green-main/10"></div>
@@ -82,12 +106,12 @@
 
             <!-- Preview -->
             <div class="max-sm:w-full">
-                <label class="text-sm font-medium">Preview</label>
-                <div class="w-65 flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
+                <label class="text-sm font-medium">Preview Portrait</label>
+                <div class="w-full sm:w-85 flex flex-col gap-2 border border-green-main/30 rounded-xl p-3">
                     <!-- image -->
-                    <Image v-if="dataDto.image" :src="dataDto.image"
-                        class="flex-shrink-0 w-full sm:aspect-3/4 rounded-lg bg-cover bg-no-repeat" />
-                    <div v-else class="flex-shrink-0 w-full sm:aspect-3/4 rounded-lg bg-green-main/20" />
+                    <Image v-if="dataDto.image_portrait" :src="dataDto.image_portrait"
+                        class="flex-shrink-0 w-full aspect-3/4 rounded-lg bg-cover bg-no-repeat" />
+                    <div v-else class="flex-shrink-0 w-full aspect-3/4 rounded-lg bg-green-main/20" />
                     <div class="flex-1 min-w-0">
                         <div class="flex flex-col gap-2 w-full">
                             <!-- title -->
@@ -113,6 +137,14 @@
             </div>
         </div>
 
+        <div>
+            <label class="text-sm font-medium">Ringkasan</label>
+            <p class="text-xs font-light mb-1">
+                Berisi maksimal 500 karakter punchline untuk menarik perhatian pembaca
+            </p>
+            <Textarea v-model="dataDto.excerpt" />
+        </div>
+
         <!-- location, address, start_at, end_at -->
         <Input v-model="dataDto.location" label="Lokasi" />
         <Textarea v-model="dataDto.address" label="Alamat" />
@@ -133,22 +165,15 @@
         <div class="border-t border-gray-200 pt-6">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-semibold text-gray-900">Event Registration</h3>
-                <ButtonLink 
-                    v-if="event?.id && registrationConfig?.isEnabled"
-                    :to="`/cp/my-events/${event.id}/registrations`"
-                    class="btn btn-sm btn-outline btn-primary"
-                >
+                <ButtonLink v-if="event?.id && registrationConfig?.isEnabled"
+                    :to="`/cp/my-events/${event.id}/registrations`" class="btn btn-sm btn-outline btn-primary">
                     <LucideUsers class="h-4 w-4 mr-1" />
                     Manage Registrations
                 </ButtonLink>
             </div>
-            
-            <CpEventRegistrationConfig
-                :eventId="event?.id"
-                :initialConfig="registrationConfig"
-                :currentRegistrations="currentRegistrations"
-                @update:config="updateRegistrationConfig"
-            />
+
+            <CpEventRegistrationConfig :eventId="event?.id" :initialConfig="registrationConfig"
+                :currentRegistrations="currentRegistrations" @update:config="updateRegistrationConfig" />
         </div>
 
         <div v-if="dataDto.content?.content">
@@ -273,12 +298,12 @@ const get = async () => {
     if (!id) return;
 
     event.value = await Api.get('/v1/event/my/' + id + '?includes=content,registrationConfig') as Event;
-    
+
     // Load registration config if exists
     if (event.value.registrationConfig) {
         registrationConfig.value = event.value.registrationConfig
     }
-    
+
     // Load current registrations if event exists and has registration config
     if (event.value.registrationConfig?.isEnabled) {
         await loadCurrentRegistrations()
@@ -291,7 +316,7 @@ const get = async () => {
 // Registration methods
 const loadCurrentRegistrations = async () => {
     if (!id) return
-    
+
     try {
         const response = await Api.get(`/v1/event/${id}/registrations`) as any
         currentRegistrations.value = response.data || []
@@ -306,7 +331,7 @@ const updateRegistrationConfig = (config: any) => {
 
 const saveRegistrationConfig = async () => {
     if (!id || !registrationConfigData.value) return
-    
+
     try {
         if (registrationConfig.value) {
             // Update existing config
@@ -315,10 +340,10 @@ const saveRegistrationConfig = async () => {
             // Create new config
             await Api.post(`/v1/event/${id}/registration-config`, registrationConfigData.value)
         }
-        
+
         // Reload the event data to get updated config
         await get()
-        
+
         // Show success message
         // You can add a toast notification here
     } catch (error: any) {
@@ -338,6 +363,8 @@ watch(event, (newEvent) => {
 
         dataDto.value.image = newEvent.image
         dataDto.value.image_md = newEvent.image_md
+        dataDto.value.image_portrait = newEvent.image_portrait
+        dataDto.value.image_portrait_md = newEvent.image_portrait_md
         dataDto.value.content = { content: newEvent.content!.content };
 
         dataDto.value.location = newEvent.location
@@ -364,6 +391,13 @@ const handleNewPhoto = (photos: PhotoContent[]) => {
 
     dataDto.value.image = photos[0]?.path ?? '';
     dataDto.value.image_md = photos[1]?.path ?? '';
+}
+
+const handleNewPortraitPhoto = (photos: PhotoContent[]) => {
+    newPhotos.value = photos;
+
+    dataDto.value.image_portrait = photos[0]?.path ?? '';
+    dataDto.value.image_portrait_md = photos[1]?.path ?? '';
 }
 
 const checkingSlug = ref<boolean>(false);
@@ -402,8 +436,10 @@ const checkSlug = () => {
 const isEvent = Joi.object({
     title: IsString.max(255),
     slug: IsString.max(255),
-    image: IsString.optional().allow(null, ''),
-    image_md: IsString.optional().allow(null, ''),
+    image: IsString.optional().allow(null, '').label('Image Landscape'),
+    image_md: IsString.optional().allow(null, '').label('Image Landscape'),
+    image_portrait: IsString.optional().allow(null, '').label('Image Portrait'),
+    image_portrait_md: IsString.optional().allow(null, '').label('Image Portrait'),
     excerpt: IsString.max(500).label('Ringkasan'),
     content: IsContent,
     location: IsString.optional(),
@@ -506,12 +542,12 @@ const submit = async () => {
                 })
 
                 id = newData.id;
-                
+
                 // Save registration configuration if it was set
                 if (registrationConfigData.value) {
                     await saveRegistrationConfig()
                 }
-                
+
                 get();
             }
         }

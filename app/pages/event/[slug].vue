@@ -18,7 +18,8 @@
                 <template v-if="data">
                     <!-- EVENT IMAGE -->
                     <div class="flex flex-col gap-1">
-                        <Image :src="data.image" :alt="data.title" class-name="aspect-3/4 bg-cover rounded-2xl" />
+                        <Image :src="data.image_portrait" :alt="data.title"
+                            class-name="aspect-3/4 bg-cover rounded-2xl" />
                         <div class="text-2xl md:text-3xl font-semibold mb-1">{{ data.title }}</div>
                         <div class="flex flex-wrap justify-center sm:justify-end gap-2">
 
