@@ -12,11 +12,12 @@
         <!-- Featured Content Section -->
         <section v-if="combinedFeaturedContent && combinedFeaturedContent.length > 0"
             class="py-8 flex max-md:flex-col gap-5 w-full md:aspect-21/9">
-            <!-- Featured Content -->
+            <!-- CAROUSEL: Featured Content -->
             <div class="md:flex-1 max-md:aspect-3/4 w-full border-border-main rounded-3xl overflow-hidden">
                 <FeaturedCarousel :items="combinedFeaturedContent" title="Featured Content" :items-per-view="3" />
             </div>
 
+            <!-- First Highlight Article -->
             <div class="w-full md:w-3/10 h-full max-md:hidden">
                 <template v-if="firstFeaturedArticle">
                     <NuxtLink :to="'/read/' + firstFeaturedArticle.slug" prefetch-on="interaction"
@@ -40,7 +41,7 @@
             <div class="w-full md:w-3/10 h-full max-md:hidden rounded-3xl bg-green-main/20 skeleton"></div>
         </section>
 
-        <PagesIndexEvents />
+        <!-- <PagesIndexEvents /> -->
         <PagesIndexLatest />
     </div>
 </template>
