@@ -57,10 +57,27 @@
         <!-- Image Landscape -->
         <div class="w-full flex flex-wrap gap-4 items-stretch">
             <div class="flex-1 flex flex-col gap-5 max-sm:w-full">
+                <!-- IMAGE Portrait -->
+                <div class="flex-1">
+                    <div class="flex gap-1 items-start mb-1">
+                        <div class="flex flex-col">
+                            <label class="text-sm font-medium">Image Portrait</label>
+                            <div class="text-xs font-light">Image utama</div>
+                        </div>
+                        <ButtonChangePhotos @uploaded="handleNewPortraitPhoto" />
+                    </div>
+                    <LazyImage v-if="dataDto.image_portrait" :src="dataDto.image_portrait" alt="main image"
+                        class="max-h-85 aspect-3/4 bg-cover rounded-xl" />
+                    <div v-else class="bg-green-main/40 max-h-85 aspect-3/4 rounded-xl"></div>
+                </div>
+
                 <!-- IMAGE Landscape -->
                 <div class="">
-                    <div class="flex gap-1 items-center mb-1">
-                        <label class="text-sm font-medium">Image Landscape</label>
+                    <div class="flex items-start gap-1 items-center mb-1">
+                        <div class="flex flex-col">
+                            <label class="text-sm font-medium">Image Landscape</label>
+                            <div class="text-xs font-light">Untuk slide di homepage</div>
+                        </div>
                         <ButtonChangePhotos @uploaded="handleNewPhoto" />
                     </div>
 
@@ -86,16 +103,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="flex-1">
-                    <div class="flex gap-1 items-center mb-1">
-                        <label class="text-sm font-medium">Image Portrait</label>
-                        <ButtonChangePhotos @uploaded="handleNewPortraitPhoto" />
-                    </div>
-                    <LazyImage v-if="dataDto.image_portrait" :src="dataDto.image_portrait" alt="main image"
-                        class="max-h-85 aspect-3/4 bg-cover rounded-xl" />
-                    <div v-else class="bg-green-main/40 max-h-85 aspect-3/4 rounded-xl"></div>
                 </div>
             </div>
 
