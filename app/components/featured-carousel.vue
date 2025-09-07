@@ -6,7 +6,7 @@
                     class="carousel__item text-black w-full h-full bg-cover bg-center"
                     :style="{ backgroundImage: `url(${item.image})` }">
 
-                    <div
+                    <div v-if="false"
                         class="bg-gradient-to-b from-black/0 to-black/50 w-full h-full flex flex-col justify-end p-6 md:p-10 text-white">
                         <div class="font-cinzel font-semibold tracking-widest">{{ item.title }}</div>
                         <div class="text-sm font-light max-sm:truncate">{{ item.excerpt }}</div>
