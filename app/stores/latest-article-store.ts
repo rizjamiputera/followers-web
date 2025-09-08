@@ -50,7 +50,7 @@ export const useLatestArticleStore = defineStore('latest-article', {
             this.isError = false;
 
             try {
-                await new Promise((resolve) => setTimeout(resolve, 400));
+                // await new Promise((resolve) => setTimeout(resolve, 400));
                 const response = await Api.get(this.apiPath) as Paginate<Article[]>
                 this.data = response;
 

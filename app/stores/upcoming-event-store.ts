@@ -58,7 +58,7 @@ export const useUpcomingEventStore = defineStore('upcoming-event', {
             this.reset();
             this.isLoading = true;
             try {
-                await new Promise((resolve) => setTimeout(resolve, 400));
+                // await new Promise((resolve) => setTimeout(resolve, 400));
                 this.data = await Api.get(this.apiPath) as Paginate<Event[]>
 
                 if (this.data.data.length) {
