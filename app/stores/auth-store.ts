@@ -48,7 +48,7 @@ export const useAuthStore = defineStore('auth', {
                 this.reset()
             }
         },
-        async handleLogin(email: string, password: string) {
+        async handleLogin(email: string, password: string, redirectPath?: string) {
             if (this.isLoading) return;
             this.isLoading = true;
 
@@ -62,7 +62,7 @@ export const useAuthStore = defineStore('auth', {
 
                 this.setAuth(data as LoginResponse);
 
-                navigateTo('/');
+                navigateTo(redirectPath || '/');
             } catch (e: any) {
                 toastError(e)
             } finally {
@@ -85,7 +85,7 @@ export const useAuthStore = defineStore('auth', {
 
             await navigateTo('/');
         },
-        async handleRegister(payload: Record<string, string>) {
+        async handleRegister(payload: Record<string, string>, redirectPath?: string) {
             if (this.isLoading) return;
             this.isLoading = true;
 
@@ -94,7 +94,7 @@ export const useAuthStore = defineStore('auth', {
 
                 this.setAuth(data as LoginResponse);
 
-                navigateTo('/');
+                navigateTo(redirectPath || '/');
             } catch (e: any) {
                 toastError(e)
             } finally {
