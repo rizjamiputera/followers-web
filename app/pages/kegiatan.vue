@@ -35,7 +35,7 @@
         </div>
     </section>
 
-    <section v-if="isPastLoading && !isPastEmtpy" class="mt-20">
+    <section class="mt-20">
         <DefaultTitle class="text-green-main">Kegiatan yang lalu</DefaultTitle>
         <div class="grid grid-cols-1 sm:grid-cols-3 md::grid-cols-3 gap-2">
             <template v-for="data in PastEvent">
