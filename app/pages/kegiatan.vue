@@ -74,12 +74,13 @@
 <script lang="ts" setup>
 import dayjs from 'dayjs';
 import { LucideCalendar, LucideClock, LucideMapPin } from 'lucide-vue-next';
-import ButtonLink from '~/components/button-link.vue';
 
 const EventsStore = useUpcomingEventStore()
 const { events, from_second_events, first_event, isEmpty, isLoading } = storeToRefs(EventsStore);
 const { get } = EventsStore;
 onMounted(() => {
+    recordVisit();
+
     EventsStore.parameters.page = 1;
     if (!EventsStore.data) {
         get();
