@@ -32,13 +32,11 @@
                     <div class="flex-1">
                         <div class="flex flex-col gap-2">
                             <!-- <EventLocationSchedule :data :skipAddress="true" /> -->
-                            <div class="badge badge-sm badge-outline-green">
-                                <LucideMapPin :size="14" /> {{ data.location }}
-                            </div>
-                            <div class="badge badge-sm badge-outline-green">
+                            <EventLocation>{{ data.location }}</EventLocation>
+                            <div class="badge badge-sm badge-outline-green bg-transparent">
                                 <LucideCalendar :size="14" /> {{ dayjs(data.start_at).format('DD MMMM YYYY') }}
                             </div>
-                            <div class="badge badge-sm badge-outline-green">
+                            <div class="badge badge-sm badge-outline-green bg-transparent">
                                 <LucideClock :size="14" /> {{ formatTime(data.start_at) }} sd {{
                                     formatTime(data.start_at) }}
                             </div>
