@@ -48,7 +48,7 @@ export const useCommentsStore = defineStore('comments', {
             if (reset) this.reset();
             this.isLoading = true;
             try {
-                await new Promise((resolve) => setTimeout(resolve, 400));
+                // await new Promise((resolve) => setTimeout(resolve, 400));
                 const response = await Api.get(this.apiPath) as Paginate<Comment[]>
                 this.data = response;
 

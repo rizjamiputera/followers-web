@@ -14,17 +14,17 @@
             <Input type="text" v-model="dataDto.email" label="Email" placeholder="Email"
                 class="bg-transparent sm:input-lg font-light" />
             <Input type="password" v-model="dataDto.password"
-                @keyup.prevent.enter="handleLogin(dataDto.email, dataDto.password)" label="Password"
+                @keyup.prevent.enter="handleLogin(dataDto.email, dataDto.password, redirectPath)" label="Password"
                 placeholder="Password" class="bg-transparent sm:input-lg font-light" />
         </form>
 
         <Button class="w-full sm:btn-lg btn-green border-0 text-white mt-5"
-            @click="handleLogin(dataDto.email, dataDto.password)" :disabled="isLoading" :loading="isLoading">
+            @click="handleLogin(dataDto.email, dataDto.password, redirectPath)" :disabled="isLoading" :loading="isLoading">
             Login
         </Button>
 
         <Divider class="mt-15">
-            <NuxtLink to="/auth/register" class="font-medium">Register</NuxtLink>
+            <NuxtLink :to="redirectPath ? `/auth/register?redirect=${encodeURIComponent(redirectPath)}` : '/auth/register'" class="font-medium">Register</NuxtLink>
         </Divider>
     </div>
 </template>
@@ -61,6 +61,9 @@ const dataDto = ref({
 const AuthStore = useAuthStore();
 const { handleLogin } = AuthStore;
 const { isLoading } = storeToRefs(AuthStore);
+
+const route = useRoute();
+const redirectPath = route.query.redirect as string;
 </script>
 
 <style></style>

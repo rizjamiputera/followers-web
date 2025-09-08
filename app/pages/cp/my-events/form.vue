@@ -40,8 +40,9 @@
             <span class="sm:hidden text-sm text-gray-600">{{ webUri }}/event/</span>
             <div class="flex gap-2">
                 <div class="join w-full">
-                    <button class="max-sm:hidden btn join-item rounded-l-full btn-active font-light">{{ webUri
-                    }}/event/</button>
+                    <button class="max-sm:hidden btn join-item rounded-l-full btn-active font-light">
+                        {{ webUri }}/event/
+                    </button>
                     <Input class="sm:join-item rounded-full sm:rounded-l-none flex-1" v-model="dataDto.slug"
                         @keyup="checkSlugChange" />
                 </div>
@@ -73,7 +74,7 @@
 
                 <!-- IMAGE Landscape -->
                 <div class="">
-                    <div class="flex items-start gap-1 items-center mb-1">
+                    <div class="flex items-start gap-1 mb-1">
                         <div class="flex flex-col">
                             <label class="text-sm font-medium">Image Landscape</label>
                             <div class="text-xs font-light">Untuk slide di homepage</div>
@@ -263,7 +264,7 @@
 
 <script lang="ts" setup>
 import Joi from 'joi';
-import { LucideCheckCircle2, LucideLoader, LucideMapPin, LucideXCircle, LucideUsers } from 'lucide-vue-next';
+import { LucideCheckCircle2, LucideLoader, LucideXCircle, LucideUsers } from 'lucide-vue-next';
 import type { ContentStatus, PhotoContent } from '~/interfaces/content-interface';
 import type { Event } from '~/interfaces/event-interface';
 import { Module, Permission } from '~/interfaces/user-interface';

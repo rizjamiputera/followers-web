@@ -55,8 +55,6 @@ const { public: { webUri } } = useRuntimeConfig();
 const title = 'Followers Bicara';
 const description = "Ruang dakwah, tempat para ustadz berbagi ilmu, nasihat, dan inspirasi.";
 
-onMounted(recordVisit);
-
 useSeoMeta({
     title: () => title,
     ogTitle: () => title,
@@ -109,6 +107,7 @@ const firstFeaturedArticle = computed<Article>(() => {
 
 // Fetch on mount
 onMounted(() => {
+    recordVisit();
     fetchFeaturedContent()
 })
 </script>

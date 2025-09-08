@@ -26,7 +26,7 @@
         </Button>
 
         <Divider class="mt-15">
-            <NuxtLink to="/auth/login" class="font-medium">Login</NuxtLink>
+            <NuxtLink :to="redirectPath ? `/auth/login?redirect=${encodeURIComponent(redirectPath)}` : '/auth/login'" class="font-medium">Login</NuxtLink>
         </Divider>
     </div>
 </template>
@@ -68,6 +68,9 @@ const AuthStore = useAuthStore();
 const { handleRegister } = AuthStore;
 const { isLoading } = storeToRefs(AuthStore);
 
+const route = useRoute();
+const redirectPath = route.query.redirect as string;
+
 const showConfirm = ref<boolean>(false);
 
 const isRegister = Joi.object({
@@ -88,7 +91,7 @@ const register = async () => {
     try {
         const data = Validate(isRegister, dataDto.value)
 
-        await handleRegister(data);
+        await handleRegister(data, redirectPath);
     } catch (error) {
         toastError(error)
     }
