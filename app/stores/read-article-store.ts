@@ -60,7 +60,7 @@ export const useReadArticleStore = defineStore('read-article', {
             this.isError = false;
             this.isNotFound = false;
             try {
-                await new Promise((resolve) => setTimeout(resolve, 400));
+                // await new Promise((resolve) => setTimeout(resolve, 400));
                 const { stats, ...data } = await Api.get(this.apiPath) as Article;
 
                 this.data = data;

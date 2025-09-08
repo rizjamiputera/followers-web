@@ -1,10 +1,6 @@
 <template>
     <div class="badge badge-outline-green bg-transparent max-w-full">
-        <div class="max-w-full flex items-center gap-1">
-            <LucideMapPin :size="14" />
-            <div class="flex-1 truncate">{{ data.location }}
-            </div>
-        </div>
+        <EventLocation>{{ data.location }}</EventLocation>
     </div>
 
     <div v-if="!skipAddress"

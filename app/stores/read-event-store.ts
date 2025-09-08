@@ -52,7 +52,7 @@ export const useReadEventStore = defineStore('read-event', {
             this.isError = false;
             this.isNotFound = false;
             try {
-                await new Promise((resolve) => setTimeout(resolve, 400));
+                // await new Promise((resolve) => setTimeout(resolve, 400));
                 const { stats, ...data } = await Api.get(this.apiPath) as Event;
 
                 this.data = data;

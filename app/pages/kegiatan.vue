@@ -25,47 +25,26 @@
         <DefaultTitle class="text-green-main">Kegiatan The Followers</DefaultTitle>
         <div class="grid grid-cols-1 sm:grid-cols-3 md::grid-cols-3 gap-2">
             <template v-for="data in events">
-                <NuxtLink :to="'/event/' + data.slug" prefetch-on="interaction"
-                    class="w-full flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
-                    <Image :src="data.image_portrait_md"
-                        class="w-33 sm:w-full aspect-3/4 rounded-lg bg-cover bg-no-repeat" />
-                    <div class="flex-1">
-                        <div class="flex flex-col gap-2">
-                            <!-- <EventLocationSchedule :data :skipAddress="true" /> -->
-                            <div class="badge badge-sm badge-outline-green">
-                                <LucideMapPin :size="14" /> {{ data.location }}
-                            </div>
-                            <div class="badge badge-sm badge-outline-green">
-                                <LucideCalendar :size="14" /> {{ dayjs(data.start_at).format('DD MMMM YYYY') }}
-                            </div>
-                            <div class="badge badge-sm badge-outline-green">
-                                <LucideClock :size="14" /> {{ formatTime(data.start_at) }} sd {{
-                                    formatTime(data.start_at) }}
-                            </div>
-                        </div>
-                        <div class="flex flex-col gap-2 mt-2">
-                            <DefaultBody class="font-cinzel tracking-wide line-clamp-1 font-bold">
-                                {{ data.title }}
-                            </DefaultBody>
-                            <DefaultBody class="line-clamp-3">{{ data.excerpt }}</DefaultBody>
-                        </div>
-                    </div>
-                </NuxtLink>
+                <EventCard :data />
             </template>
 
-            <template v-if="isLoading" v-for="m in 6" :key="m">
-                <div class="w-full flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
-                    <div class="w-33 sm:w-full aspect-3/4 rounded-lg bg-green-main/20 skeleton" />
-                    <div class="flex-1 flex flex-col gap-1">
-                        <div class="h-5 w-3/4 bg-green-main/20 skeleton"></div>
-                        <div class="h-3 w-full bg-green-main/20 skeleton mt-3"></div>
-                        <div class="h-3 w-full bg-green-main/20 skeleton"></div>
-                        <div class="h-3 w-1/2 bg-green-main/20 skeleton"></div>
-                    </div>
-                </div>
-            </template>
+            <CardSkeleton v-if="isLoading" v-for="m in 6" :key="m" />
         </div>
         <div v-if="isEmpty" class="text-lg text-center font-light text-green-main/80 mt-10">
+            Nantikan kegiatan kami berikutnya
+        </div>
+    </section>
+
+    <section class="mt-20">
+        <DefaultTitle class="text-green-main">Kegiatan yang lalu</DefaultTitle>
+        <div class="grid grid-cols-1 sm:grid-cols-3 md::grid-cols-3 gap-2">
+            <template v-for="data in PastEvent">
+                <EventCard :data />
+            </template>
+
+            <CardSkeleton v-if="isPastLoading" v-for="m in 6" :key="m" />
+        </div>
+        <div v-if="isPastEmtpy" class="text-lg text-center font-light text-green-main/80 mt-10">
             Nantikan kegiatan kami berikutnya
         </div>
     </section>
@@ -74,15 +53,27 @@
 <script lang="ts" setup>
 import dayjs from 'dayjs';
 import { LucideCalendar, LucideClock, LucideMapPin } from 'lucide-vue-next';
-import ButtonLink from '~/components/button-link.vue';
+import CardSkeleton from '~/components/event/card-skeleton.vue';
 
-const EventsStore = useUpcomingEventStore()
-const { events, from_second_events, first_event, isEmpty, isLoading } = storeToRefs(EventsStore);
-const { get } = EventsStore;
+const UpcomingEventsStore = useUpcomingEventStore()
+const { events, from_second_events, first_event, isEmpty, isLoading } = storeToRefs(UpcomingEventsStore);
+const { get } = UpcomingEventsStore;
+
+const PastEventStore = usePastEventStore()
+const { events: PastEvent, isEmpty: isPastEmtpy, isLoading: isPastLoading } = storeToRefs(PastEventStore);
+const { get: getPast } = PastEventStore;
+
+
 onMounted(() => {
-    EventsStore.parameters.page = 1;
-    if (!EventsStore.data) {
+    recordVisit();
+
+    UpcomingEventsStore.parameters.page = 1;
+    if (!UpcomingEventsStore.data) {
         get();
+    }
+
+    if (!PastEventStore.data) {
+        getPast();
     }
 })
 </script>
