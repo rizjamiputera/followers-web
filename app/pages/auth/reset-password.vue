@@ -26,7 +26,7 @@
                 <span>{{ successMessage }}</span>
             </div>
 
-            <ButtonLink class="btn-green" to="navigateTo('/auth/login')">
+            <ButtonLink class="btn-green" to="/auth/login">
                 Go to Login
             </ButtonLink>
         </div>
