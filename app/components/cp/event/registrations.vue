@@ -15,7 +15,7 @@
                     class="btn btn-sm btn-outline btn-success">
                     <LucideDownload v-if="!isExporting" class="h-4 w-4 mr-1" />
                     <span v-if="isExporting" class="loading loading-spinner loading-xs mr-1"></span>
-                    {{ isExporting ? 'Exporting...' : 'Export PDF' }}
+                    {{ isExporting ? 'Exporting...' : 'Export' }}
                 </button>
 
                 <!-- Refresh Button -->
@@ -243,48 +243,8 @@
         </div>
 
         <!-- Export Options Modal -->
-        <div v-if="showExportModal"
-            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div class="bg-white rounded-lg max-w-md w-full">
-                <div class="p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-xl font-semibold">Export Options</h3>
-                        <button @click="showExportModal = false" class="text-gray-400 hover:text-gray-600">
-                            <LucideX class="h-6 w-6" />
-                        </button>
-                    </div>
-
-                    <div class="space-y-4">
-                        <p class="text-gray-600">Choose which registrations to export:</p>
-                        
-                        <!-- Export Options -->
-                        <div class="space-y-3">
-                            <button @click="exportWithFilter('all')"
-                                class="w-full p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left">
-                                <div class="flex items-center gap-3">
-                                    <LucideUsers class="h-5 w-5 text-gray-600" />
-                                    <div>
-                                        <div class="font-medium">All Registrations</div>
-                                        <div class="text-sm text-gray-500">Export all registrations ({{ totalCount }} total)</div>
-                                    </div>
-                                </div>
-                            </button>
-
-                            <button @click="exportWithFilter('confirmed')"
-                                class="w-full p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left">
-                                <div class="flex items-center gap-3">
-                                    <LucideUserCheck class="h-5 w-5 text-green-600" />
-                                    <div>
-                                        <div class="font-medium">Confirmed Only</div>
-                                        <div class="text-sm text-gray-500">Export only confirmed registrations ({{ confirmedCount }} total)</div>
-                                    </div>
-                                </div>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <LazyCpEventExport v-if="showExportModal" :show="showExportModal" @close="showExportModal = false"
+            :isExporting="isExporting" @export="exportRegistrations" :totalCount :confirmedCount />
     </div>
 </template>
 
@@ -300,6 +260,8 @@ import type {
 } from '~/interfaces/event-registration-interface'
 
 interface Props {
+    eventId: string
+    eventTitle: string
     registrations?: EventRegistration[]
     pagination?: {
         page: number
@@ -308,8 +270,10 @@ interface Props {
     }
     isLoading?: boolean
     isUpdating?: boolean
-    isExporting?: boolean
+    currentFilters: any
 }
+
+const isExporting = ref(false)
 
 const props = defineProps<Props>()
 
@@ -318,7 +282,7 @@ const emit = defineEmits<{
     filter: [filters: { status?: string; search?: string; page?: number }]
     confirm: [registrationId: string]
     cancel: [registrationId: string]
-    export: [exportType: 'all' | 'confirmed']
+    export: [exportType: 'all' | 'confirmed', format: 'pdf' | 'xlsx']
 }>()
 
 // Reactive data
@@ -439,12 +403,79 @@ const changePage = (page: number) => {
     })
 }
 
-const exportRegistrations = () => {
-    emit('export', 'all')
-}
+const exportRegistrations = async (exportType: 'all' | 'confirmed', format: 'pdf' | 'xlsx') => {
+    if (!props.eventId) return;
 
-const exportWithFilter = (exportType: 'all' | 'confirmed') => {
-    showExportModal.value = false
-    emit('export', exportType)
+    showExportModal.value = false;
+
+    isExporting.value = true
+
+    try {
+        // Build query parameters for current filters
+        const queryParams = new URLSearchParams()
+
+        // Add export type filter
+        if (exportType === 'confirmed') {
+            queryParams.append('status', 'CONFIRMED')
+        } else {
+            // For 'all' type, use existing filters if any
+            if (props.currentFilters.status) {
+                queryParams.append('status', props.currentFilters.status)
+            }
+        }
+
+        if (props.currentFilters.search) {
+            queryParams.append('search', props.currentFilters.search)
+        }
+
+        const queryString = queryParams.toString()
+
+        // Choose endpoint based on format
+        const endpoint = format === 'xlsx' ? 'export/xlsx' : 'export'
+        const url = `/v1/event/${props.eventId}/registrations/${endpoint}${queryString ? `?${queryString}` : ''}`
+
+        // Make request to export endpoint
+        const response = await Api.getBlob(url)
+
+        // Create download link
+        const mimeType = format === 'xlsx'
+            ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            : 'application/pdf'
+
+        const blob = new Blob([response], { type: mimeType })
+        const downloadUrl = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+
+        // Generate filename with current date and export type
+        const today = new Date().toISOString().split('T')[0]
+        const typeLabel = exportType === 'confirmed' ? '-confirmed' : ''
+        const fileExtension = format === 'xlsx' ? 'xlsx' : 'pdf'
+        const filename = `${props.eventTitle.toLowerCase().replace(/\s+/g, '-') || 'event'}-registrations${typeLabel}-${today}.${fileExtension}`
+
+        link.href = downloadUrl
+        link.download = filename
+        link.style.display = 'none'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+
+        // Clean up
+        URL.revokeObjectURL(downloadUrl)
+
+    } catch (error: any) {
+        console.error('Failed to export registrations:', error)
+
+        // Show user-friendly error message
+        let errorMessage = `Failed to export registrations as ${format.toUpperCase()}`
+        if (error.status === 403) {
+            errorMessage = 'You do not have permission to export registrations'
+        } else if (error.status === 404) {
+            errorMessage = 'Event not found'
+        }
+
+        alert(errorMessage)
+    } finally {
+        isExporting.value = false
+    }
 }
 </script>

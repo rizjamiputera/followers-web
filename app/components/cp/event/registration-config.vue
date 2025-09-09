@@ -322,6 +322,17 @@ const hasRegistrationStart = ref(false)
 const hasRegistrationEnd = ref(false)
 
 // Utility functions
+const formatDateForInput = (date: Date): string => {
+    // Format date for datetime-local input while preserving user's local timezone
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    const hours = String(date.getHours()).padStart(2, '0')
+    const minutes = String(date.getMinutes()).padStart(2, '0')
+    
+    return `${year}-${month}-${day}T${hours}:${minutes}`
+}
+
 const slugify = (text: string): string => {
     return text
         .toLowerCase()
@@ -383,9 +394,9 @@ watchEffect(() => {
             label: props.initialConfig.label || 'Registrasi',
             participantLimit: props.initialConfig.participantLimit,
             registrationStart: props.initialConfig.registrationStart ?
-                new Date(props.initialConfig.registrationStart).toISOString().slice(0, 16) : undefined,
+                formatDateForInput(new Date(props.initialConfig.registrationStart)) : undefined,
             registrationEnd: props.initialConfig.registrationEnd ?
-                new Date(props.initialConfig.registrationEnd).toISOString().slice(0, 16) : undefined,
+                formatDateForInput(new Date(props.initialConfig.registrationEnd)) : undefined,
             formFields: formFields,
             requireApproval: props.initialConfig.requireApproval || false,
             confirmationMessage: props.initialConfig.confirmationMessage || ''
@@ -491,7 +502,18 @@ const removeOption = (field: FormField, index: number) => {
 }
 
 const emitUpdate = () => {
-    emit('update:config', configData.value)
+    // Convert datetime-local values to ISO strings with timezone information
+    const configToEmit = {
+        ...configData.value,
+        registrationStart: configData.value.registrationStart 
+            ? new Date(configData.value.registrationStart).toISOString() 
+            : undefined,
+        registrationEnd: configData.value.registrationEnd 
+            ? new Date(configData.value.registrationEnd).toISOString() 
+            : undefined,
+    }
+    
+    emit('update:config', configToEmit)
 }
 
 // Watch for changes and emit updates
