@@ -8,7 +8,7 @@
             <div class="space-y-3">
                 <button @click="selectedExportType = 'all'"
                     :class="selectedExportType === 'all' ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:bg-gray-50'"
-                    class="w-full p-4 border rounded-lg transition-colors text-left">
+                    class="w-full p-4 border rounded-lg transition-colors text-left cursor-pointer">
                     <div class="flex items-center gap-3">
                         <LucideUsers class="h-5 w-5"
                             :class="selectedExportType === 'all' ? 'text-green-600' : 'text-gray-600'" />
@@ -29,7 +29,7 @@
 
                 <button @click="selectedExportType = 'confirmed'"
                     :class="selectedExportType === 'confirmed' ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:bg-gray-50'"
-                    class="w-full p-4 border rounded-lg transition-colors text-left">
+                    class="w-full p-4 border rounded-lg transition-colors text-left cursor-pointer">
                     <div class="flex items-center gap-3">
                         <LucideUserCheck class="h-5 w-5"
                             :class="selectedExportType === 'confirmed' ? 'text-green-600' : 'text-green-600'" />
@@ -70,7 +70,7 @@
             <div class="space-y-3">
                 <button @click="selectedExportFormat = 'pdf'"
                     :class="selectedExportFormat === 'pdf' ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:bg-gray-50'"
-                    class="w-full p-4 border rounded-lg transition-colors text-left">
+                    class="w-full p-4 border rounded-lg transition-colors text-left cursor-pointer">
                     <div class="flex items-center gap-3">
                         <LucideFileText class="h-5 w-5"
                             :class="selectedExportFormat === 'pdf' ? 'text-red-600' : 'text-red-500'" />
@@ -90,7 +90,7 @@
 
                 <button @click="selectedExportFormat = 'xlsx'"
                     :class="selectedExportFormat === 'xlsx' ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:bg-gray-50'"
-                    class="w-full p-4 border rounded-lg transition-colors text-left">
+                    class="w-full p-4 border rounded-lg transition-colors text-left cursor-pointer">
                     <div class="flex items-center gap-3">
                         <LucideSheet class="h-5 w-5"
                             :class="selectedExportFormat === 'xlsx' ? 'text-green-600' : 'text-green-500'" />
