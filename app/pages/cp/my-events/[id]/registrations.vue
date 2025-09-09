@@ -153,7 +153,7 @@ const cancelRegistration = async (registrationId: string) => {
 // Export registrations
 const isExporting = ref(false)
 
-const exportRegistrations = async (exportType: 'all' | 'confirmed') => {
+const exportRegistrations = async (exportType: 'all' | 'confirmed', format: 'pdf' | 'xlsx') => {
     if (!eventId) return
 
     isExporting.value = true
@@ -177,22 +177,28 @@ const exportRegistrations = async (exportType: 'all' | 'confirmed') => {
         }
 
         const queryString = queryParams.toString()
-        const url = `/v1/event/${eventId}/registrations/export${queryString ? `?${queryString}` : ''}`
+        
+        // Choose endpoint based on format
+        const endpoint = format === 'xlsx' ? 'export/xlsx' : 'export'
+        const url = `/v1/event/${eventId}/registrations/${endpoint}${queryString ? `?${queryString}` : ''}`
 
         // Make request to export endpoint
         const response = await Api.getBlob(url)
 
         // Create download link
-        const blob = new Blob([response], {
-            type: 'application/pdf'
-        })
+        const mimeType = format === 'xlsx' 
+            ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            : 'application/pdf'
+            
+        const blob = new Blob([response], { type: mimeType })
         const downloadUrl = URL.createObjectURL(blob)
         const link = document.createElement('a')
 
         // Generate filename with current date and export type
         const today = new Date().toISOString().split('T')[0]
         const typeLabel = exportType === 'confirmed' ? '-confirmed' : ''
-        const filename = `${eventTitle.value?.toLowerCase().replace(/\s+/g, '-') || 'event'}-registrations${typeLabel}-${today}.pdf`
+        const fileExtension = format === 'xlsx' ? 'xlsx' : 'pdf'
+        const filename = `${eventTitle.value?.toLowerCase().replace(/\s+/g, '-') || 'event'}-registrations${typeLabel}-${today}.${fileExtension}`
 
         link.href = downloadUrl
         link.download = filename
@@ -208,7 +214,7 @@ const exportRegistrations = async (exportType: 'all' | 'confirmed') => {
         console.error('Failed to export registrations:', error)
 
         // Show user-friendly error message
-        let errorMessage = 'Failed to export registrations'
+        let errorMessage = `Failed to export registrations as ${format.toUpperCase()}`
         if (error.status === 403) {
             errorMessage = 'You do not have permission to export registrations'
         } else if (error.status === 404) {
