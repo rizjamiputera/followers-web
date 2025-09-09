@@ -14,6 +14,7 @@ interface AuthStoreState {
     user?: User
     isLoading: boolean
     show_request_login: boolean
+    resetPasswordLoading: boolean
 }
 
 export const useAuthStore = defineStore('auth', {
@@ -23,6 +24,7 @@ export const useAuthStore = defineStore('auth', {
         user: undefined,
         isLoading: false,
         show_request_login: false,
+        resetPasswordLoading: false,
     }),
     getters: {
         permissions: (state): UserPermission[] => state.user?.permissions ?? [],
@@ -109,6 +111,53 @@ export const useAuthStore = defineStore('auth', {
             if (process.client) {
                 const access_token = useCookie('access_token')
                 access_token.value = data.access_token;
+            }
+        },
+        async handleForgotPassword(email: string) {
+            if (this.resetPasswordLoading) return;
+            this.resetPasswordLoading = true;
+
+            try {
+                const response = await Api.post('/v1/auth/forgot-password', {
+                    email
+                }) as { message: string };
+
+                return {
+                    success: true,
+                    message: response.message
+                };
+            } catch (e: any) {
+                toastError(e);
+                return {
+                    success: false,
+                    message: e.message || 'Failed to send password reset email'
+                };
+            } finally {
+                this.resetPasswordLoading = false;
+            }
+        },
+        async handleResetPassword(token: string, newPassword: string) {
+            if (this.resetPasswordLoading) return;
+            this.resetPasswordLoading = true;
+
+            try {
+                const response = await Api.post('/v1/auth/reset-password', {
+                    token,
+                    newPassword
+                }) as { message: string };
+
+                return {
+                    success: true,
+                    message: response.message
+                };
+            } catch (e: any) {
+                toastError(e);
+                return {
+                    success: false,
+                    message: e.message || 'Failed to reset password'
+                };
+            } finally {
+                this.resetPasswordLoading = false;
             }
         },
         reset() {

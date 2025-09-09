@@ -1,9 +1,9 @@
-import { useToast } from "vue-toast-notification";
+import { useToast, type ToastPosition } from "vue-toast-notification";
 const toast = useToast();
 
-export const toastSuccess = (message: string) => {
+export const toastSuccess = (message: string, position: ToastPosition = "top") => {
     toast.success(message, {
-        position: "top-right",
+        position,
         dismissible: false,
         duration: 2000,
     });
