@@ -1,7 +1,5 @@
 <template>
-    <div class="badge badge-outline-green bg-transparent max-w-full">
-        <EventLocation>{{ data.location }}</EventLocation>
-    </div>
+    <EventLocation>{{ data.location }}</EventLocation>
 
     <div v-if="!skipAddress"
         class="border-1 border-green-main/30 rounded-lg text-sm font-light max-w-full break-words whitespace-pre-wrap py-2 px-3">
