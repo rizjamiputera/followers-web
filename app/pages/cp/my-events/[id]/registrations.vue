@@ -15,9 +15,9 @@
         </div>
 
         <!-- Registration Management -->
-        <CpEventRegistrations :registrations="registrations" :pagination="pagination" :isLoading="isLoading"
-            :isUpdating="isUpdating" :isExporting="isExporting" @refresh="loadRegistrations" @filter="handleFilter"
-            @confirm="confirmRegistration" @cancel="cancelRegistration" @export="exportRegistrations" />
+        <CpEventRegistrations :eventId :eventTitle :registrations="registrations" :pagination="pagination"
+            :isLoading="isLoading" :isUpdating="isUpdating" :currentFilters @refresh="loadRegistrations"
+            @filter="handleFilter" @confirm="confirmRegistration" @cancel="cancelRegistration" />
     </div>
 </template>
 
@@ -151,81 +151,81 @@ const cancelRegistration = async (registrationId: string) => {
 }
 
 // Export registrations
-const isExporting = ref(false)
+// const isExporting = ref(false)
 
-const exportRegistrations = async (exportType: 'all' | 'confirmed', format: 'pdf' | 'xlsx') => {
-    if (!eventId) return
+// const exportRegistrations = async (exportType: 'all' | 'confirmed', format: 'pdf' | 'xlsx') => {
+//     if (!eventId) return
 
-    isExporting.value = true
+//     isExporting.value = true
 
-    try {
-        // Build query parameters for current filters
-        const queryParams = new URLSearchParams()
+//     try {
+//         // Build query parameters for current filters
+//         const queryParams = new URLSearchParams()
 
-        // Add export type filter
-        if (exportType === 'confirmed') {
-            queryParams.append('status', 'CONFIRMED')
-        } else {
-            // For 'all' type, use existing filters if any
-            if (currentFilters.value.status) {
-                queryParams.append('status', currentFilters.value.status)
-            }
-        }
-        
-        if (currentFilters.value.search) {
-            queryParams.append('search', currentFilters.value.search)
-        }
+//         // Add export type filter
+//         if (exportType === 'confirmed') {
+//             queryParams.append('status', 'CONFIRMED')
+//         } else {
+//             // For 'all' type, use existing filters if any
+//             if (currentFilters.value.status) {
+//                 queryParams.append('status', currentFilters.value.status)
+//             }
+//         }
 
-        const queryString = queryParams.toString()
-        
-        // Choose endpoint based on format
-        const endpoint = format === 'xlsx' ? 'export/xlsx' : 'export'
-        const url = `/v1/event/${eventId}/registrations/${endpoint}${queryString ? `?${queryString}` : ''}`
+//         if (currentFilters.value.search) {
+//             queryParams.append('search', currentFilters.value.search)
+//         }
 
-        // Make request to export endpoint
-        const response = await Api.getBlob(url)
+//         const queryString = queryParams.toString()
 
-        // Create download link
-        const mimeType = format === 'xlsx' 
-            ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            : 'application/pdf'
-            
-        const blob = new Blob([response], { type: mimeType })
-        const downloadUrl = URL.createObjectURL(blob)
-        const link = document.createElement('a')
+//         // Choose endpoint based on format
+//         const endpoint = format === 'xlsx' ? 'export/xlsx' : 'export'
+//         const url = `/v1/event/${eventId}/registrations/${endpoint}${queryString ? `?${queryString}` : ''}`
 
-        // Generate filename with current date and export type
-        const today = new Date().toISOString().split('T')[0]
-        const typeLabel = exportType === 'confirmed' ? '-confirmed' : ''
-        const fileExtension = format === 'xlsx' ? 'xlsx' : 'pdf'
-        const filename = `${eventTitle.value?.toLowerCase().replace(/\s+/g, '-') || 'event'}-registrations${typeLabel}-${today}.${fileExtension}`
+//         // Make request to export endpoint
+//         const response = await Api.getBlob(url)
 
-        link.href = downloadUrl
-        link.download = filename
-        link.style.display = 'none'
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
+//         // Create download link
+//         const mimeType = format === 'xlsx'
+//             ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+//             : 'application/pdf'
 
-        // Clean up
-        URL.revokeObjectURL(downloadUrl)
+//         const blob = new Blob([response], { type: mimeType })
+//         const downloadUrl = URL.createObjectURL(blob)
+//         const link = document.createElement('a')
 
-    } catch (error: any) {
-        console.error('Failed to export registrations:', error)
+//         // Generate filename with current date and export type
+//         const today = new Date().toISOString().split('T')[0]
+//         const typeLabel = exportType === 'confirmed' ? '-confirmed' : ''
+//         const fileExtension = format === 'xlsx' ? 'xlsx' : 'pdf'
+//         const filename = `${eventTitle.value?.toLowerCase().replace(/\s+/g, '-') || 'event'}-registrations${typeLabel}-${today}.${fileExtension}`
 
-        // Show user-friendly error message
-        let errorMessage = `Failed to export registrations as ${format.toUpperCase()}`
-        if (error.status === 403) {
-            errorMessage = 'You do not have permission to export registrations'
-        } else if (error.status === 404) {
-            errorMessage = 'Event not found'
-        }
+//         link.href = downloadUrl
+//         link.download = filename
+//         link.style.display = 'none'
+//         document.body.appendChild(link)
+//         link.click()
+//         document.body.removeChild(link)
 
-        alert(errorMessage)
-    } finally {
-        isExporting.value = false
-    }
-}
+//         // Clean up
+//         URL.revokeObjectURL(downloadUrl)
+
+//     } catch (error: any) {
+//         console.error('Failed to export registrations:', error)
+
+//         // Show user-friendly error message
+//         let errorMessage = `Failed to export registrations as ${format.toUpperCase()}`
+//         if (error.status === 403) {
+//             errorMessage = 'You do not have permission to export registrations'
+//         } else if (error.status === 404) {
+//             errorMessage = 'Event not found'
+//         }
+
+//         alert(errorMessage)
+//     } finally {
+//         isExporting.value = false
+//     }
+// }
 
 // Initialize
 onMounted(async () => {
