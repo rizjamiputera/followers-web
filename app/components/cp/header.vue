@@ -10,7 +10,7 @@
                     </label>
 
                     <NuxtLink to="/" prefetch-on="interaction">
-                        <img src="/logo-hitam.webp" alt="Followers Logo" class="h-10">
+                        <img src="/logo.svg" alt="Followers Logo" class="h-10">
                     </NuxtLink>
                 </div>
                 <div class="navbar-center hidden lg:flex">

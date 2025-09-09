@@ -75,12 +75,20 @@
                             <StatusBade :status="dt.status" />
                         </td>
                         <td class="text-center">
-                            <div v-if="dt.registrationConfig?.isEnabled" class="text-sm">
-                                <div class="badge badge-sm badge-success">
-                                    {{ dt.registeredCount || 0 }}
-                                    <template v-if="dt.registrationConfig.participantLimit"> / {{
-                                        dt.registrationConfig.participantLimit }}</template>
+                            <div v-if="dt.registrationConfig?.isEnabled" class="flex items-center gap-2">
+                                <div class="text-sm text-nowrap">
+                                    <div class="badge badge-sm badge-success">
+                                        {{ dt.registeredCount || 0 }}
+                                        <template v-if="dt.registrationConfig.participantLimit"> / {{
+                                            dt.registrationConfig.participantLimit }}</template>
+                                    </div>
                                 </div>
+
+                                <ButtonLink v-if="dt.registrationConfig?.isEnabled"
+                                    :to="`/cp/my-events/${dt.id}/registrations`" class="btn-sm btn-info btn-outline"
+                                    title="Manage Registrations">
+                                    <LucideUsers :size="12" />
+                                </ButtonLink>
                             </div>
                             <span v-else class="text-xs text-gray-400">Disabled</span>
                         </td>
@@ -119,12 +127,6 @@
                                 <ButtonLink v-if="canEdit" :to="`/cp/my-events/form?id=${dt.id}`"
                                     class="btn-sm btn-neutral">
                                     Edit
-                                </ButtonLink>
-
-                                <ButtonLink v-if="dt.registrationConfig?.isEnabled"
-                                    :to="`/cp/my-events/${dt.id}/registrations`" class="btn-sm btn-info btn-outline"
-                                    title="Manage Registrations">
-                                    <LucideUsers :size="12" />
                                 </ButtonLink>
 
                                 <ButtonLink v-if="dt.status == 'PUBLISHED'" :to="`/event/${dt.slug}`" target="_blank"
@@ -206,9 +208,13 @@ const canPublish = computed(() => AuthStore.can(Module.EVENT, Permission.PUBLISH
 
 const EventsStore = useEventsStore()
 const { events, page, last_page, parameters, isEmpty, isLoading, search } = storeToRefs(EventsStore);
-if (!parameters.value.includes.includes('registeredCount')) {
-    parameters.value.includes.push('registeredCount');
-}
+
+// const updateIncludes = () => {
+//     if (!parameters.value.includes.includes('registeredCount')) {
+//         parameters.value.includes.push('registeredCount');
+//     }
+// }
+// updateIncludes();
 const { get } = EventsStore;
 
 const sectionRef = ref<HTMLElement>();
@@ -277,13 +283,6 @@ const showConfirmReject = ref<boolean>(false);
 const showConfirmApprove = ref<boolean>(false);
 const showConfirmPublish = ref<boolean>(false);
 const showConfirmTakeDown = ref<boolean>(false);
-
-
-// reset state
-onBeforeUnmount(() => {
-    // remove registeredCount
-    parameters.value.includes = parameters.value.includes.filter(i => i != 'registeredCount');
-})
 </script>
 
 <style></style>

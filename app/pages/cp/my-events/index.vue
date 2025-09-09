@@ -28,6 +28,7 @@
                         <th class="text-center">Start</th>
                         <th class="text-center">End</th>
                         <th class="text-center">Status</th>
+                        <th class="text-center">Registrations</th>
                         <th class="text-center">Publish</th>
                         <th class="text-center">Action</th>
                     </tr>
@@ -71,6 +72,24 @@
                             <StatusBade :status="dt.status" />
                         </td>
                         <td class="text-center">
+                            <div v-if="dt.registrationConfig?.isEnabled" class="flex items-center gap-2">
+                                <div class="text-sm text-nowrap">
+                                    <div class="badge badge-sm badge-success">
+                                        {{ dt.registeredCount || 0 }}
+                                        <template v-if="dt.registrationConfig.participantLimit"> / {{
+                                            dt.registrationConfig.participantLimit }}</template>
+                                    </div>
+                                </div>
+
+                                <ButtonLink v-if="dt.registrationConfig?.isEnabled"
+                                    :to="`/cp/my-events/${dt.id}/registrations`" class="btn-sm btn-info btn-outline"
+                                    title="Manage Registrations">
+                                    <LucideUsers :size="12" />
+                                </ButtonLink>
+                            </div>
+                            <span v-else class="text-xs text-gray-400">Disabled</span>
+                        </td>
+                        <td class="text-center">
                             <div class="flex gap-1 justify-center">
                                 <Button v-if="canApprove && ['ON_REVIEW', 'REJECTED', 'TAKE_DOWN'].includes(dt.status)"
                                     class="btn-sm btn-primary"
@@ -99,7 +118,8 @@
                                 <!-- preview -->
                                 <Button class="btn-sm" @click="get_preview(dt.id)">Preview</Button>
                                 <ButtonLink :to="`/cp/my-events/form?id=${dt.id}`" class="btn-sm btn-neutral"
-                                    @click="get_preview(dt.id)">Edit</ButtonLink>
+                                    @click="get_preview(dt.id)">Edit
+                                </ButtonLink>
 
                                 <!-- open event new tab -->
                                 <ButtonLink v-if="dt.status == 'PUBLISHED'" :to="`/event/${dt.slug}`" target="_blank"
@@ -169,7 +189,7 @@
 
 <script lang="ts" setup>
 import dayjs from 'dayjs';
-import { LucideBookmark, LucideEye, LucideLink, LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
+import { LucideBookmark, LucideEye, LucideLink, LucideShare2, LucideThumbsDown, LucideThumbsUp, LucideUsers } from 'lucide-vue-next';
 import { contentStatuses, type ContentStatus } from '~/interfaces/content-interface';
 import type { Event } from '~/interfaces/event-interface';
 import { Module, Permission } from '~/interfaces/user-interface';

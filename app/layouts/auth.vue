@@ -4,7 +4,7 @@
             <div class="w-full max-w-lg mx-auto flex flex-col gap-4 justify-center ">
                 <div class="flex-1 flex flex-col justify-center items-center py-10">
                     <NuxtLink to="/" class="w-1/2 md:w-3/4">
-                        <img src="/logo-hitam.webp" alt="Logo" class="rounded-full">
+                        <img src="/logo.svg" alt="Logo" class="rounded-full">
                     </NuxtLink>
                 </div>
             </div>
