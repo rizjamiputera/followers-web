@@ -23,7 +23,14 @@
             Login
         </Button>
 
-        <Divider class="mt-15">
+        <!-- Forgot Password Link -->
+        <div class="text-center mt-4">
+            <NuxtLink to="/auth/forgot-password" class="text-sm text-gray-600 hover:text-green-600 transition-colors">
+                Forgot your password?
+            </NuxtLink>
+        </div>
+
+        <Divider class="mt-10">
             <NuxtLink :to="redirectPath ? `/auth/register?redirect=${encodeURIComponent(redirectPath)}` : '/auth/register'" class="font-medium">Register</NuxtLink>
         </Divider>
     </div>
