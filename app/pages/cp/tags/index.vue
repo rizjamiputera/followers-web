@@ -82,93 +82,21 @@
     </div>
 
     <!-- Create/Edit Modal -->
-    <Modal v-if="showCreateModal || showEditModal" :show="showCreateModal || showEditModal" @close="closeModals">
-        <div class="p-6">
-            <h3 class="text-lg font-semibold mb-4">
-                {{ showEditModal ? 'Edit Tag' : 'Create New Tag' }}
-            </h3>
-
-            <form @submit.prevent="submitForm" class="space-y-4">
-                <div>
-                    <label class="label">
-                        <span class="label-text">Tag Name *</span>
-                    </label>
-                    <Input v-model="formData.name" placeholder="Enter tag name..." class="input-bordered w-full"
-                        required maxlength="100" />
-                </div>
-
-                <div>
-                    <label class="label">
-                        <span class="label-text">Color (Optional)</span>
-                    </label>
-                    <div class="flex items-center gap-3">
-                        <input type="color" v-model="formData.color"
-                            class="w-12 h-10 rounded border border-gray-300 cursor-pointer" />
-                        <Input v-model="formData.color" placeholder="#FF5733" class="input-bordered flex-1"
-                            pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
-                            title="Please enter a valid hex color (e.g., #FF5733)" />
-                        <Button type="button" @click="formData.color = ''" class="btn-sm btn-ghost" title="Clear color">
-                            <LucideX class="h-4 w-4" />
-                        </Button>
-                    </div>
-                    <div class="label">
-                        <span class="label-text-alt text-gray-500">
-                            Leave empty for no color or enter a hex color code
-                        </span>
-                    </div>
-                </div>
-
-                <div class="flex justify-end gap-2 pt-4">
-                    <Button type="button" @click="closeModals" class="btn-ghost">
-                        Cancel
-                    </Button>
-                    <Button type="submit" class="btn-green" :disabled="isSubmitting || !formData.name.trim()">
-                        <span v-if="isSubmitting" class="loading loading-spinner loading-xs"></span>
-                        {{ showEditModal ? 'Update Tag' : 'Create Tag' }}
-                    </Button>
-                </div>
-            </form>
-        </div>
-    </Modal>
+    <LazyCpTagForm v-if="showCreateModal || showEditModal" :show="showCreateModal || showEditModal" @close="closeModals"
+        :data="editingTag" />
 
     <!-- Delete Confirmation Modal -->
-    <Modal v-if="showDeleteModal" :show="showDeleteModal" @close="showDeleteModal = false">
-        <div class="p-6">
-            <h3 class="text-lg font-semibold mb-4 text-red-600">Delete Tag</h3>
-            <div v-if="tagToDelete">
-                <p class="mb-4">
-                    Are you sure you want to delete the tag "<strong>{{ tagToDelete.name }}</strong>"?
-                </p>
-                <div v-if="tagToDelete._count && tagToDelete._count.contents > 0" class="alert alert-warning mb-4">
-                    <LucideAlertTriangle class="h-4 w-4" />
-                    <span>
-                        This tag is currently used in {{ tagToDelete._count.contents }} content items.
-                        Deleting it will remove it from all associated content.
-                    </span>
-                </div>
-                <div class="flex justify-end gap-2">
-                    <Button @click="showDeleteModal = false" class="btn-ghost">
-                        Cancel
-                    </Button>
-                    <Button @click="deleteTag" class="btn-error" :disabled="isDeleting">
-                        <span v-if="isDeleting" class="loading loading-spinner loading-xs"></span>
-                        Delete Tag
-                    </Button>
-                </div>
-            </div>
-        </div>
-    </Modal>
+    <LazyCpTagRemove v-if="showDeleteModal && tagToDelete" :show="showDeleteModal" :data="tagToDelete"
+        @close="showDeleteModal = false" />
 </template>
 
 <script lang="ts" setup>
 import {
     LucidePlus,
     LucideTrash2,
-    LucideX,
-    LucideAlertTriangle,
     LucidePencilLine
 } from 'lucide-vue-next'
-import type { Tag, CreateTagDto, UpdateTagDto } from '~/interfaces/content-interface'
+import type { Tag, CreateTagDto } from '~/interfaces/content-interface'
 import { Module, Permission } from '~/interfaces/user-interface'
 
 definePageMeta({
@@ -196,20 +124,14 @@ const formData = ref<CreateTagDto & { id?: string }>({
     name: '',
     color: ''
 })
-const isSubmitting = ref(false)
+// const isSubmitting = ref(false)
 const editingTag = ref<Tag | null>(null)
 
 // Delete
 const tagToDelete = ref<Tag | null>(null)
-const isDeleting = ref(false)
 
 const openEditModal = (tag: Tag) => {
     editingTag.value = tag
-    formData.value = {
-        id: tag.id,
-        name: tag.name,
-        color: tag.color || ''
-    }
     showEditModal.value = true
 }
 
@@ -220,55 +142,12 @@ const closeModals = () => {
     formData.value = { name: '', color: '' }
 }
 
-const submitForm = async () => {
-    try {
-        isSubmitting.value = true
-
-        const data: CreateTagDto | UpdateTagDto = {
-            name: formData.value.name.trim(),
-            color: formData.value.color?.trim() || undefined
-        }
-
-        if (showEditModal.value && editingTag.value) {
-            await update(editingTag.value.id, data)
-            toastSuccess('Tag updated successfully!')
-        } else {
-            await create(data as CreateTagDto)
-            toastSuccess('Tag created successfully!')
-        }
-
-        closeModals()
-        await get()
-    } catch (error) {
-        console.error('Failed to save tag:', error)
-        toastError('Failed to save tag. Please try again.')
-    } finally {
-        isSubmitting.value = false
-    }
-}
-
 const confirmDelete = (tag: Tag) => {
     tagToDelete.value = tag
     showDeleteModal.value = true
 }
 
-const deleteTag = async () => {
-    if (!tagToDelete.value) return
 
-    try {
-        isDeleting.value = true
-        await remove(tagToDelete.value.id)
-        toastSuccess('Tag deleted successfully!')
-        showDeleteModal.value = false
-        tagToDelete.value = null
-        await get()
-    } catch (error) {
-        console.error('Failed to delete tag:', error)
-        toastError('Failed to delete tag. Please try again.')
-    } finally {
-        isDeleting.value = false
-    }
-}
 
 // Initialize
 onMounted(get)
