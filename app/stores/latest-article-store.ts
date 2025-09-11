@@ -18,7 +18,7 @@ export const useLatestArticleStore = defineStore('latest-article', {
         parameters: {
             limit: 6,
             page: 1,
-            includes: ['author']
+            includes: ['author', 'tags.tag']
         },
         authorId: undefined,
         isLoading: true,

@@ -153,6 +153,11 @@
             <Textarea v-model="dataDto.excerpt" />
         </div>
 
+        <div>
+            <TagInput v-model="eventTags" label="Tags" hint="Tambahkan tags untuk mengkategorikan event ini"
+                placeholder="Ketik untuk menambah tags..." :max-tags="10" />
+        </div>
+
         <!-- location, address, start_at, end_at -->
         <Input v-model="dataDto.location" label="Lokasi" />
         <Textarea v-model="dataDto.address" label="Alamat" />
@@ -266,7 +271,7 @@
 import Joi from 'joi';
 import { LucideCheckCircle2, LucideLoader, LucideXCircle, LucideUsers } from 'lucide-vue-next';
 import type { ContentStatus, PhotoContent } from '~/interfaces/content-interface';
-import type { Event } from '~/interfaces/event-interface';
+import type { Event, EventDto } from '~/interfaces/event-interface';
 import { Module, Permission } from '~/interfaces/user-interface';
 
 definePageMeta({
@@ -286,7 +291,7 @@ let id = route.query.id as string | undefined;
 const show_preview = ref<boolean>(false)
 
 const event = ref<Event | undefined>(undefined)
-const dataDto = ref<Partial<Event>>({
+const dataDto = ref<Partial<EventDto>>({
     content: {
         content: {
             content: [],
@@ -296,6 +301,7 @@ const dataDto = ref<Partial<Event>>({
 });
 
 const newPhotos = ref<PhotoContent[] | null>(null)
+const eventTags = ref<string[]>([])
 
 // Registration configuration
 const registrationConfig = ref<any>(null)
@@ -305,7 +311,7 @@ const registrationConfigData = ref<any>(null)
 const get = async () => {
     if (!id) return;
 
-    event.value = await Api.get('/v1/event/my/' + id + '?includes=content,registrationConfig') as Event;
+    event.value = await Api.get('/v1/event/my/' + id + '?includes=content,registrationConfig,tags.tag') as Event;
 
     // Load registration config if exists
     if (event.value.registrationConfig) {
@@ -379,8 +385,24 @@ watch(event, (newEvent) => {
         dataDto.value.address = newEvent.address
         dataDto.value.start_at = newEvent.start_at
         dataDto.value.end_at = newEvent.end_at
+
+        // Set tags
+        if (newEvent.tags) {
+            eventTags.value = newEvent.tags.map(t => t.name)
+        } else {
+            eventTags.value = []
+        }
+    } else {
+        // Reset tags when no event
+        eventTags.value = []
     }
 }, { immediate: true })
+
+// Watch for tag changes and update dataDto
+watch(eventTags, (newTags) => {
+    // Store tags as string array for API submission
+    dataDto.value.tags = newTags;
+}, { deep: true })
 
 
 
@@ -452,6 +474,7 @@ const isEvent = Joi.object({
     content: IsContent,
     location: IsString.optional(),
     address: IsString.optional(),
+    tags: Joi.array().items(Joi.string()).optional(),
     start_at: Joi.date().optional(),
     end_at: Joi.date().optional(),
 })

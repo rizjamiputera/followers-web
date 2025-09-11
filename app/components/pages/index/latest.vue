@@ -3,7 +3,7 @@
         <div class="flex flex-col gap-4">
             <div>
                 <DefaultTitle>Artikel <span class="text-green-main">Terbaru</span></DefaultTitle>
-                <DefaultSubtitle>Pelajari ilmu sebanyka mungkin sebagai bekal kita kelak</DefaultSubtitle>
+                <DefaultSubtitle>Pelajari ilmu sebanyak mungkin sebagai bekal kita kelak</DefaultSubtitle>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-5">
                 <template v-if="isEmpty && !isLoading">
@@ -16,16 +16,19 @@
                         class="w-full flex sm:flex-col gap-2 border border-green-main/30 rounded-xl p-3">
                         <Image :src="data.image_md"
                             class="w-33 sm:w-full aspect-4/3 sm:aspect-video rounded-lg bg-cover bg-no-repeat" />
-                        <div class="flex-1">
+                        <div class="flex-1 flex flex-col gap-2">
                             <div class="flex justify-start sm:justify-between gap-2 text-xs">
                                 <AvatarPublishedAt :data class="text-xs" avatar_width="w-5 h-5" />
                             </div>
-                            <div class="flex flex-col gap-2 mt-2">
-                                <DefaultBody class="font-cinzel tracking-wide line-clamp-1 font-bold">
+                            <div class="flex-1 flex flex-col gap-2">
+                                <DefaultBody class="line-clamp-1 font-bold">
                                     {{ data.title }}
                                 </DefaultBody>
                                 <DefaultBody class="line-clamp-3">{{ data.excerpt }}</DefaultBody>
                             </div>
+
+                            <!-- Tags positioned at bottom -->
+                            <TagList v-if="data.tags" :tags="data.tags" :clickable="false" size="sm" />
                         </div>
                     </NuxtLink>
                 </template>

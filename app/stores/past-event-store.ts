@@ -18,7 +18,7 @@ export const usePastEventStore = defineStore('past-event', {
         parameters: {
             limit: 6,
             page: 1,
-            includes: []
+            includes: ['tags.tag']
         },
         isLoading: true,
         isError: false,

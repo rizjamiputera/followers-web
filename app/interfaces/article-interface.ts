@@ -34,3 +34,6 @@ export interface Article {
     authBookmark?: boolean
 }
 
+export interface ArticleDto extends Omit<Article, 'tags'> {
+    tags?: string[]
+}
