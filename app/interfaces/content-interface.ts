@@ -44,6 +44,22 @@ export interface Tag {
     id: string
     name: string
     slug: string
+    color?: string | null
+    createdAt?: string
+    updatedAt?: string
+    _count?: {
+        contents: number
+    }
+}
+
+export interface CreateTagDto {
+    name: string
+    color?: string
+}
+
+export interface UpdateTagDto {
+    name?: string
+    color?: string
 }
 
 export interface Comment {
