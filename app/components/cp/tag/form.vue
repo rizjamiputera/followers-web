@@ -15,7 +15,7 @@
                         required maxlength="100" />
                 </div>
 
-                <div>
+                <div v-if="false">
                     <label class="label">
                         <span class="label-text">Color (Optional)</span>
                     </label>

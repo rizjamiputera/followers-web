@@ -28,7 +28,7 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Color</th>
+                        <!-- <th>Color</th> -->
                         <th>Name</th>
                         <th>Slug</th>
                         <th class="text-center">Content Count</th>
@@ -42,15 +42,15 @@
                         </td>
                     </tr>
                     <tr v-for="tag in filteredTags" :key="tag.id">
-                        <td>
-                            <div class="flex items-center gap-2">
+                        <td v-if="false">
+                            <!-- <div class="flex items-center gap-2">
                                 <div v-if="tag.color" class="w-6 h-6 rounded border border-gray-200"
                                     :style="{ backgroundColor: tag.color }"></div>
                                 <div v-else class="w-6 h-6 rounded border border-gray-200 bg-gray-100">
                                     <span class="text-xs text-gray-400 flex items-center justify-center h-full">-</span>
                                 </div>
                                 <span v-if="tag.color" class="text-xs text-gray-600">{{ tag.color }}</span>
-                            </div>
+                            </div> -->
                         </td>
                         <td>
                             <div class="flex items-center gap-2 capitalize">
