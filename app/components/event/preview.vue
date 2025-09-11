@@ -8,6 +8,9 @@
 
         <div class="text-lg md:text-2xl font-semibold mb-2">{{ data.title }}</div>
 
+        <!-- Tags -->
+        <!-- <TagList v-if="data.tags" :tags="data.tags" class="mb-3" /> -->
+
         <!-- location & schedule time -->
         <EventLocationSchedule :data />
 

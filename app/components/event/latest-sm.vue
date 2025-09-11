@@ -19,9 +19,11 @@
                             </div>
                         </div>
                         <div class="flex flex-col gap-2">
-                            <DefaultBody class="font-cinzel tracking-wide line-clamp-1 font-bold">{{ data.title }}
-                            </DefaultBody>
+                            <DefaultBody class="line-clamp-1 font-bold">{{ data.title }}</DefaultBody>
                             <DefaultBody class="line-clamp-3">{{ data.excerpt }}</DefaultBody>
+
+                            <!-- Tags -->
+                            <TagList v-if="data.tags" :tags="data.tags" :clickable="false" size="xs" class="mt-2" />
                         </div>
                     </div>
                 </NuxtLink>

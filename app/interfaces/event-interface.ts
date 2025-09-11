@@ -43,3 +43,7 @@ export interface Event {
     // readStatId: string
     // visitors    Visit[]
 }
+
+export interface EventDto extends Omit<Event, 'tags'> {
+    tags?: string[]
+}
