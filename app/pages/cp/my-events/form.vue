@@ -128,7 +128,7 @@
                             </DefaultBody>
                             <div v-else class="h-5 w-3/4 rounded-full bg-green-main/20"></div>
 
-                            <EventLocationSchedule :data="dataDto" :skipAddress="true" />
+                            <EventLocationSchedule :data="(dataDto as Event)" :skipAddress="true" />
 
                             <!-- exerpt -->
                             <DefaultBody v-if="dataDto.excerpt" class="line-clamp-3">
@@ -262,7 +262,7 @@
 
     <LazyModal v-if="show_preview" :show="show_preview" @close="show_preview = false" max-width="max-w-4xl">
         <div class="p-4">
-            <EventPreview :data="dataDto" />
+            <EventPreview :data="(dataDto as Event)" />
         </div>
     </LazyModal>
 </template>
