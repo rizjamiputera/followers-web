@@ -189,7 +189,7 @@
 
     <LazyModal v-if="show_preview" :show="show_preview" @close="show_preview = false" max-width="max-w-4xl">
         <div class="p-4">
-            <ArticlePreview :data="dataDto" />
+            <ArticlePreview :data="(dataDto as ArticleDto)" />
         </div>
     </LazyModal>
 </template>
@@ -259,6 +259,8 @@ watch(article, (newArticle) => {
         } else {
             articleTags.value = []
         }
+
+        dataDto.value.tags = articleTags.value;
     } else {
         // Reset tags when no article
         articleTags.value = []
@@ -266,10 +268,10 @@ watch(article, (newArticle) => {
 }, { immediate: true })
 
 // Watch for tag changes and update dataDto
-watch(articleTags, (newTags) => {
-    // Store tags as string array for API submission
-    dataDto.value.tags = newTags;
-}, { deep: true })
+// watch(articleTags, (newTags) => {
+//     // Store tags as string array for API submission
+//     dataDto.value.tags = newTags;
+// }, { deep: true })
 
 const checkTitleChange = () => {
     dataDto.value.slug = slugify(dataDto.value.title ?? '')

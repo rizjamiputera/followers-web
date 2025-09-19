@@ -127,11 +127,6 @@ watch(() => props.modelValue, (newValue) => {
     }
 }, { immediate: true })
 
-// Watch selected tags and emit changes
-watch(selectedTags, (newTags) => {
-    emit('update:modelValue', newTags.map(tag => tag.name))
-}, { deep: true })
-
 // Methods
 async function fetchTags(query: string) {
     if (!query || query.length < 1) {
@@ -222,10 +217,14 @@ function addNewTag(name: string) {
     selectedTags.value.push(newTag)
     inputValue.value = ''
     showSuggestions.value = false
+
+    emit('update:modelValue', selectedTags.value.map(tag => tag.name))
 }
 
 function removeTag(tagToRemove: Tag) {
     selectedTags.value = selectedTags.value.filter(tag => tag.name !== tagToRemove.name)
+
+    emit('update:modelValue', selectedTags.value.map(tag => tag.name))
 }
 
 // Cleanup timers on unmount

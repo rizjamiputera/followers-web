@@ -45,10 +45,10 @@
 </template>
 
 <script lang="ts" setup>
-import type { Article } from '~/interfaces/article-interface';
+import type { Article, ArticleDto } from '~/interfaces/article-interface';
 
 defineProps<{
-    data: Article | Partial<Article>
+    data: Article | ArticleDto
 }>()
 
 </script>
