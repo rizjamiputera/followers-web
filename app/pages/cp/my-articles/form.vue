@@ -75,6 +75,11 @@
                     </p>
                     <Textarea v-model="dataDto.excerpt" />
                 </div>
+
+                <div>
+                    <TagInput v-model="articleTags" label="Tags" hint="Tambahkan tags untuk mengkategorikan artikel ini"
+                        placeholder="Ketik untuk menambah tags..." :max-tags="10" />
+                </div>
             </div>
 
             <div class="max-md:hidden py-3">
@@ -184,7 +189,7 @@
 
     <LazyModal v-if="show_preview" :show="show_preview" @close="show_preview = false" max-width="max-w-4xl">
         <div class="p-4">
-            <ArticlePreview :data="dataDto" />
+            <ArticlePreview :data="(dataDto as ArticleDto)" />
         </div>
     </LazyModal>
 </template>
@@ -192,7 +197,7 @@
 <script lang="ts" setup>
 import Joi from 'joi';
 import { LucideCheckCircle2, LucideLoader, LucideXCircle } from 'lucide-vue-next';
-import type { Article } from '~/interfaces/article-interface';
+import type { Article, ArticleDto } from '~/interfaces/article-interface';
 import type { ContentStatus, PhotoContent } from '~/interfaces/content-interface';
 import { Module, Permission } from '~/interfaces/user-interface';
 
@@ -213,7 +218,7 @@ let id = route.query.id as string | undefined;
 const show_preview = ref<boolean>(false)
 
 const article = ref<Article | undefined>(undefined)
-const dataDto = ref<Partial<Article>>({
+const dataDto = ref<Partial<ArticleDto>>({
     content: {
         content: {
             content: [],
@@ -223,11 +228,12 @@ const dataDto = ref<Partial<Article>>({
 });
 
 const newPhotos = ref<PhotoContent[] | null>(null)
+const articleTags = ref<string[]>([])
 
 const get = async () => {
     if (!id) return;
 
-    article.value = await Api.get('/v1/article/my/' + id + '?includes=content') as Article;
+    article.value = await Api.get('/v1/article/my/' + id + '?includes=content,tags.tag') as Article;
 
     // initial at edit
     slugAvailable.value = true;
@@ -246,8 +252,26 @@ watch(article, (newArticle) => {
         dataDto.value.image_md = newArticle.image_md
 
         dataDto.value.content = { content: newArticle.content!.content };
+
+        // Set tags
+        if (newArticle.tags) {
+            articleTags.value = newArticle.tags.map(t => t.name)
+        } else {
+            articleTags.value = []
+        }
+
+        dataDto.value.tags = articleTags.value;
+    } else {
+        // Reset tags when no article
+        articleTags.value = []
     }
 }, { immediate: true })
+
+// Watch for tag changes and update dataDto
+// watch(articleTags, (newTags) => {
+//     // Store tags as string array for API submission
+//     dataDto.value.tags = newTags;
+// }, { deep: true })
 
 const checkTitleChange = () => {
     dataDto.value.slug = slugify(dataDto.value.title ?? '')
@@ -304,6 +328,7 @@ const isArticle = Joi.object({
     image: IsString.optional().allow(null, ''),
     image_md: IsString.optional().allow(null, ''),
     excerpt: IsString.max(250).label('Ringkasan'),
+    tags: Joi.array().items(Joi.string()).optional(),
     content: IsContent
 })
 

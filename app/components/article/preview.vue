@@ -5,6 +5,9 @@
         <Image v-if="data.image" :src="data.image" :alt="data.title"
             class-name="w-full aspect-video bg-cover rounded-2xl" />
         <div v-else class-name="w-full aspect-video bg-green-main rounded-2xl" />
+
+        <!-- Tags -->
+        <!-- <TagList v-if="data.tags" :tags="data.tags" class="mt-3" /> -->
         <div class="flex flex-wrap justify-center sm:justify-between gap-2">
             <!-- <LazyAvatarName v-if="author" :user="author" avatar_width="w-10 h-10" /> -->
 
@@ -42,10 +45,10 @@
 </template>
 
 <script lang="ts" setup>
-import type { Article } from '~/interfaces/article-interface';
+import type { Article, ArticleDto } from '~/interfaces/article-interface';
 
 defineProps<{
-    data: Article | Partial<Article>
+    data: Article | ArticleDto
 }>()
 
 </script>
