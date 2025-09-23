@@ -53,7 +53,7 @@
                     <!-- Avatar -->
                     <div class="relative">
                         <Image v-if="profile.user?.avatar_md" :src="profile.user.avatar_md"
-                            class="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg" />
+                            class="w-32 h-32 rounded-full bg-cover bg-center bg-no-repeat border-4 border-green-main/40 shadow-lg" />
                         <div v-else
                             class="w-32 h-32 rounded-full bg-gradient-to-br from-green-main/30 to-green-main/50 flex items-center justify-center border-4 border-white shadow-lg">
                             <span class="text-4xl font-bold text-white">
@@ -61,7 +61,7 @@
                             </span>
                         </div>
                         <!-- Verification badge -->
-                        <div
+                        <div v-if="false"
                             class="absolute -bottom-2 -right-2 w-10 h-10 bg-green-main rounded-full flex items-center justify-center border-3 border-white">
                             <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd"
@@ -73,7 +73,10 @@
 
                     <!-- Profile Info -->
                     <div class="flex-1 text-center md:text-left">
-                        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">{{ profile.user?.name }}</h1>
+                        <div class="flex items-center gap-3">
+                            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">{{ profile.user?.name }}</h1>
+                            <FollowButton v-if="profile.user" :userId="profile.user.id" @updated="getData" />
+                        </div>
                         <p class="text-green-main/70 mb-4">@{{ profile.slug }}</p>
 
                         <!-- Stats -->
@@ -91,10 +94,10 @@
                         <!-- Specializations -->
                         <div v-if="profile.specializations && profile.specializations.length > 0"
                             class="flex flex-wrap justify-center md:justify-start gap-2 mb-4">
-                            <span v-for="spec in profile.specializations" :key="spec"
-                                class="px-3 py-1 bg-green-main text-white text-sm rounded-full font-medium">
+                            <div v-for="spec in profile.specializations" :key="spec"
+                                class="badge badge-success badge-outline">
                                 {{ spec }}
-                            </span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -165,25 +168,27 @@ const slug = route.params.slug as string;
 
 // State
 const profile = ref<Profile | null>(null);
-const content = ref<Record<string, any> | null>(null);
 const isLoading = ref(true);
 const isNotFound = ref(false);
+
+const content = computed(() => {
+    if (!profile.value) return null;
+    if (!profile.value.biography) return null;
+
+    return profile.value.biography.content
+})
 
 // Fetch creator profile
 const { public: { apiUri, webUri } } = useRuntimeConfig();
 
 try {
     // Server-side fetch for SEO
-    const { data: profileData } = await useFetch(`${apiUri}/v1/creator/${slug}?includes=user,biography,socialLinks`, {
+    const { data: profileData } = await useFetch(`${apiUri}/v1/creator/${slug}?includes=user`, {
         server: true,
     });
 
     if (profileData.value) {
         profile.value = profileData.value as Profile;
-
-        if (profile.value.biography) {
-            content.value = profile.value.biography.content
-        }
     } else {
         isNotFound.value = true;
     }
@@ -192,6 +197,17 @@ try {
 } finally {
     isLoading.value = false;
 }
+
+const getData = async () => {
+    const response = await Api.get(`/v1/creator/${slug}?includes=user,biography,socialLinks`);
+
+    if (response) {
+        profile.value = response as Profile;
+    }
+}
+
+// re-fetch to get complete relation
+onMounted(getData);
 
 // SEO Meta
 useSeoMeta({

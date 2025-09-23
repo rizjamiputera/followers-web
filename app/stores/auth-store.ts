@@ -28,6 +28,7 @@ export const useAuthStore = defineStore('auth', {
     }),
     getters: {
         permissions: (state): UserPermission[] => state.user?.permissions ?? [],
+        isLogin: (state): boolean => !!state.user,
         can: (state) => {
             return (module: Module, permission: Permission): boolean => {
                 if (!state.user) return false;
