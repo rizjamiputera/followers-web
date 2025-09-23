@@ -30,7 +30,7 @@
                     </div>
                 </template>
                 <template v-for="(creator, n) in creators" :key="creator.slug || n">
-                    <NuxtLink :to="'/creator/' + creator.slug" prefetch-on="interaction"
+                    <NuxtLink :to="'/@' + creator.slug" prefetch-on="interaction"
                         class="group bg-white border border-green-main/20 rounded-xl p-4 hover:shadow-lg hover:border-green-main/40 transition-all duration-300 hover:-translate-y-1">
 
                         <!-- Avatar -->

@@ -8,7 +8,6 @@ interface CretorStoreState {
     data?: Paginate<Profile[]>
     parameters: PaginationParameters
     search: string
-    status?: ContentStatus
     isLoading: boolean
     isError: boolean
 }
@@ -22,7 +21,6 @@ export const useCreatorStore = defineStore('creator', {
             includes: ['user', 'socialLinks']
         },
         search: '',
-        status: undefined,
         isLoading: false,
         isError: false
     }),
@@ -35,7 +33,6 @@ export const useCreatorStore = defineStore('creator', {
                     page: state.parameters.page,
                     includes: state.parameters.includes.join(','),
                     search: state.search,
-                    status: state.status,
                     sortBy: 'slug',
                     order: 'desc'
                 },
@@ -75,7 +72,6 @@ export const useCreatorStore = defineStore('creator', {
             this.data = undefined;
 
             this.search = '';
-            this.status = undefined;
             this.isLoading = false;
             this.isError = false;
 

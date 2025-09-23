@@ -30,6 +30,10 @@
                     <NuxtLink to="/kegiatan" prefetch-on="interaction" class="text-nowrap text-white-main"
                         @click="$emit('close')">Kegiatan</NuxtLink>
                 </li>
+                <li>
+                    <NuxtLink to="/creator" prefetch-on="interaction" class="text-nowrap text-white-main"
+                        @click="$emit('close')">Penulis</NuxtLink>
+                </li>
                 <ClientOnly>
                     <li v-if="user">
                         <NuxtLink to="/profile" prefetch-on="interaction" class="text-nowrap text-white-main"
