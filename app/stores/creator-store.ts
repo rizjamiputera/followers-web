@@ -10,6 +10,8 @@ interface CretorStoreState {
     search: string
     isLoading: boolean
     isError: boolean
+    isPublicApi?: boolean
+    isPublic?: boolean | string
 }
 
 export const useCreatorStore = defineStore('creator', {
@@ -22,20 +24,25 @@ export const useCreatorStore = defineStore('creator', {
         },
         search: '',
         isLoading: false,
-        isError: false
+        isError: false,
+        isPublicApi: false,
+        isPublic: undefined
     }),
     getters: {
         apiPath: (state) => {
             return queryString.stringifyUrl({
-                url: '/v1/creator',
+                url: `/v1/creator${state.isPublicApi ? '/public' : ''}`,
                 query: {
                     limit: state.parameters.limit,
                     page: state.parameters.page,
                     includes: state.parameters.includes.join(','),
                     search: state.search,
                     sortBy: 'slug',
-                    order: 'desc'
-                },
+                    order: 'desc',
+                    ...((state.isPublic !== undefined && state.isPublic !== '') && {
+                        isPublic: state.isPublic
+                    })
+                }
             });
         },
         creators: (state): Profile[] => state.data?.data ?? [],
@@ -74,6 +81,8 @@ export const useCreatorStore = defineStore('creator', {
             this.search = '';
             this.isLoading = false;
             this.isError = false;
+            this.isPublicApi = undefined;
+            this.isPublic = undefined;
 
             this.parameters.limit = 12;
             this.parameters.page = 1;

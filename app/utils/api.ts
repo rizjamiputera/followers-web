@@ -1,5 +1,3 @@
-type ApiMethod = (path: string, data: Record<string, any> | FormData) => Promise<unknown>;
-
 export interface ApiInterface {
     check_maintenance: () => void
     headers: () => Record<string, any>
@@ -8,8 +6,8 @@ export interface ApiInterface {
     getBlob: (path: string) => Promise<ArrayBuffer>;
     post: (path: string, data?: Record<string, any> | FormData) => Promise<unknown>;
     postWithXVar: (path: string, data?: Record<string, any> | FormData) => Promise<unknown>;
-    put: ApiMethod;
-    patch: ApiMethod;
+    put: (path: string, data: Record<string, any> | FormData) => Promise<unknown>;
+    patch: (path: string, data?: Record<string, any> | FormData) => Promise<unknown>;
     upload_file: (path: string, file: File, data?: Record<string, any>) => Promise<unknown>;
     upload_file_stream: (path: string, file: File, content_type: string) => Promise<unknown>;
     remove: (path: string, body?: Record<string, any>) => Promise<unknown>;
@@ -195,7 +193,7 @@ export const Api: ApiInterface = {
             Api.handleError(error);
         }
     },
-    patch: async (path: string, data: Record<string, any> | FormData) => {
+    patch: async (path: string, data?: Record<string, any> | FormData) => {
         Api.check_maintenance();
 
         const apiUri = useRuntimeConfig().public.apiUri;

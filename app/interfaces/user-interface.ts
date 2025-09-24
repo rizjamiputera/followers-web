@@ -40,6 +40,7 @@ export enum Permission {
 }
 
 export interface Profile {
+    id?: string
     slug: string
     user?: User
     userId: string
@@ -48,6 +49,7 @@ export interface Profile {
     socialLinks: SocialLink[]
     totalArticles: number
     totalFollowers: number
+    isPublic?: boolean
 }
 
 

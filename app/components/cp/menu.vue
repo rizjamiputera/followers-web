@@ -23,6 +23,9 @@
                         <li>
                             <NuxtLink to="/cp/events/featured" prefetch-on="interaction">Featured Events</NuxtLink>
                         </li>
+                        <li>
+                            <NuxtLink to="/cp/creators" prefetch-on="interaction">Creator</NuxtLink>
+                        </li>
 
                         <hr class="my-4">
                         <div class="font-bold text-gray-400 px-2">Managemen Kontent</div>

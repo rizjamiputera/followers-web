@@ -175,6 +175,7 @@ let searchTimeout: NodeJS.Timeout;
 
 onMounted(() => {
     reset();
+    CreatorStores.isPublicApi = true;
     get();
 });
 
@@ -194,6 +195,8 @@ const loadMore = () => {
     get(false);
 };
 
+
+onUnmounted(reset);
 </script>
 
 <style></style>

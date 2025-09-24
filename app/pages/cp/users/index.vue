@@ -84,31 +84,9 @@
         </div>
         <pagination :page :last_page @prev="--parameters.page" @next="++parameters.page" />
     </div>
-
-    <!-- <LazyModal v-if="show_preview" :show="show_preview" @close="show_preview = false" max-width="max-w-4xl">
-        <div class="p-4" v-if="selectedPreview">
-            <ArticlePreview :data="selectedPreview" />
-        </div>
-    </LazyModal>
-
-    <LazySetPublishModal v-if="canPublish && selectedArticleId && showConfirmPublish" :show="showConfirmPublish"
-        type="article" :dataId="selectedArticleId" @close="showConfirmPublish = false"
-        @submited="showConfirmPublish = false; get(false)" />
-
-    <LazySetRejectModal v-if="canPublish && selectedArticleId && showConfirmReject" :show="showConfirmReject"
-        type="article" :dataId="selectedArticleId" @close="showConfirmReject = false"
-        @submited="showConfirmReject = false; get(false)" />
-
-    <LazySetTakeDown v-if="canPublish && showConfirmTakeDown && selectedArticleId" :show="showConfirmTakeDown"
-        type="article" :dataId="selectedArticleId" @close="showConfirmTakeDown = false"
-        @submited="showConfirmTakeDown = false; get(false)" /> -->
 </template>
 
 <script lang="ts" setup>
-import dayjs from 'dayjs';
-import { LucideBookmark, LucideEye, LucideLink, LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
-import type { Article } from '~/interfaces/article-interface';
-import { contentStatuses, type ContentStatus } from '~/interfaces/content-interface';
 import { Module, Permission, type Role } from '~/interfaces/user-interface';
 
 definePageMeta({
