@@ -18,6 +18,12 @@
                             <li v-if="isSuperOrAdmin">
                                 <NuxtLink to="/cp" prefetch-on="interaction">Dashboard</NuxtLink>
                             </li>
+                            <li v-if="isSuperOrAdmin">
+                                <NuxtLink to="/cp/analytics" prefetch-on="interaction">Visit Analytics</NuxtLink>
+                            </li>
+                            <li v-if="isSuperOrAdmin">
+                                <NuxtLink to="/cp/visitor-journeys" prefetch-on="interaction">Visitor Journeys</NuxtLink>
+                            </li>
                             <li v-if="can(Module.ARTICLE, Permission.READ)">
                                 <NuxtLink to="/cp/articles/featured" prefetch-on="interaction">Featured Article
                                 </NuxtLink>
