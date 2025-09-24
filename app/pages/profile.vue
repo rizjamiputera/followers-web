@@ -37,7 +37,7 @@
             <div class="flex flex-col gap-3">
                 <div>
                     <label class="text-sm font-medium text-gray-600">Username</label>
-                    <p>{{ creatorProfile.slug }}</p>
+                    <p>{{ creatorProfile.user?.username }}</p>
                 </div>
 
                 <div v-if="creatorProfile.specializations?.length">
@@ -54,7 +54,7 @@
                     <label class="text-sm font-medium text-gray-600">Social Links</label>
                     <div class="flex flex-col gap-3 mt-2">
                         <div v-for="social in creatorProfile.socialLinks" :key="social.platform"
-                            class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg max-w-xs">
+                            class="flex items-center gap-3 p-1 border border-gray-200 rounded-lg max-w-xs">
                             <div class="w-8 h-8 rounded bg-gray-100 flex items-center justify-center">
                                 <SocialIcon :platform="social.platform" class="w-5 h-5" />
                             </div>
@@ -101,7 +101,7 @@ const creatorProfile = ref<Profile | null>(null);
 
 const loadCreatorProfile = async () => {
     try {
-        creatorProfile.value = await Api.get('/v1/creator/my/profile?includes=biography,socialLinks') as Profile;
+        creatorProfile.value = await Api.get('/v1/creator/my/profile?includes=biography,socialLinks,user') as Profile;
     } catch (error) {
         creatorProfile.value = null;
     }

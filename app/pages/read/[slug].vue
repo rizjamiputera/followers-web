@@ -27,7 +27,10 @@
                         </div>
                         <Image :src="data.image" :alt="data.title" class-name="aspect-video bg-cover rounded-2xl" />
                         <div class="flex flex-wrap justify-center sm:justify-between gap-2">
-                            <LazyAvatarName v-if="data.author" :user="data.author" avatar_width="w-10 h-10" />
+                            <div v-if="data.author" class="flex items-center gap-2">
+                                <LazyAvatarName :user="data.author" avatar_width="w-10 h-10" />
+                                <LazyFollowButton :userId="data.authorId" />
+                            </div>
 
                             <div class="flex items-center gap-2">
                                 <div class="join join-horizontal">

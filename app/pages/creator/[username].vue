@@ -77,7 +77,7 @@
                             <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">{{ profile.user?.name }}</h1>
                             <FollowButton v-if="profile.user" :userId="profile.user.id" @updated="getData" />
                         </div>
-                        <p class="text-green-main/70 mb-4">@{{ profile.slug }}</p>
+                        <p class="text-green-main/70 mb-4">@{{ profile.user?.username }}</p>
 
                         <!-- Stats -->
                         <div class="flex justify-center md:justify-start items-center gap-6 mb-4">
@@ -125,7 +125,7 @@
                             <div class="space-y-3">
                                 <a v-for="social in profile.socialLinks" :key="social.platform" :href="social.url"
                                     target="_blank"
-                                    class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:border-green-main hover:bg-green-main/5 transition-colors">
+                                    class="flex items-center gap-3 p-2 border border-gray-200 rounded-lg hover:border-green-main hover:bg-green-main/5 transition-colors">
                                     <div class="w-8 h-8 rounded bg-gray-100 flex items-center justify-center">
                                         <SocialIcon :platform="social.platform" class="w-5 h-5" />
                                     </div>
@@ -154,12 +154,11 @@
 </template>
 
 <script lang="ts" setup>
-import type { Content } from '~/interfaces/content-interface';
 import type { Profile } from '~/interfaces/user-interface';
 
 // Get route params
 const route = useRoute();
-const slug = route.params.slug as string;
+const username = route.params.username as string;
 
 // State
 const profile = ref<Profile | null>(null);
@@ -178,7 +177,7 @@ const { public: { apiUri, webUri } } = useRuntimeConfig();
 
 try {
     // Server-side fetch for SEO
-    const { data: profileData } = await useFetch(`${apiUri}/v1/creator/public/${slug}?includes=user`, {
+    const { data: profileData } = await useFetch(`${apiUri}/v1/creator/public/${username}?includes=user`, {
         server: true,
     });
 
@@ -194,7 +193,7 @@ try {
 }
 
 const getData = async () => {
-    const response = await Api.get(`/v1/creator/public/${slug}?includes=user,biography,socialLinks`);
+    const response = await Api.get(`/v1/creator/public/${username}?includes=user,biography,socialLinks`);
 
     if (response) {
         profile.value = response as Profile;
@@ -220,7 +219,7 @@ useSeoMeta({
     ogImage: () => profile.value?.user?.avatar_md ?? (webUri + '/logo-hitam.jpg'),
     twitterCard: 'summary_large_image',
     ogSiteName: 'FollowersBicara.com',
-    ogUrl: () => `${webUri}/creator/${slug}`
+    ogUrl: () => `${webUri}/creator/${username}`
 });
 </script>
 

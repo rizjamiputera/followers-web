@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col gap-4">
-        <Input v-model="dataDto.slug" label="Username" @keyup="checkSlugChange" />
+        <Input v-model="dataDto.username" label="Username" @keyup="checkUsernameChange" />
 
         <div>
             <label class="text-sm font-medium">Specializations</label>
@@ -15,15 +15,15 @@
             <div class="flex flex-col gap-2 mt-2">
                 <div v-for="(link, index) in dataDto.socialLinks" :key="index"
                     class="flex gap-2 items-center flex-wrap">
-                    <select v-model="link.platform" class="select select-sm select-bordered flex-shrink-0">
+                    <select v-model="link.platform" class="select select-sm select-bordered w-40">
                         <option v-for="platform in socialPlatforms" :key="platform" :value="platform">
                             {{ platform }}
                         </option>
                     </select>
                     <Input v-model="link.handle" placeholder="@username" class="flex-1 min-w-40" />
                     <Input v-model="link.url" placeholder="https://..." class="flex-1 min-w-60" />
-                    <Button @click="removeSocialLink(index)" class="btn-sm btn-error">
-                        Remove
+                    <Button @click="removeSocialLink(index)" class="btn-sm btn-circle btn-error">
+                        <LucideTrash2 :size="14" />
                     </Button>
                 </div>
                 <Button @click="addSocialLink" class="btn-sm btn-outline w-fit">
@@ -40,13 +40,15 @@
 </template>
 
 <script lang="ts" setup>
+import { LucideTrash2 } from 'lucide-vue-next';
 import type { Profile, SocialLink, SocialPlatform } from '~/interfaces/user-interface';
 
 const props = defineProps<{
     userId?: string;
 }>();
 
-const dataDto = ref<Partial<Profile>>({
+const dataDto = ref<Partial<Profile> & { username: string }>({
+    username: '',
     biography: {
         content: {
             content: [],
@@ -66,7 +68,7 @@ const get = async () => {
     try {
         const endpoint = props.userId
             ? `/v1/creator/${props.userId}?includes=biography,socialLinks,user`
-            : `/v1/creator/my/profile?includes=biography,socialLinks`;
+            : `/v1/creator/my/profile?includes=biography,socialLinks,user`;
 
         profile.value = await Api.get(endpoint) as Profile;
     } catch (error) {
@@ -78,7 +80,7 @@ onMounted(get);
 
 watch(profile, (newProfile) => {
     if (newProfile) {
-        dataDto.value.slug = newProfile.slug;
+        dataDto.value.username = newProfile.user?.username ?? '';
         dataDto.value.biography = { content: newProfile.biography?.content ?? { type: 'doc', content: [] } };
         dataDto.value.specializations = newProfile.specializations ?? [];
         dataDto.value.socialLinks = newProfile.socialLinks
@@ -96,8 +98,8 @@ watch(specializationTags, (newTags) => {
     dataDto.value.specializations = newTags;
 }, { deep: true });
 
-const checkSlugChange = () => {
-    dataDto.value.slug = slugify(dataDto.value.slug ?? '');
+const checkUsernameChange = () => {
+    dataDto.value.username = slugify(dataDto.value.username ?? '');
 };
 
 const addSocialLink = () => {

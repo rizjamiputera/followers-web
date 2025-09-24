@@ -31,7 +31,7 @@ const emit = defineEmits<{
 const formRef = ref<any>(null);
 
 const isProfile = Joi.object({
-    slug: IsString.max(100),
+    username: IsString.max(100),
     specializations: Joi.array().items(Joi.string()).optional(),
     socialLinks: Joi.array().items(Joi.object({
         platform: Joi.string().required(),
