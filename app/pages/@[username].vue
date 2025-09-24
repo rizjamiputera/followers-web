@@ -8,8 +8,8 @@
 <script lang="ts" setup>
 // Get the slug from the route
 const route = useRoute();
-const slug = route.params.slug as string;
+const username = route.params.username as string;
 
 // Redirect to the creator page
-await navigateTo(`/creator/${slug}`, { redirectCode: 301 });
+await navigateTo(`/creator/${username}`, { redirectCode: 301 });
 </script>

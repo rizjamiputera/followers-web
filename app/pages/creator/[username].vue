@@ -154,12 +154,11 @@
 </template>
 
 <script lang="ts" setup>
-import type { Content } from '~/interfaces/content-interface';
 import type { Profile } from '~/interfaces/user-interface';
 
 // Get route params
 const route = useRoute();
-const slug = route.params.slug as string;
+const username = route.params.username as string;
 
 // State
 const profile = ref<Profile | null>(null);
@@ -178,7 +177,7 @@ const { public: { apiUri, webUri } } = useRuntimeConfig();
 
 try {
     // Server-side fetch for SEO
-    const { data: profileData } = await useFetch(`${apiUri}/v1/creator/public/${slug}?includes=user`, {
+    const { data: profileData } = await useFetch(`${apiUri}/v1/creator/public/${username}?includes=user`, {
         server: true,
     });
 
@@ -194,7 +193,7 @@ try {
 }
 
 const getData = async () => {
-    const response = await Api.get(`/v1/creator/public/${slug}?includes=user,biography,socialLinks`);
+    const response = await Api.get(`/v1/creator/public/${username}?includes=user,biography,socialLinks`);
 
     if (response) {
         profile.value = response as Profile;
@@ -220,7 +219,7 @@ useSeoMeta({
     ogImage: () => profile.value?.user?.avatar_md ?? (webUri + '/logo-hitam.jpg'),
     twitterCard: 'summary_large_image',
     ogSiteName: 'FollowersBicara.com',
-    ogUrl: () => `${webUri}/creator/${slug}`
+    ogUrl: () => `${webUri}/creator/${username}`
 });
 </script>
 
