@@ -42,6 +42,7 @@ export enum Permission {
 export interface Profile {
     slug: string
     user?: User
+    userId: string
     biography?: Content
     specializations: string[]
     socialLinks: SocialLink[]

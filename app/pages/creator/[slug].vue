@@ -143,13 +143,9 @@
                             </div>
                         </div>
 
-                        <!-- Articles/Events Section -->
                         <div>
-                            <h3 class="text-xl font-bold text-gray-800 mb-4">Karya Terbaru</h3>
-                            <div class="text-center py-8 text-gray-500">
-                                <div class="text-4xl mb-2">📝</div>
-                                <p>Artikel dan event akan segera ditampilkan</p>
-                            </div>
+                            <LazyArticleLatestSm v-if="profile" :authorId="profile.userId"
+                                :authorName="profile.user?.name" />
                         </div>
                     </div>
                 </div>
@@ -207,7 +203,10 @@ const getData = async () => {
 }
 
 // re-fetch to get complete relation
-onMounted(getData);
+onMounted(() => {
+    recordVisit();
+    getData();
+});
 
 // SEO Meta
 useSeoMeta({
