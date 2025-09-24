@@ -304,7 +304,15 @@ import Stat from '~/components/cp/dashboard/stat.vue';
 import { Module, Permission } from '~/interfaces/user-interface';
 
 definePageMeta({
-    layout: 'control-panel'
+    layout: 'control-panel',
+    middleware: [
+        () => {
+            const auth = useAuthStore();
+            if (!(auth.can(Module.ARTICLE, Permission.CREATE) || auth.can(Module.EVENT, Permission.CREATE))) {
+                return navigateTo('/cp')
+            }
+        }
+    ]
 })
 
 const AuthStore = useAuthStore();

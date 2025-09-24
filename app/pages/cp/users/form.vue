@@ -104,7 +104,6 @@ const modules = computed(() => Object.keys(Module).map((module) => {
     return {
         name: module,
         permissions: Object.keys(Permission).map((permission) => {
-            console.log(module, permission)
             return {
                 name: permission,
                 checked: userPermissions.value.some(

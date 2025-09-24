@@ -136,12 +136,9 @@ async function fetchTags(query: string) {
 
     isLoading.value = true
     try {
-        console.log('Fetching tags for query:', query)
         const response = await Api.get('/v1/tags/search?q=' + query) as Tag[]
-        console.log('Tag search response:', response)
         availableTags.value = response || []
     } catch (error) {
-        console.error('Error fetching tags:', error)
         availableTags.value = []
     } finally {
         isLoading.value = false

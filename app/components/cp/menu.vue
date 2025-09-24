@@ -11,26 +11,30 @@
                     </li>
                 </ul>
                 <template v-for="n in 1" :key="n">
-                    <hr class="my-4">
-                    <ul class="">
-                        <div class="font-bold text-gray-400 px-2">Home Page</div>
-                        <li v-if="isSuperOrAdmin">
-                            <NuxtLink to="/cp" prefetch-on="interaction">Dashboard</NuxtLink>
-                        </li>
-                        <li v-if="can(Module.ARTICLE, Permission.READ)">
-                            <NuxtLink to="/cp/articles/featured" prefetch-on="interaction">Featured Article</NuxtLink>
-                        </li>
-                        <li v-if="can(Module.EVENT, Permission.READ)">
-                            <NuxtLink to="/cp/events/featured" prefetch-on="interaction">Featured Events</NuxtLink>
-                        </li>
-                        <li v-if="can(Module.USER, Permission.READ)">
-                            <NuxtLink to="/cp/creators" prefetch-on="interaction">Creator</NuxtLink>
-                        </li>
-
+                    <template v-if="canAccessHomepage">
                         <hr class="my-4">
-                        <div class="font-bold text-gray-400 px-2">Managemen Kontent</div>
-                        <ClientOnly>
+                        <div class="font-bold text-gray-400 px-2">Home Page</div>
+                        <ul class="">
+                            <li v-if="isSuperOrAdmin">
+                                <NuxtLink to="/cp" prefetch-on="interaction">Dashboard</NuxtLink>
+                            </li>
+                            <li v-if="can(Module.ARTICLE, Permission.READ)">
+                                <NuxtLink to="/cp/articles/featured" prefetch-on="interaction">Featured Article
+                                </NuxtLink>
+                            </li>
+                            <li v-if="can(Module.EVENT, Permission.READ)">
+                                <NuxtLink to="/cp/events/featured" prefetch-on="interaction">Featured Events</NuxtLink>
+                            </li>
+                            <li v-if="can(Module.USER, Permission.READ)">
+                                <NuxtLink to="/cp/creators" prefetch-on="interaction">Creator</NuxtLink>
+                            </li>
+                        </ul>
+                    </template>
 
+                    <hr class="my-4">
+                    <div class="font-bold text-gray-400 px-2">Managemen Kontent</div>
+                    <ul>
+                        <ClientOnly>
                             <!-- ARTICLE -->
                             <li v-if="can(Module.ARTICLE, Permission.READ)">
                                 <details>
@@ -50,7 +54,8 @@
                                             </NuxtLink>
                                         </li>
                                         <li v-if="can(Module.ARTICLE, Permission.PUBLISH)">
-                                            <NuxtLink to="/cp/articles/published" prefetch-on="interaction">Published
+                                            <NuxtLink to="/cp/articles/published" prefetch-on="interaction">
+                                                Published
                                             </NuxtLink>
                                         </li>
                                     </ul>
@@ -139,6 +144,14 @@ import { Module, Permission } from '~/interfaces/user-interface';
 
 const AuthStore = useAuthStore();
 const { can, user, isSuperOrAdmin } = storeToRefs(AuthStore);
+
+const canAccessHomepage = computed(() => {
+    const check1 = isSuperOrAdmin.value;
+    const check2 = can.value(Module.ARTICLE, Permission.READ)
+    const check3 = can.value(Module.EVENT, Permission.READ)
+    const check4 = can.value(Module.USER, Permission.READ)
+    return check1 || check2 || check3 || check4;
+})
 
 const drawerMenu = ref<HTMLElement | null>(null)
 function triggerDrawer() {
