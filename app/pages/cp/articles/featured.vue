@@ -219,7 +219,7 @@ const paginationRange = computed(() => {
 const loadArticles = async () => {
     loading.value = true
     try {
-        const response = await Api.get('/v1/article?status=PUBLISHED&limit=1000&include=author,stats')
+        const response = await Api.get('/v1/article?status=PUBLISHED&limit=1000&include=author,stats') as any
         articles.value = response.data || []
     } catch (error) {
         console.error('Failed to load articles:', error)

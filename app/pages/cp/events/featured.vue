@@ -232,7 +232,7 @@ const paginationRange = computed(() => {
 const loadEvents = async () => {
     loading.value = true
     try {
-        const response = await Api.get('/v1/event?status=PUBLISHED&limit=1000&include=author,stats,registrations')
+        const response = await Api.get('/v1/event?status=PUBLISHED&limit=1000&include=author,stats,registrations') as any
         events.value = response.data || []
     } catch (error) {
         console.error('Failed to load events:', error)
