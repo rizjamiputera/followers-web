@@ -108,7 +108,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <!-- Biography -->
                     <div class="lg:col-span-2">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-4">Tentang Penulis</h2>
+                        <h2 class="font-cinzel tracking-wide font-bold text-green-main mb-4">Tentang Penulis</h2>
                         <div v-if="content" class="prose prose-lg max-w-none">
                             <WysiwygRenderer :content="content" />
                         </div>
@@ -121,7 +121,7 @@
                     <div class="space-y-6">
                         <!-- Social Links -->
                         <div v-if="profile.socialLinks && profile.socialLinks.length > 0">
-                            <h3 class="text-xl font-bold text-gray-800 mb-4">Media Sosial</h3>
+                            <h3 class="font-cinzel tracking-wide font-bold text-green-main mb-4">Media Sosial</h3>
                             <div class="space-y-3">
                                 <a v-for="social in profile.socialLinks" :key="social.platform" :href="social.url"
                                     target="_blank"
