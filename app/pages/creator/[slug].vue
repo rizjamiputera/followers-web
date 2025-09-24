@@ -130,7 +130,7 @@
                                         <SocialIcon :platform="social.platform" class="w-5 h-5" />
                                     </div>
                                     <div class="flex-1">
-                                        <div class="font-medium capitalize">{{ social.platform.toLowerCase() }}</div>
+                                        <!-- <div class="font-medium capitalize">{{ social.platform.toLowerCase() }}</div> -->
                                         <div class="text-sm text-gray-600">{{ social.handle || social.url }}</div>
                                     </div>
                                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
@@ -179,7 +179,7 @@ const { public: { apiUri, webUri } } = useRuntimeConfig();
 
 try {
     // Server-side fetch for SEO
-    const { data: profileData } = await useFetch(`${apiUri}/v1/creator/${slug}?includes=user`, {
+    const { data: profileData } = await useFetch(`${apiUri}/v1/creator/public/${slug}?includes=user`, {
         server: true,
     });
 
@@ -195,7 +195,7 @@ try {
 }
 
 const getData = async () => {
-    const response = await Api.get(`/v1/creator/${slug}?includes=user,biography,socialLinks`);
+    const response = await Api.get(`/v1/creator/public/${slug}?includes=user,biography,socialLinks`);
 
     if (response) {
         profile.value = response as Profile;

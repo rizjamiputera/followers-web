@@ -2,8 +2,8 @@
     <div class="flex flex-col gap-3 relative">
         <div class="flex justify-between items-center gap-3">
             <div>
-                <h1 class="text-2xl font-bold">Edit Creator Profile</h1>
-                <p class="text-sm text-gray-600" v-if="profile?.user">{{ profile.user.name }} ({{ profile.user.email }})
+                <p class="text-gray-600 font-bold" v-if="profile?.user">{{ profile.user.name }} ({{ profile.user.email
+                    }})
                 </p>
             </div>
             <div class="flex flex-wrap gap-1">
@@ -15,17 +15,12 @@
         </div>
 
         <div class="w-full flex flex-col gap-4">
-            <Input v-model="dataDto.slug" label="Slug" @keyup="checkSlugChange" />
-
-            <div class="flex items-center gap-2">
-                <input type="checkbox" v-model="dataDto.isPublic" class="checkbox checkbox-sm" />
-                <label class="text-sm font-medium">Public Profile</label>
-            </div>
+            <Input v-model="dataDto.slug" label="Username" @keyup="checkSlugChange" />
 
             <div>
                 <label class="text-sm font-medium">Specializations</label>
                 <p class="text-xs font-light mb-1">
-                    Bidang keahlian creator (pisahkan dengan koma)
+                    Bidang keahlian creator
                 </p>
                 <TagInput v-model="specializationTags" placeholder="Ketik untuk menambah spesialisasi..."
                     :max-tags="10" />
@@ -122,7 +117,6 @@ const dataDto = ref<Partial<Profile>>({
     },
     specializations: [],
     socialLinks: [],
-    isPublic: false
 });
 
 const specializationTags = ref<string[]>([]);
@@ -132,6 +126,8 @@ const get = async () => {
     if (!id) return;
 
     profile.value = await Api.get(`/v1/creator/${id}?includes=biography,socialLinks,user`) as Profile;
+
+    console.log(profile.value)
 };
 
 onMounted(get);
@@ -139,7 +135,7 @@ onMounted(get);
 watch(profile, (newProfile) => {
     if (newProfile) {
         dataDto.value.slug = newProfile.slug;
-        dataDto.value.isPublic = newProfile.isPublic ?? false;
+        // dataDto.value.isPublic = newProfile.isPublic ?? false;
         dataDto.value.biography = { content: newProfile.biography?.content ?? { type: 'doc', content: [] } };
         dataDto.value.specializations = newProfile.specializations ?? [];
         dataDto.value.socialLinks = newProfile.socialLinks ?? [];
@@ -173,7 +169,6 @@ const removeSocialLink = (index: number) => {
 
 const isProfile = Joi.object({
     slug: IsString.max(100),
-    isPublic: Joi.boolean(),
     specializations: Joi.array().items(Joi.string()).optional(),
     socialLinks: Joi.array().items(Joi.object({
         platform: Joi.string().required(),
