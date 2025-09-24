@@ -110,7 +110,7 @@
                                     <div class="form-control">
                                         <label class="label cursor-pointer">
                                             <input type="checkbox" :checked="creator.isPublic"
-                                                @change="togglePublic(creator)" :disabled="updating"
+                                                @change="togglePublic(creator)" :disabled="updating || !canEdit"
                                                 class="checkbox checkbox-primary checkbox-sm" />
                                         </label>
                                     </div>
@@ -119,7 +119,11 @@
                                     <div class="flex items-center gap-2">
                                         <NuxtLink :to="`/creator/${creator.slug}`" target="_blank"
                                             class="btn btn-ghost btn-xs">
-                                            <LucideExternalLink class="h-3 w-3" />
+                                            <LucideExternalLink class="h-4 w-4" />
+                                        </NuxtLink>
+                                        <NuxtLink v-if="canEdit" :to="`/cp/creators/${creator.id}`"
+                                            class="btn btn-ghost btn-xs">
+                                            <LucideEdit class="h-4 w-4" />
                                         </NuxtLink>
                                     </div>
                                 </td>
@@ -147,12 +151,17 @@ import {
     LucideUser,
     LucideFileText,
     LucideUsers,
-    LucideExternalLink
+    LucideExternalLink,
+    LucideEdit
 } from 'lucide-vue-next'
+import { Module, Permission } from '~/interfaces/user-interface';
 
 definePageMeta({
     layout: 'control-panel'
 })
+
+const AuthStore = useAuthStore()
+const canEdit = computed(() => AuthStore.can(Module.USER, Permission.EDIT))
 
 const CreatorStores = useCreatorStore();
 
