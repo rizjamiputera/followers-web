@@ -79,7 +79,7 @@
 
 <script lang="ts" setup>
 import { LucideKey, LucidePencil } from 'lucide-vue-next';
-import type { Profile } from '~/interfaces/user-interface';
+import { Module, Permission, type Profile } from '~/interfaces/user-interface';
 
 onMounted(() => {
     recordVisit();
@@ -100,6 +100,9 @@ const showEditCreatorProfile = ref<boolean>(false);
 const creatorProfile = ref<Profile | null>(null);
 
 const loadCreatorProfile = async () => {
+    // check if user can create article
+    if (!AuthStore.can(Module.ARTICLE, Permission.CREATE)) return;
+
     try {
         creatorProfile.value = await Api.get('/v1/creator/my/profile?includes=biography,socialLinks,user') as Profile;
     } catch (error) {
