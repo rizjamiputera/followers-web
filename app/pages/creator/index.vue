@@ -174,6 +174,7 @@ const search = ref('');
 let searchTimeout: NodeJS.Timeout;
 
 onMounted(() => {
+    recordVisit();
     reset();
     CreatorStores.isPublicApi = true;
     get();
