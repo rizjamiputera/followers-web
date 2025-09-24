@@ -130,7 +130,6 @@
                                         <SocialIcon :platform="social.platform" class="w-5 h-5" />
                                     </div>
                                     <div class="flex-1">
-                                        <!-- <div class="font-medium capitalize">{{ social.platform.toLowerCase() }}</div> -->
                                         <div class="text-sm text-gray-600">{{ social.handle || social.url }}</div>
                                     </div>
                                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"

@@ -2,8 +2,8 @@
     <div class="flex flex-col gap-3 relative">
         <div class="flex justify-between items-center gap-3">
             <div>
-                <p class="text-gray-600 font-bold" v-if="profile?.user">{{ profile.user.name }} ({{ profile.user.email
-                    }})
+                <p class="text-gray-600 font-bold" v-if="profile?.user">
+                    {{ profile.user.name }} ({{ profile.user.email }})
                 </p>
             </div>
             <div class="flex flex-wrap gap-1">
@@ -14,44 +14,7 @@
             </div>
         </div>
 
-        <div class="w-full flex flex-col gap-4">
-            <Input v-model="dataDto.slug" label="Username" @keyup="checkSlugChange" />
-
-            <div>
-                <label class="text-sm font-medium">Specializations</label>
-                <p class="text-xs font-light mb-1">
-                    Bidang keahlian creator
-                </p>
-                <TagInput v-model="specializationTags" placeholder="Ketik untuk menambah spesialisasi..."
-                    :max-tags="10" />
-            </div>
-
-            <div>
-                <label class="text-sm font-medium">Social Links</label>
-                <div class="flex flex-col gap-2 mt-2">
-                    <div v-for="(link, index) in dataDto.socialLinks" :key="index" class="flex gap-2 items-center">
-                        <select v-model="link.platform" class="select select-sm select-bordered flex-shrink-0">
-                            <option v-for="platform in socialPlatforms" :key="platform" :value="platform">
-                                {{ platform }}
-                            </option>
-                        </select>
-                        <Input v-model="link.handle" placeholder="@username" class="flex-1" />
-                        <Input v-model="link.url" placeholder="https://..." class="flex-1" />
-                        <Button @click="removeSocialLink(index)" class="btn-sm btn-error">
-                            Remove
-                        </Button>
-                    </div>
-                    <Button @click="addSocialLink" class="btn-sm btn-outline">
-                        + Add Social Link
-                    </Button>
-                </div>
-            </div>
-
-            <div v-if="dataDto.biography?.content">
-                <label class="text-sm font-medium">Biography</label>
-                <TiptapEditor v-model="dataDto.biography.content" />
-            </div>
-        </div>
+        <CpCreatorProfileFormContent ref="formRef" :userId="id" />
 
         <div class="flex flex-wrap justify-end gap-1">
             <Button class="max-sm:btn-sm" @click="confirm_cancel = true">Cancel</Button>
@@ -86,7 +49,7 @@
 <script lang="ts" setup>
 import Joi from 'joi';
 import { LucideLoader } from 'lucide-vue-next';
-import type { Profile, SocialLink, SocialPlatform } from '~/interfaces/user-interface';
+import type { Profile } from '~/interfaces/user-interface';
 import { Module, Permission } from '~/interfaces/user-interface';
 
 definePageMeta({
@@ -94,8 +57,6 @@ definePageMeta({
     middleware: [
         () => {
             const auth = useAuthStore();
-            console.log('auth.user.role')
-            console.log(auth.user?.role)
             if (!auth.can(Module.USER, Permission.EDIT)) {
                 return navigateTo('/cp')
             }
@@ -103,69 +64,11 @@ definePageMeta({
     ]
 });
 
-const router = useRouter();
 const route = useRoute();
 const id = route.params.id as string;
 
-const profile = ref<Profile | undefined>(undefined);
-const dataDto = ref<Partial<Profile>>({
-    biography: {
-        content: {
-            content: [],
-            type: 'doc'
-        },
-    },
-    specializations: [],
-    socialLinks: [],
-});
-
-const specializationTags = ref<string[]>([]);
-const socialPlatforms = ['INSTAGRAM', 'FACEBOOK', 'TWITTER', 'YOUTUBE', 'TIKTOK', 'LINKEDIN', 'TELEGRAM', 'WHATSAPP', 'WEBSITE'];
-
-const get = async () => {
-    if (!id) return;
-
-    profile.value = await Api.get(`/v1/creator/${id}?includes=biography,socialLinks,user`) as Profile;
-
-    console.log(profile.value)
-};
-
-onMounted(get);
-
-watch(profile, (newProfile) => {
-    if (newProfile) {
-        dataDto.value.slug = newProfile.slug;
-        // dataDto.value.isPublic = newProfile.isPublic ?? false;
-        dataDto.value.biography = { content: newProfile.biography?.content ?? { type: 'doc', content: [] } };
-        dataDto.value.specializations = newProfile.specializations ?? [];
-        dataDto.value.socialLinks = newProfile.socialLinks ?? [];
-
-        specializationTags.value = newProfile.specializations ?? [];
-    }
-}, { immediate: true });
-
-watch(specializationTags, (newTags) => {
-    dataDto.value.specializations = newTags;
-}, { deep: true });
-
-const checkSlugChange = () => {
-    dataDto.value.slug = slugify(dataDto.value.slug ?? '');
-};
-
-const addSocialLink = () => {
-    if (!dataDto.value.socialLinks) {
-        dataDto.value.socialLinks = [];
-    }
-    dataDto.value.socialLinks.push({
-        platform: 'INSTAGRAM' as SocialPlatform,
-        url: '',
-        handle: ''
-    });
-};
-
-const removeSocialLink = (index: number) => {
-    dataDto.value.socialLinks?.splice(index, 1);
-};
+const formRef = ref<any>(null);
+const profile = computed(() => formRef.value?.profile);
 
 const isProfile = Joi.object({
     slug: IsString.max(100),
@@ -187,7 +90,8 @@ const validate = () => {
     showConfirmSave.value = false;
 
     try {
-        validatedData.value = Validate(isProfile, dataDto.value);
+        const dataDto = formRef.value?.getData();
+        validatedData.value = Validate(isProfile, dataDto);
         validatedData.value.biography = validatedData.value.biography.content;
 
         showConfirmSave.value = true;
@@ -206,7 +110,7 @@ const submit = async () => {
 
         toastSuccess('Profile updated successfully');
 
-        await get();
+        location.reload();
     } catch (error) {
         toastError(error);
     } finally {
