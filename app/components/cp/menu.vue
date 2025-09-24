@@ -11,7 +11,7 @@
                     </li>
                 </ul>
                 <template v-for="n in 1" :key="n">
-                    <template>
+                    <template v-if="canAccessHomepage">
                         <hr class="my-4">
                         <div class="font-bold text-gray-400 px-2">Home Page</div>
                         <ul class="">
