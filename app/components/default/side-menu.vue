@@ -21,6 +21,22 @@
         </div>
         <div
             class="side-menu menu flex-1 max-h-full w-full overflow-y-auto border-1 border-white-main/40 rounded-2xl p-4">
+            <ClientOnly>
+                <ul v-if="user">
+                    <li>
+                        <NuxtLink to="/profile" prefetch-on="interaction" class="text-nowrap text-white-main"
+                            @click="$emit('close')">Profile</NuxtLink>
+                    </li>
+                    <li v-if="user?.role != 'USER'">
+                        <NuxtLink to="/cp" prefetch-on="interaction" class="text-nowrap text-white-main"
+                            @click="$emit('close')">
+                            Go to admin
+                            <LucideArrowRight :size="12" />
+                        </NuxtLink>
+                    </li>
+                </ul>
+                <hr class="!my-3">
+            </ClientOnly>
             <ul>
                 <li>
                     <NuxtLink to="/" prefetch-on="interaction" class="text-nowrap text-white-main"
@@ -30,16 +46,10 @@
                     <NuxtLink to="/kegiatan" prefetch-on="interaction" class="text-nowrap text-white-main"
                         @click="$emit('close')">Kegiatan</NuxtLink>
                 </li>
-                <ClientOnly>
-                    <li v-if="user">
-                        <NuxtLink to="/profile" prefetch-on="interaction" class="text-nowrap text-white-main"
-                            @click="$emit('close')">Profile</NuxtLink>
-                    </li>
-                    <li v-if="user?.role != 'USER'">
-                        <NuxtLink to="/cp" prefetch-on="interaction" class="text-nowrap text-white-main"
-                            @click="$emit('close')">Go to admin</NuxtLink>
-                    </li>
-                </ClientOnly>
+                <li>
+                    <NuxtLink to="/creator" prefetch-on="interaction" class="text-nowrap text-white-main"
+                        @click="$emit('close')">Penulis</NuxtLink>
+                </li>
                 <template v-if="false">
                     <li>
                         <!-- <details :open="isOpen"> -->
@@ -67,6 +77,8 @@
 </template>
 
 <script lang="ts" setup>
+import { LucideArrowRight } from 'lucide-vue-next';
+
 defineEmits(['close'])
 const props = defineProps<{
     show: boolean

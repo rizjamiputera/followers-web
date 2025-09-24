@@ -1,5 +1,5 @@
 <template>
-    <section v-if="!isEmpty">
+    <section>
         <div class="flex flex-col gap-4">
             <div>
                 <DefaultTitle>Artikel <span class="text-green-main">Terbaru</span></DefaultTitle>

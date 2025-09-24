@@ -90,7 +90,7 @@ const fetchFeaturedContent = async () => {
     try {
         loadingFeatured.value = true;
         // Use single endpoint for all homepage data
-        const homepageData = await Api.get('/v1/home-page/data')
+        const homepageData = await Api.get('/v1/home-page/data') as any
 
         featuredArticles.value = Array.isArray(homepageData?.featuredArticles) ? homepageData.featuredArticles : []
         featuredEvents.value = Array.isArray(homepageData?.featuredEvents) ? homepageData.featuredEvents : []

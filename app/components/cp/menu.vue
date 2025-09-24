@@ -14,14 +14,17 @@
                     <hr class="my-4">
                     <ul class="">
                         <div class="font-bold text-gray-400 px-2">Home Page</div>
-                        <li>
+                        <li v-if="isSuperOrAdmin">
                             <NuxtLink to="/cp" prefetch-on="interaction">Dashboard</NuxtLink>
                         </li>
-                        <li>
+                        <li v-if="can(Module.ARTICLE, Permission.READ)">
                             <NuxtLink to="/cp/articles/featured" prefetch-on="interaction">Featured Article</NuxtLink>
                         </li>
-                        <li>
+                        <li v-if="can(Module.EVENT, Permission.READ)">
                             <NuxtLink to="/cp/events/featured" prefetch-on="interaction">Featured Events</NuxtLink>
+                        </li>
+                        <li v-if="can(Module.USER, Permission.READ)">
+                            <NuxtLink to="/cp/creators" prefetch-on="interaction">Creator</NuxtLink>
                         </li>
 
                         <hr class="my-4">
@@ -135,7 +138,7 @@ import { LucideArrowLeft } from 'lucide-vue-next';
 import { Module, Permission } from '~/interfaces/user-interface';
 
 const AuthStore = useAuthStore();
-const { can, user } = storeToRefs(AuthStore);
+const { can, user, isSuperOrAdmin } = storeToRefs(AuthStore);
 
 const drawerMenu = ref<HTMLElement | null>(null)
 function triggerDrawer() {

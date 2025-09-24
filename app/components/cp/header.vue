@@ -46,7 +46,7 @@
                                     </li>
                                     <li v-if="user.role != 'USER'">
                                         <NuxtLink to="/" class="rounded-full justify-between">
-                                            Go to home
+                                            Back To Website
                                             <LucideArrowRight :size="12" />
                                         </NuxtLink>
                                     </li>
