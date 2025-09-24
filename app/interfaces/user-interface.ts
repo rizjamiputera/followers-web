@@ -3,6 +3,7 @@ import type { Content } from "./content-interface"
 export interface User {
     id: string
     name: string
+    username: string
     email: string
     active: boolean
     avatar?: string
@@ -41,7 +42,6 @@ export enum Permission {
 
 export interface Profile {
     id?: string
-    slug: string
     user?: User
     userId: string
     biography?: Content

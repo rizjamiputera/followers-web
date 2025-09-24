@@ -77,7 +77,7 @@
                             <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">{{ profile.user?.name }}</h1>
                             <FollowButton v-if="profile.user" :userId="profile.user.id" @updated="getData" />
                         </div>
-                        <p class="text-green-main/70 mb-4">@{{ profile.slug }}</p>
+                        <p class="text-green-main/70 mb-4">@{{ profile.user?.username }}</p>
 
                         <!-- Stats -->
                         <div class="flex justify-center md:justify-start items-center gap-6 mb-4">
@@ -125,7 +125,7 @@
                             <div class="space-y-3">
                                 <a v-for="social in profile.socialLinks" :key="social.platform" :href="social.url"
                                     target="_blank"
-                                    class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:border-green-main hover:bg-green-main/5 transition-colors">
+                                    class="flex items-center gap-3 p-2 border border-gray-200 rounded-lg hover:border-green-main hover:bg-green-main/5 transition-colors">
                                     <div class="w-8 h-8 rounded bg-gray-100 flex items-center justify-center">
                                         <SocialIcon :platform="social.platform" class="w-5 h-5" />
                                     </div>

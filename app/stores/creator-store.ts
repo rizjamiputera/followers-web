@@ -37,8 +37,8 @@ export const useCreatorStore = defineStore('creator', {
                     page: state.parameters.page,
                     includes: state.parameters.includes.join(','),
                     search: state.search,
-                    sortBy: 'slug',
-                    order: 'desc',
+                    sortBy: 'user.name',
+                    order: 'asc',
                     ...((state.isPublic !== undefined && state.isPublic !== '') && {
                         isPublic: state.isPublic
                     })

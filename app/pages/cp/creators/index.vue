@@ -63,7 +63,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="creator in creators" :key="creator.slug">
+                            <tr v-for="creator in creators" :key="creator.id">
                                 <td>
                                     <div class="flex items-center gap-3">
                                         <div class="avatar">
@@ -78,7 +78,7 @@
                                         </div>
                                         <div>
                                             <div class="font-semibold">{{ creator.user?.name }}</div>
-                                            <div class="text-sm opacity-70">@{{ creator.slug }}</div>
+                                            <div class="text-sm opacity-70">@{{ creator.user?.username }}</div>
                                         </div>
                                     </div>
                                 </td>
@@ -117,7 +117,7 @@
                                 </td>
                                 <td>
                                     <div class="flex items-center gap-2">
-                                        <NuxtLink :to="`/creator/${creator.slug}`" target="_blank"
+                                        <NuxtLink :to="`/creator/${creator.user?.username}`" target="_blank"
                                             class="btn btn-ghost btn-xs">
                                             <LucideExternalLink class="h-4 w-4" />
                                         </NuxtLink>
@@ -154,7 +154,7 @@ import {
     LucideExternalLink,
     LucideEdit
 } from 'lucide-vue-next'
-import { Module, Permission } from '~/interfaces/user-interface';
+import { Module, Permission, type Profile } from '~/interfaces/user-interface';
 
 definePageMeta({
     layout: 'control-panel',
@@ -231,7 +231,7 @@ const loadStats = async () => {
     }
 };
 
-const togglePublic = async (creator: any) => {
+const togglePublic = async (creator: Profile) => {
     updating.value = true;
     try {
         await Api.patch(`/v1/creator/${creator.id}/toggle-public`);
