@@ -100,7 +100,15 @@ import type { Tag, CreateTagDto } from '~/interfaces/content-interface'
 import { Module, Permission } from '~/interfaces/user-interface'
 
 definePageMeta({
-    layout: 'control-panel'
+    layout: 'control-panel',
+    middleware: [
+        () => {
+            const auth = useAuthStore();
+            if (!(auth.can(Module.ARTICLE, Permission.CREATE) || auth.can(Module.EVENT, Permission.CREATE))) {
+                return navigateTo('/cp')
+            }
+        }
+    ]
 })
 
 // Auth and permissions

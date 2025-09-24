@@ -54,7 +54,8 @@
                                             </NuxtLink>
                                         </li>
                                         <li v-if="can(Module.ARTICLE, Permission.PUBLISH)">
-                                            <NuxtLink to="/cp/articles/published" prefetch-on="interaction">Published
+                                            <NuxtLink to="/cp/articles/published" prefetch-on="interaction">
+                                                Published
                                             </NuxtLink>
                                         </li>
                                     </ul>
