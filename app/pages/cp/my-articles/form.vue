@@ -202,7 +202,15 @@ import type { ContentStatus, PhotoContent } from '~/interfaces/content-interface
 import { Module, Permission } from '~/interfaces/user-interface';
 
 definePageMeta({
-    layout: 'control-panel'
+    layout: 'control-panel',
+    middleware: [
+        () => {
+            const auth = useAuthStore();
+            if (!auth.can(Module.ARTICLE, Permission.CREATE)) {
+                return navigateTo('/cp')
+            }
+        }
+    ]
 });
 
 const AuthStore = useAuthStore();
@@ -349,7 +357,7 @@ const validate = () => {
     showConfirmDraftOrReview.value = false;
 
     try {
-        console.log(dataDto.value.content)
+        // console.log(dataDto.value.content)
         validatedData.value = Validate(isArticle, dataDto.value);
         validatedData.value.content = validatedData.value.content.content;
 

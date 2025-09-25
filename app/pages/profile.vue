@@ -24,9 +24,54 @@
                 <LucideKey :size="16" /> Ganti Password
             </Button>
         </div>
+
+        <!-- Creator Profile Section -->
+        <div v-if="creatorProfile" class="border-t pt-4 mt-4">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">Creator Profile</h2>
+                <Button class="btn-sm btn-green" @click="showEditCreatorProfile = true">
+                    <LucidePencil :size="14" /> Edit Profile
+                </Button>
+            </div>
+
+            <div class="flex flex-col gap-3">
+                <div>
+                    <label class="text-sm font-medium text-gray-600">Username</label>
+                    <p>{{ creatorProfile.user?.username }}</p>
+                </div>
+
+                <div v-if="creatorProfile.specializations?.length">
+                    <label class="text-sm font-medium text-gray-600">Specializations</label>
+                    <div class="flex flex-wrap gap-2 mt-1">
+                        <span v-for="spec in creatorProfile.specializations" :key="spec"
+                            class="badge badge-sm badge-green">
+                            {{ spec }}
+                        </span>
+                    </div>
+                </div>
+
+                <div v-if="creatorProfile.socialLinks?.length">
+                    <label class="text-sm font-medium text-gray-600">Social Links</label>
+                    <div class="flex flex-col gap-3 mt-2">
+                        <div v-for="social in creatorProfile.socialLinks" :key="social.platform"
+                            class="flex items-center gap-3 p-1 border border-gray-200 rounded-lg max-w-xs">
+                            <div class="w-8 h-8 rounded bg-gray-100 flex items-center justify-center">
+                                <SocialIcon :platform="social.platform" class="w-5 h-5" />
+                            </div>
+                            <div class="flex-1">
+                                <div class="text-sm text-gray-600">{{ social.handle || social.url }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
+
     <LazyChangePassword v-if="showChangePassword" :show="showChangePassword" @close="showChangePassword = false" />
     <LazyProfileForm v-if="showChangeProfile" :show="showChangeProfile" @close="showChangeProfile = false" />
+    <LazyCreatorProfileForm v-if="showEditCreatorProfile" :show="showEditCreatorProfile"
+        @close="showEditCreatorProfile = false; loadCreatorProfile()" />
 
     <input type="file" ref="fileInput" class="hidden" accept="image/jpg, image/jpeg, image/png"
         @change="handleFileChange" />
@@ -34,8 +79,12 @@
 
 <script lang="ts" setup>
 import { LucideKey, LucidePencil } from 'lucide-vue-next';
+import { Module, Permission, type Profile } from '~/interfaces/user-interface';
 
-onMounted(recordVisit);
+onMounted(() => {
+    recordVisit();
+    loadCreatorProfile();
+});
 
 const AuthStore = useAuthStore();
 const { user } = storeToRefs(AuthStore)
@@ -45,6 +94,21 @@ const showChangeProfile = ref<boolean>(false);
 
 // change password
 const showChangePassword = ref<boolean>(false);
+
+// creator profile
+const showEditCreatorProfile = ref<boolean>(false);
+const creatorProfile = ref<Profile | null>(null);
+
+const loadCreatorProfile = async () => {
+    // check if user can create article
+    if (!AuthStore.can(Module.ARTICLE, Permission.CREATE)) return;
+
+    try {
+        creatorProfile.value = await Api.get('/v1/creator/my/profile?includes=biography,socialLinks,user') as Profile;
+    } catch (error) {
+        creatorProfile.value = null;
+    }
+};
 
 // Handle file input
 const fileInput = ref<HTMLInputElement | null>(null)

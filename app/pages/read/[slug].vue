@@ -18,15 +18,19 @@
                 <template v-if="data">
                     <!-- ARTICLE IMAGE -->
                     <div class="flex flex-col gap-1">
-                        <div class="font-cinzel tracking-wide text-2xl md:text-3xl font-semibold mb-1">{{ data.title
-                        }}</div>
+                        <div class="font-cinzel tracking-wide text-2xl md:text-3xl font-semibold mb-1">
+                            {{ data.title }}
+                        </div>
                         <div class="flex justify-end items-center gap-1 text-xs font-light">
                             <LucideClock :size="12" /> {{ data.publishedAt ? getRelativeTime(data.publishedAt) : '-' }}
                             <div class="">{{ stats?.readCount ?? 0 }} views</div>
                         </div>
                         <Image :src="data.image" :alt="data.title" class-name="aspect-video bg-cover rounded-2xl" />
                         <div class="flex flex-wrap justify-center sm:justify-between gap-2">
-                            <LazyAvatarName v-if="data.author" :user="data.author" avatar_width="w-10 h-10" />
+                            <div v-if="data.author" class="flex items-center gap-2">
+                                <LazyAvatarName :user="data.author" avatar_width="w-10 h-10" />
+                                <LazyFollowButton :userId="data.authorId" />
+                            </div>
 
                             <div class="flex items-center gap-2">
                                 <div class="join join-horizontal">

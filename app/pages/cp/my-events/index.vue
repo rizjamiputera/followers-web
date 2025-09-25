@@ -195,7 +195,15 @@ import type { Event } from '~/interfaces/event-interface';
 import { Module, Permission } from '~/interfaces/user-interface';
 
 definePageMeta({
-    layout: 'control-panel'
+    layout: 'control-panel',
+    middleware: [
+        () => {
+            const auth = useAuthStore();
+            if (!auth.can(Module.EVENT, Permission.CREATE)) {
+                return navigateTo('/cp')
+            }
+        }
+    ]
 });
 
 const AuthStore = useAuthStore();

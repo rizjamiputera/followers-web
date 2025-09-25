@@ -12,7 +12,7 @@
         <div class="stats shadow w-full">
             <div class="stat">
                 <div class="stat-title">Featured Events</div>
-                <div class="stat-value text-primary">{{ events.filter(e => e.isFeatured).length }}</div>
+                <div class="stat-value text-primary">{{events.filter(e => e.isFeatured).length}}</div>
                 <div class="stat-desc">Currently featured</div>
             </div>
             <div class="stat">
@@ -29,8 +29,8 @@
                     <h2 class="card-title">Published Events</h2>
                     <div class="flex items-center gap-2">
                         <div class="form-control">
-                            <input v-model="searchQuery" type="text" placeholder="Search events..." 
-                                   class="input input-bordered input-sm w-64" />
+                            <input v-model="searchQuery" type="text" placeholder="Search events..."
+                                class="input input-bordered input-sm w-64" />
                         </div>
                         <div class="form-control">
                             <select v-model="filterFeatured" class="select select-bordered select-sm">
@@ -73,7 +73,8 @@
                                         <div class="avatar">
                                             <div class="mask mask-squircle w-12 h-12">
                                                 <img v-if="event.image" :src="event.image" :alt="event.title" />
-                                                <div v-else class="bg-gradient-to-br from-green-500 to-blue-600 w-full h-full flex items-center justify-center">
+                                                <div v-else
+                                                    class="bg-gradient-to-br from-green-500 to-blue-600 w-full h-full flex items-center justify-center">
                                                     <LucideCalendar class="h-6 w-6 text-white" />
                                                 </div>
                                             </div>
@@ -87,7 +88,8 @@
                                 <td>
                                     <div class="flex items-center gap-2">
                                         <div class="avatar avatar-xs">
-                                            <Avatar :src="event.author?.avatar" :name="event.author?.name" class="w-6 h-6" />
+                                            <Avatar :src="event.author?.avatar" :name="event.author?.name"
+                                                class="w-6 h-6" />
                                         </div>
                                         <span class="text-sm">{{ event.author?.name }}</span>
                                     </div>
@@ -121,23 +123,21 @@
                                 <td>
                                     <div class="form-control">
                                         <label class="label cursor-pointer">
-                                            <input type="checkbox" 
-                                                   :checked="event.isFeatured" 
-                                                   @change="toggleFeatured(event)"
-                                                   :disabled="updating"
-                                                   class="checkbox checkbox-primary checkbox-sm" />
+                                            <input type="checkbox" :checked="event.isFeatured"
+                                                @change="toggleFeatured(event)" :disabled="updating"
+                                                class="checkbox checkbox-primary checkbox-sm" />
                                         </label>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="flex items-center gap-2">
-                                        <NuxtLink :to="`/events/${event.slug}`" target="_blank" 
-                                                  class="btn btn-ghost btn-xs">
-                                            <LucideExternalLink class="h-3 w-3" />
+                                        <NuxtLink :to="`/events/${event.slug}`" target="_blank"
+                                            class="btn btn-ghost btn-xs">
+                                            <LucideExternalLink class="h-4 w-4" />
                                         </NuxtLink>
-                                        <NuxtLink :to="`/cp/my-events/form?id=${event.id}`" 
-                                                  class="btn btn-ghost btn-xs">
-                                            <LucideEdit class="h-3 w-3" />
+                                        <NuxtLink :to="`/cp/my-events/form?id=${event.id}`"
+                                            class="btn btn-ghost btn-xs">
+                                            <LucideEdit class="h-4 w-4" />
                                         </NuxtLink>
                                     </div>
                                 </td>
@@ -149,10 +149,8 @@
                 <!-- Pagination -->
                 <div v-if="totalPages > 1" class="flex justify-center mt-6">
                     <div class="join">
-                        <button v-for="page in paginationRange" :key="page" 
-                                @click="currentPage = page"
-                                class="join-item btn btn-sm"
-                                :class="{ 'btn-active': page === currentPage }">
+                        <button v-for="page in paginationRange" :key="page" @click="currentPage = page"
+                            class="join-item btn btn-sm" :class="{ 'btn-active': page === currentPage }">
                             {{ page }}
                         </button>
                     </div>
@@ -163,18 +161,27 @@
 </template>
 
 <script lang="ts" setup>
-import { 
-    LucideRefreshCw, 
-    LucideCalendar, 
+import {
+    LucideRefreshCw,
+    LucideCalendar,
     LucideMapPin,
     LucideUsers,
-    LucideEye, 
-    LucideExternalLink, 
-    LucideEdit 
+    LucideEye,
+    LucideExternalLink,
+    LucideEdit
 } from 'lucide-vue-next'
+import { Module, Permission } from '~/interfaces/user-interface';
 
 definePageMeta({
-    layout: 'control-panel'
+    layout: 'control-panel',
+    middleware: [
+        () => {
+            const auth = useAuthStore();
+            if (!auth.can(Module.EVENT, Permission.READ)) {
+                return navigateTo('/cp')
+            }
+        }
+    ]
 })
 
 // Reactive data
@@ -192,7 +199,7 @@ const filteredEvents = computed(() => {
 
     if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
-        filtered = filtered.filter(event => 
+        filtered = filtered.filter(event =>
             event.title.toLowerCase().includes(query) ||
             event.excerpt.toLowerCase().includes(query) ||
             event.location?.toLowerCase().includes(query) ||
@@ -234,7 +241,7 @@ const paginationRange = computed(() => {
 const loadEvents = async () => {
     loading.value = true
     try {
-        const response = await Api.get('/v1/event?status=PUBLISHED&limit=1000&include=author,stats,registrations')
+        const response = await Api.get('/v1/event?status=PUBLISHED&limit=1000&include=author,stats,registrations') as any
         events.value = response.data || []
     } catch (error) {
         console.error('Failed to load events:', error)
@@ -250,13 +257,13 @@ const toggleFeatured = async (event: any) => {
         await Api.patch(`/v1/home-page/featured-events/${event.id}`, {
             isFeatured: !event.isFeatured
         })
-        
+
         // Update local state
         event.isFeatured = !event.isFeatured
-        
+
         // Show success message
         // Add toast notification here if available
-        
+
     } catch (error) {
         console.error('Failed to update featured status:', error)
         // Add error toast here if available

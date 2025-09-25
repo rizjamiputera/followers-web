@@ -28,6 +28,12 @@ export const useAuthStore = defineStore('auth', {
     }),
     getters: {
         permissions: (state): UserPermission[] => state.user?.permissions ?? [],
+        isLogin: (state): boolean => !!state.user,
+        isSuperOrAdmin: (state): boolean => {
+            if (!state.user) return false;
+            if (["SUPERADMIN", "ADMIN"].includes(state.user.role)) return true;
+            return false;
+        },
         can: (state) => {
             return (module: Module, permission: Permission): boolean => {
                 if (!state.user) return false;
@@ -43,8 +49,10 @@ export const useAuthStore = defineStore('auth', {
     actions: {
         async getAuthUser() {
             try {
+                const headers = useRequestHeaders(['cookie'])
                 this.user = await $fetch<User>('/api/auth/user', {
-                    query: { includes: 'permissions' }
+                    query: { includes: 'permissions' },
+                    headers: import.meta.server ? headers : undefined
                 })
             } catch {
                 this.reset()

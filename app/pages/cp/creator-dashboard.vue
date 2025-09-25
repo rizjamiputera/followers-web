@@ -59,9 +59,9 @@
                     :value2="`${formatNumber(creatorData.statistics?.engagement?.totalComments || 0)} comments`" />
 
                 <!-- Rating -->
-                <Stat :icon="LucideStar" color-class="text-info" label="Average Rating"
+                <!-- <Stat :icon="LucideStar" color-class="text-info" label="Average Rating"
                     :value1="(creatorData.statistics?.engagement?.averageRating || 0).toFixed(1)"
-                    :value2="`${formatNumber(creatorData.statistics?.social?.ratingsCount || 0)} ratings`" />
+                    :value2="`${formatNumber(creatorData.statistics?.social?.ratingsCount || 0)} ratings`" /> -->
             </div>
 
             <!-- Content Visitor Analytics -->
@@ -105,22 +105,26 @@
                             <div class="stat">
                                 <div class="stat-title">Published</div>
                                 <div class="stat-value text-success text-2xl">{{
-                                    formatNumber(creatorData.statistics?.content?.articles?.published || 0) }}</div>
+                                    formatNumber(creatorData.statistics?.content?.articles?.published || 0) }}
+                                </div>
                             </div>
                             <div class="stat">
                                 <div class="stat-title">Draft</div>
                                 <div class="stat-value text-warning text-2xl">{{
-                                    formatNumber(creatorData.statistics?.content?.articles?.draft || 0) }}</div>
+                                    formatNumber(creatorData.statistics?.content?.articles?.draft || 0) }}
+                                </div>
                             </div>
                             <div class="stat">
                                 <div class="stat-title">Under Review</div>
                                 <div class="stat-value text-info text-2xl">{{
-                                    formatNumber(creatorData.statistics?.content?.articles?.on_review || 0) }}</div>
+                                    formatNumber(creatorData.statistics?.content?.articles?.on_review || 0) }}
+                                </div>
                             </div>
                             <div class="stat">
                                 <div class="stat-title">Approved</div>
                                 <div class="stat-value text-primary text-2xl">{{
-                                    formatNumber(creatorData.statistics?.content?.articles?.approved || 0) }}</div>
+                                    formatNumber(creatorData.statistics?.content?.articles?.approved || 0) }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -134,22 +138,26 @@
                             <div class="stat">
                                 <div class="stat-title">Published</div>
                                 <div class="stat-value text-success text-2xl">{{
-                                    formatNumber(creatorData.statistics?.content?.events?.published || 0) }}</div>
+                                    formatNumber(creatorData.statistics?.content?.events?.published || 0) }}
+                                </div>
                             </div>
                             <div class="stat">
                                 <div class="stat-title">Draft</div>
                                 <div class="stat-value text-warning text-2xl">{{
-                                    formatNumber(creatorData.statistics?.content?.events?.draft || 0) }}</div>
+                                    formatNumber(creatorData.statistics?.content?.events?.draft || 0) }}
+                                </div>
                             </div>
                             <div class="stat">
                                 <div class="stat-title">Under Review</div>
                                 <div class="stat-value text-info text-2xl">{{
-                                    formatNumber(creatorData.statistics?.content?.events?.on_review || 0) }}</div>
+                                    formatNumber(creatorData.statistics?.content?.events?.on_review || 0) }}
+                                </div>
                             </div>
                             <div class="stat">
                                 <div class="stat-title">Approved</div>
                                 <div class="stat-value text-primary text-2xl">{{
-                                    formatNumber(creatorData.statistics?.content?.events?.approved || 0) }}</div>
+                                    formatNumber(creatorData.statistics?.content?.events?.approved || 0) }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -165,18 +173,21 @@
                         <div class="space-y-4">
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Followers</span>
-                                <span class="font-bold">{{ formatNumber(creatorData.statistics?.social?.followers || 0)
-                                    }}</span>
+                                <span class="font-bold">
+                                    {{ formatNumber(creatorData.statistics?.social?.followers || 0) }}
+                                </span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Total Shares</span>
-                                <span class="font-bold">{{ formatNumber(creatorData.statistics?.engagement?.totalShares
-                                    || 0) }}</span>
+                                <span class="font-bold">
+                                    {{ formatNumber(creatorData.statistics?.engagement?.totalShares || 0) }}
+                                </span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Bookmarks</span>
                                 <span class="font-bold">{{
-                                    formatNumber(creatorData.statistics?.engagement?.totalBookmarks || 0) }}</span>
+                                    formatNumber(creatorData.statistics?.engagement?.totalBookmarks || 0) }}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -189,9 +200,9 @@
                         <div class="space-y-4">
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Total Registrations</span>
-                                <span class="font-bold">{{
-                                    formatNumber(creatorData.statistics?.engagement?.totalEventRegistrations || 0)
-                                    }}</span>
+                                <span class="font-bold">
+                                    {{ formatNumber(creatorData.statistics?.engagement?.totalEventRegistrations || 0) }}
+                                </span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Avg. per Event</span>
@@ -244,8 +255,9 @@
                                     <div class="font-medium line-clamp-1">{{ article.title }}</div>
                                     <div class="text-sm text-gray-600">{{ formatDate(article.publishedAt) }}</div>
                                 </div>
-                                <div class="text-sm font-bold text-primary">{{ formatNumber(article.metrics?.readCount
-                                    || 0) }} views</div>
+                                <div class="text-sm font-bold text-primary">
+                                    {{ formatNumber(article.metrics?.readCount || 0) }} views
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -262,8 +274,9 @@
                                     <div class="font-medium line-clamp-1">{{ event.title }}</div>
                                     <div class="text-sm text-gray-600">{{ formatDate(event.publishedAt) }}</div>
                                 </div>
-                                <div class="text-sm font-bold text-secondary">{{ formatNumber(event.registrations || 0)
-                                    }} registered</div>
+                                <div class="text-sm font-bold text-secondary">
+                                    {{ formatNumber(event.registrations || 0) }} registered
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -291,7 +304,15 @@ import Stat from '~/components/cp/dashboard/stat.vue';
 import { Module, Permission } from '~/interfaces/user-interface';
 
 definePageMeta({
-    layout: 'control-panel'
+    layout: 'control-panel',
+    middleware: [
+        () => {
+            const auth = useAuthStore();
+            if (!(auth.can(Module.ARTICLE, Permission.CREATE) || auth.can(Module.EVENT, Permission.CREATE))) {
+                return navigateTo('/cp')
+            }
+        }
+    ]
 })
 
 const AuthStore = useAuthStore();

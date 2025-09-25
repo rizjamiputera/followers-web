@@ -254,9 +254,20 @@ import {
 } from 'lucide-vue-next'
 import Stat from '~/components/cp/dashboard/stat.vue'
 import Engagement from '~/components/cp/dashboard/engagement.vue'
+import { Module, Permission } from '~/interfaces/user-interface';
 
 definePageMeta({
-    layout: 'control-panel'
+    layout: 'control-panel',
+    middleware: [
+        () => {
+            const auth = useAuthStore();
+            if (!auth.isSuperOrAdmin) {
+                if (auth.can(Module.ARTICLE, Permission.CREATE) || auth.can(Module.EVENT, Permission.CREATE)) {
+                    return navigateTo('/cp/creator-dashboard')
+                }
+            }
+        }
+    ]
 })
 
 // Reactive data

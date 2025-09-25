@@ -1,6 +1,9 @@
+import type { Content } from "./content-interface"
+
 export interface User {
     id: string
     name: string
+    username: string
     email: string
     active: boolean
     avatar?: string
@@ -35,4 +38,35 @@ export enum Permission {
     APPROVE = 'APPROVE', // can approve article
     PUBLISH = 'PUBLISH', // can publish or take down article
 
+}
+
+export interface Profile {
+    id?: string
+    user?: User
+    userId: string
+    biography?: Content
+    specializations: string[]
+    socialLinks: SocialLink[]
+    totalArticles: number
+    totalFollowers: number
+    isPublic?: boolean
+}
+
+
+export interface SocialLink {
+    platform: SocialPlatform
+    url: string
+    handle?: string
+}
+
+export enum SocialPlatform {
+    INSTAGRAM = 'INSTAGRAM',
+    FACEBOOK = 'FACEBOOK',
+    TWITTER = 'TWITTER',
+    YOUTUBE = 'YOUTUBE',
+    TIKTOK = 'TIKTOK',
+    LINKEDIN = 'LINKEDIN',
+    TELEGRAM = 'TELEGRAM',
+    WHATSAPP = 'WHATSAPP',
+    WEBSITE = 'WEBSITE',
 }
