@@ -131,7 +131,7 @@
                                 </td>
                                 <td>
                                     <div class="flex items-center gap-2">
-                                        <NuxtLink :to="`/events/${event.slug}`" target="_blank"
+                                        <NuxtLink :to="`/event/${event.slug}`" target="_blank"
                                             class="btn btn-ghost btn-xs">
                                             <LucideExternalLink class="h-4 w-4" />
                                         </NuxtLink>
