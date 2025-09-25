@@ -4,7 +4,7 @@
             <ClientOnly>
                 <Avatar :avatar="user?.avatar_md" :name="user?.name" class="w-20 h-20" />
                 <div class="flex flex-col gap-1">
-                    <div class="text-sm">{{ user?.name }}</div>
+                    <div class="font-semibold">{{ user?.name }}</div>
                     <div class="text-sm">{{ user?.email }}</div>
                     <div>
                         <div class="badget badge-sm badge-green rounded-full text-sm w-min">{{ user?.role }}</div>
@@ -28,7 +28,7 @@
         <!-- Creator Profile Section -->
         <div v-if="creatorProfile" class="border-t pt-4 mt-4">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold">Creator Profile</h2>
+                <h2 class="text-xl font-bold font-cinzel">Creator Profile</h2>
                 <Button class="btn-sm btn-green" @click="showEditCreatorProfile = true">
                     <LucidePencil :size="14" /> Edit Profile
                 </Button>
@@ -36,12 +36,12 @@
 
             <div class="flex flex-col gap-3">
                 <div>
-                    <label class="text-sm font-medium text-gray-600">Username</label>
+                    <label class="text-sm font-bold text-gray-600">Username</label>
                     <p>{{ creatorProfile.user?.username }}</p>
                 </div>
 
                 <div v-if="creatorProfile.specializations?.length">
-                    <label class="text-sm font-medium text-gray-600">Specializations</label>
+                    <label class="text-sm font-bold text-gray-600">Specializations</label>
                     <div class="flex flex-wrap gap-2 mt-1">
                         <span v-for="spec in creatorProfile.specializations" :key="spec"
                             class="badge badge-sm badge-green">
@@ -51,7 +51,7 @@
                 </div>
 
                 <div v-if="creatorProfile.socialLinks?.length">
-                    <label class="text-sm font-medium text-gray-600">Social Links</label>
+                    <label class="text-sm font-bold text-gray-600">Social Links</label>
                     <div class="flex flex-col gap-3 mt-2">
                         <div v-for="social in creatorProfile.socialLinks" :key="social.platform"
                             class="flex items-center gap-3 p-1 border border-gray-200 rounded-lg max-w-xs">
@@ -63,6 +63,11 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div v-if="content" class="prose prose-lg max-w-none">
+                    <label class="text-sm font-bold text-gray-600">Biografi</label>
+                    <WysiwygRenderer :content="content" />
                 </div>
             </div>
         </div>
@@ -109,6 +114,13 @@ const loadCreatorProfile = async () => {
         creatorProfile.value = null;
     }
 };
+
+const content = computed(() => {
+    if (!creatorProfile.value) return null;
+    if (!creatorProfile.value.biography) return null;
+
+    return creatorProfile.value.biography.content
+})
 
 // Handle file input
 const fileInput = ref<HTMLInputElement | null>(null)
