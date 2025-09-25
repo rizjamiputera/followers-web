@@ -1,5 +1,5 @@
 # Use a base image with Node.js installed
-FROM node:20-alpine3.18
+FROM node:23.11.1-alpine3.22
 
 # Build argument for image tag
 ARG IMAGE_TAG=latest
