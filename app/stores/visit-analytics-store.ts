@@ -104,11 +104,19 @@ export interface UserAgentAnalytics {
 }
 
 // Visitor Journey Analytics Types
+export interface VisitorUser {
+    id: string
+    name: string
+    username: string
+    email: string
+}
+
 export interface VisitorJourney {
     fingerprint: string
     firstVisitAt: string
     lastVisitAt: string
     totalPages: number
+    user: VisitorUser | null
     path: { page: string; timestamp: string }[]
     sessionDuration: number
 }
@@ -116,6 +124,10 @@ export interface VisitorJourney {
 export interface VisitorJourneys {
     journeys: VisitorJourney[]
     totalJourneys: number
+    currentPage: number
+    totalPages: number
+    hasNextPage: boolean
+    hasPrevPage: boolean
 }
 
 export interface PathFlow {
@@ -175,6 +187,7 @@ interface VisitAnalyticsStoreState {
     selectedPeriod: number
     timelineInterval: 'hour' | 'day' | 'week'
     journeyLimit: number
+    journeyPage: number
 
     // Loading states
     isLoading: boolean
@@ -213,7 +226,8 @@ export const useVisitAnalyticsStore = defineStore('visitAnalytics', {
         // Parameters
         selectedPeriod: 30,
         timelineInterval: 'day',
-        journeyLimit: 50,
+        journeyLimit: 20,
+        journeyPage: 1,
 
         // Loading states
         isLoading: false,
@@ -387,11 +401,12 @@ export const useVisitAnalyticsStore = defineStore('visitAnalytics', {
         },
 
         // Fetch visitor journey analytics
-        async fetchVisitorJourneys(limit?: number) {
+        async fetchVisitorJourneys(limit?: number, page?: number) {
             this.isLoadingJourneys = true
             try {
                 const journeyLimit = limit || this.journeyLimit
-                const response = await Api.get(`/v1/visit-stats/journeys?days=${this.selectedPeriod}&limit=${journeyLimit}`) as any
+                const journeyPage = page || this.journeyPage
+                const response = await Api.get(`/v1/visit-stats/journeys?days=${this.selectedPeriod}&limit=${journeyLimit}&page=${journeyPage}`) as any
                 this.visitorJourneys = response.data || response
             } catch (error: any) {
                 this.isError = true
@@ -472,7 +487,28 @@ export const useVisitAnalyticsStore = defineStore('visitAnalytics', {
         // Set journey limit and refresh journeys
         async setJourneyLimit(limit: number) {
             this.journeyLimit = limit
+            this.journeyPage = 1 // Reset to first page when limit changes
             await this.fetchVisitorJourneys()
+        },
+
+        // Set journey page and refresh journeys
+        async setJourneyPage(page: number) {
+            this.journeyPage = page
+            await this.fetchVisitorJourneys()
+        },
+
+        // Navigate to next page
+        async nextJourneyPage() {
+            if (this.visitorJourneys?.hasNextPage) {
+                await this.setJourneyPage(this.journeyPage + 1)
+            }
+        },
+
+        // Navigate to previous page
+        async prevJourneyPage() {
+            if (this.visitorJourneys?.hasPrevPage) {
+                await this.setJourneyPage(this.journeyPage - 1)
+            }
         },
 
         // Reset store state
@@ -491,7 +527,8 @@ export const useVisitAnalyticsStore = defineStore('visitAnalytics', {
 
             this.selectedPeriod = 30
             this.timelineInterval = 'day'
-            this.journeyLimit = 50
+            this.journeyLimit = 20
+            this.journeyPage = 1
 
             this.isLoading = false
             this.isLoadingAnalytics = false
