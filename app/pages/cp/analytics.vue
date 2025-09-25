@@ -147,7 +147,7 @@
                                 <div>
                                     <div class="font-medium">This Week</div>
                                     <div class="text-sm text-gray-600">{{ formatNumber(visitAnalytics.visits.thisWeek)
-                                        }} visits</div>
+                                    }} visits</div>
                                 </div>
                                 <div class="text-right">
                                     <div class="text-sm text-gray-600">Last Week: {{
@@ -165,7 +165,7 @@
                                 <div>
                                     <div class="font-medium">This Month</div>
                                     <div class="text-sm text-gray-600">{{ formatNumber(visitAnalytics.visits.thisMonth)
-                                        }} visits</div>
+                                    }} visits</div>
                                 </div>
                                 <div class="text-right">
                                     <div class="text-sm text-gray-600">Last Month: {{
@@ -236,7 +236,7 @@
                             <!-- Direct Traffic -->
                             <div class="flex items-center justify-between p-3 bg-base-200 rounded">
                                 <div>
-                                    <div class="font-medium">Direct Traffic</div>
+                                    <div class="font-semibold">Direct Traffic</div>
                                     <div class="text-sm text-gray-600">Users who typed URL directly</div>
                                 </div>
                                 <div class="text-right">
@@ -249,7 +249,7 @@
                             <div v-for="referrer in referrers.referrers.slice(0, 5)" :key="referrer.referrer"
                                 class="flex items-center justify-between p-3 bg-base-200 rounded">
                                 <div class="flex-1">
-                                    <div class="font-medium truncate">{{ getDomainFromUrl(referrer.referrer) }}</div>
+                                    <div class="font-semibold truncate">{{ getDomainFromUrl(referrer.referrer) }}</div>
                                     <div class="text-sm text-gray-600 truncate">{{ referrer.referrer }}</div>
                                 </div>
                                 <div class="text-right">
@@ -271,9 +271,9 @@
                         <div v-if="userAgentAnalytics" class="space-y-4 mt-4">
                             <!-- Top Browsers -->
                             <div>
-                                <h3 class="font-medium mb-2">Top Browsers</h3>
+                                <h3 class="font-semibold mb-2">Top Browsers</h3>
                                 <div class="space-y-2">
-                                    <div v-for="browser in userAgentAnalytics.browsers.slice(0, 3)" :key="browser.name"
+                                    <div v-for="browser in userAgentAnalytics.browsers.slice(0, 5)" :key="browser.name"
                                         class="flex items-center justify-between">
                                         <span class="text-sm">{{ browser.name }}</span>
                                         <div class="flex items-center gap-2">
@@ -281,8 +281,9 @@
                                                 <div class="bg-primary h-2 rounded-full"
                                                     :style="{ width: browser.percentage + '%' }"></div>
                                             </div>
-                                            <span class="text-sm font-mono w-12 text-right">{{
-                                                browser.percentage.toFixed(1) }}%</span>
+                                            <span class="text-sm font-mono w-12 text-right">
+                                                {{ browser.percentage.toFixed(1) }}%
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -290,11 +291,11 @@
 
                             <!-- Top Devices -->
                             <div>
-                                <h3 class="font-medium mb-2">Device Types</h3>
+                                <h3 class="font-semibold mb-2">Device Types</h3>
                                 <div class="space-y-2">
-                                    <div v-for="device in userAgentAnalytics.devices.slice(0, 3)" :key="device.type"
+                                    <div v-for="device in userAgentAnalytics.devices.slice(0, 5)" :key="device.name"
                                         class="flex items-center justify-between">
-                                        <span class="text-sm">{{ device.type }}</span>
+                                        <span class="text-sm">{{ device.name }}</span>
                                         <div class="flex items-center gap-2">
                                             <div class="w-20 bg-base-300 rounded-full h-2">
                                                 <div class="bg-secondary h-2 rounded-full"

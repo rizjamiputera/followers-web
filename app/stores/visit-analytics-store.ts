@@ -85,7 +85,7 @@ export interface Browser {
 }
 
 export interface Device {
-    type: string
+    name: string
     visits: number
     percentage: number
 }
