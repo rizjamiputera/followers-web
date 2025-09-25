@@ -18,7 +18,7 @@
                 <template v-if="data">
                     <!-- ARTICLE IMAGE -->
                     <div class="flex flex-col gap-1">
-                        <div class="font-cinzel tracking-wide text-2xl md:text-3xl font-semibold mb-1">
+                        <div class="text-2xl md:text-3xl font-semibold mb-1">
                             {{ data.title }}
                         </div>
                         <div class="flex justify-end items-center gap-1 text-xs font-light">
