@@ -11,9 +11,9 @@
 
         <!-- Featured Content Section -->
         <section v-if="combinedFeaturedContent && combinedFeaturedContent.length > 0"
-            class="py-8 flex max-md:flex-col gap-5 w-full md:aspect-21/9">
+            class="py-8 flex max-md:flex-col items-stretch gap-5 w-full">
             <!-- CAROUSEL: Featured Content -->
-            <div class="md:flex-1 max-md:aspect-3/4 w-full border-border-main rounded-3xl overflow-hidden">
+            <div class="md:flex-1 w-full md:w-7/10">
                 <FeaturedCarousel :items="combinedFeaturedContent" title="Featured Content" :items-per-view="3" />
             </div>
 
@@ -23,7 +23,7 @@
                     <NuxtLink :to="'/read/' + firstFeaturedArticle.slug" prefetch-on="interaction"
                         class=" w-full h-full flex flex-col gap-2 border border-border-main rounded-3xl p-6 bg-white/50">
                         <Image :src="firstFeaturedArticle.image_md"
-                            class="flex-1 max-md:aspect-square w-full rounded-2xl bg-cover bg-no-repeat" />
+                            class="flex-1 aspect-square w-full h-full rounded-2xl bg-cover bg-no-repeat" />
                         <div class="w-full">
                             <AvatarPublishedAt :data="firstFeaturedArticle" class="text-xs" avatar_width="w-5 h-5" />
                             <div class="flex flex-col gap-2 text-xs">
