@@ -9,7 +9,9 @@
                             :style="{ backgroundImage: `url(${item.image})` }">
                         </NuxtLink>
                         <div class="w-full h-full flex flex-col justify-end text-gray-900">
-                            <div class="font-cinzel font-semibold tracking-widest line-clamp-2">{{ item.title }}</div>
+                            <div class="text-xs sm:text-sm md:text-md line-clamp-2 ">
+                                {{ item.title }}
+                            </div>
                             <div v-if="false" class="text-sm font-light max-sm:truncate">{{ item.excerpt }}</div>
 
                             <!-- <template v-if="item.location && item.start_at"> -->
