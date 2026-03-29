@@ -1,39 +1,42 @@
 <template>
     <template v-if="items && items.length > 0">
-        <Carousel v-bind="carouselConfig" class="w-full !h-full">
-            <Slide v-for="item in items" :key="item.id">
-                <NuxtLink :to="(!item.location ? '/read/' : '/event/') + item.slug"
-                    class="carousel__item text-black w-full h-full bg-cover bg-center"
-                    :style="{ backgroundImage: `url(${item.image})` }">
+        <div class="relative">
+            <Carousel ref="carouselRef" v-bind="carouselConfig" class="w-full items-start">
+                <Slide v-for="item in items" :key="item.id" class="!items-start">
+                    <div class="carousel__item w-full flex flex-col items-start gap-2">
+                        <NuxtLink :to="(!item.location ? '/read/' : '/event/') + item.slug"
+                            class="w-full h-full bg-cover bg-center aspect-video rounded-lg md:rounded-3xl overflow-hidden"
+                            :style="{ backgroundImage: `url(${item.image})` }">
+                        </NuxtLink>
+                        <div class="w-full h-full flex flex-col justify-end text-gray-900">
+                            <div class="font-cinzel font-semibold tracking-widest line-clamp-2">{{ item.title }}</div>
+                            <div v-if="false" class="text-sm font-light max-sm:truncate">{{ item.excerpt }}</div>
 
-                    <div v-if="false"
-                        class="bg-gradient-to-b from-black/0 to-black/50 w-full h-full flex flex-col justify-end p-6 md:p-10 text-white">
-                        <div class="font-cinzel font-semibold tracking-widest">{{ item.title }}</div>
-                        <div class="text-sm font-light max-sm:truncate">{{ item.excerpt }}</div>
-
-                        <template v-if="item.location && item.start_at">
-                            <div class="badge badge-sm badge-outline bg-black/50 border-white/50">
-                                <LucideMapPin :size="14" /> {{ item.location }}
-                            </div>
-                            <div class="flex gap-1 mt-1">
+                            <!-- <template v-if="item.location && item.start_at"> -->
+                            <template v-if="false">
                                 <div class="badge badge-sm badge-outline bg-black/50 border-white/50">
-                                    <LucideCalendar :size="14" /> {{ dayjs(item.start_at).format('DD MMMM YYYY') }}
+                                    <LucideMapPin :size="14" /> {{ item.location }}
                                 </div>
-                                <div class="badge badge-sm badge-outline bg-black/50 border-white/50">
-                                    <LucideClock :size="14" />
-                                    {{ formatTime(item.start_at) }} {{ userTimezone() }}
+                                <div class="flex gap-1 mt-1">
+                                    <div class="badge badge-sm badge-outline bg-black/50 border-white/50">
+                                        <LucideCalendar :size="14" /> {{ dayjs(item.start_at).format('DD MMMM YYYY') }}
+                                    </div>
+                                    <div class="badge badge-sm badge-outline bg-black/50 border-white/50">
+                                        <LucideClock :size="14" />
+                                        {{ formatTime(item.start_at) }} {{ userTimezone() }}
+                                    </div>
                                 </div>
-                            </div>
-                        </template>
+                            </template>
+                        </div>
                     </div>
-                </NuxtLink>
-            </Slide>
+                </Slide>
 
-            <template #addons>
-                <Navigation />
-                <Pagination />
-            </template>
-        </Carousel>
+                <template #addons>
+                    <Navigation />
+                </template>
+            </Carousel>
+            <Pagination :carousel="carouselRef" class="!-bottom-2" />
+        </div>
     </template>
 
 </template>
@@ -48,6 +51,8 @@ import {
 import 'vue3-carousel/carousel.css'
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
 import dayjs from 'dayjs'
+
+const carouselRef = ref<InstanceType<typeof Carousel>>()
 
 const carouselConfig = {
     itemsToShow: 1,
@@ -84,3 +89,11 @@ onMounted(() => {
 onUnmounted(() => {
 })
 </script>
+
+<style>
+.carousel__pagination button {
+    border-radius: 100%;
+    height: 6px;
+    width: 6px;
+}
+</style>
