@@ -9,7 +9,7 @@
         </div>
 
         <div class="text-sm text-gray-600">
-            Total: {{ categories.length }} kategori
+            Total: {{ sorted.length }} kategori
         </div>
 
         <!-- Loading -->
@@ -22,9 +22,8 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Urutan</th>
+                        <th class="w-24 text-center">Posisi</th>
                         <th>Nama</th>
-                        <th>Slug</th>
                         <th class="text-center">Artikel</th>
                         <th class="text-center">Event</th>
                         <th class="text-center">Di Beranda</th>
@@ -32,23 +31,39 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-if="!isLoading && categories.length === 0">
-                        <td colspan="7" class="text-center text-green-main font-light">
+                    <tr v-if="!isLoading && sorted.length === 0">
+                        <td colspan="6" class="text-center text-green-main font-light">
                             Belum ada kategori
                         </td>
                     </tr>
-                    <tr v-for="cat in categories" :key="cat.id">
-                        <td class="text-center w-16">
-                            <span class="badge badge-ghost">{{ cat.sortOrder }}</span>
+                    <tr v-for="(cat, index) in sorted" :key="cat.id"
+                        :class="cat.showOnHome ? '' : 'opacity-50'">
+                        <!-- Position controls -->
+                        <td class="text-center">
+                            <div class="flex items-center justify-center gap-1">
+                                <template v-if="canEdit">
+                                    <button @click="moveUp(index)" :disabled="index === 0 || moving"
+                                        class="btn btn-xs btn-ghost"
+                                        :class="index === 0 ? 'opacity-20 cursor-not-allowed' : 'hover:text-green-main'">
+                                        <LucideChevronUp class="h-3 w-3" />
+                                    </button>
+                                </template>
+                                <span class="text-xs font-mono w-4 text-center text-gray-400">{{ index + 1 }}</span>
+                                <template v-if="canEdit">
+                                    <button @click="moveDown(index)" :disabled="index === sorted.length - 1 || moving"
+                                        class="btn btn-xs btn-ghost"
+                                        :class="index === sorted.length - 1 ? 'opacity-20 cursor-not-allowed' : 'hover:text-green-main'">
+                                        <LucideChevronDown class="h-3 w-3" />
+                                    </button>
+                                </template>
+                            </div>
                         </td>
                         <td>
                             <div class="font-medium">{{ cat.name }}</div>
                             <div v-if="cat.description" class="text-xs text-gray-400 line-clamp-1">
                                 {{ cat.description }}
                             </div>
-                        </td>
-                        <td>
-                            <code class="text-xs bg-gray-100 px-2 py-1 rounded">{{ cat.slug }}</code>
+                            <code class="text-xs text-gray-300">{{ cat.slug }}</code>
                         </td>
                         <td class="text-center">
                             <span class="badge badge-ghost">{{ cat._count?.articles ?? 0 }}</span>
@@ -82,6 +97,11 @@
                 </tbody>
             </table>
         </div>
+
+        <p v-if="canEdit" class="text-xs text-gray-400">
+            Gunakan tombol ▲ ▼ untuk mengatur urutan tampilan kategori di beranda.
+            Hanya kategori yang diaktifkan "Di Beranda" yang akan muncul.
+        </p>
     </div>
 
     <LazyCpCategoryForm v-if="showCreateModal || showEditModal"
@@ -96,7 +116,7 @@
 </template>
 
 <script lang="ts" setup>
-import { LucidePlus, LucidePencilLine, LucideTrash2 } from 'lucide-vue-next';
+import { LucidePlus, LucidePencilLine, LucideTrash2, LucideChevronUp, LucideChevronDown } from 'lucide-vue-next';
 import type { Category } from '~/interfaces/category-interface';
 import { Module, Permission } from '~/interfaces/user-interface';
 
@@ -120,7 +140,13 @@ const canDelete = computed(() => AuthStore.can(Module.ARTICLE, Permission.DELETE
 const CategoriesStore = useCategoriesStore();
 const { categories } = storeToRefs(CategoriesStore);
 
+// Locally sorted copy — we mutate this for instant UI feedback before refetch.
+const sorted = computed(() =>
+    [...categories.value].sort((a, b) => a.sortOrder - b.sortOrder)
+);
+
 const isLoading = ref(false);
+const moving = ref(false);
 
 const load = async () => {
     isLoading.value = true;
@@ -129,6 +155,40 @@ const load = async () => {
 };
 
 onMounted(load);
+
+// Swap sortOrder values between two adjacent rows then persist both.
+const moveUp = async (index: number) => {
+    if (index === 0 || moving.value) return;
+    await swapOrder(sorted.value[index], sorted.value[index - 1]);
+};
+
+const moveDown = async (index: number) => {
+    if (index === sorted.value.length - 1 || moving.value) return;
+    await swapOrder(sorted.value[index], sorted.value[index + 1]);
+};
+
+const swapOrder = async (a: Category, b: Category) => {
+    moving.value = true;
+    try {
+        // Optimistically swap in the store so the UI reacts instantly.
+        const orderA = a.sortOrder;
+        const orderB = b.sortOrder;
+
+        // If both happen to have equal sortOrder, give them distinct values.
+        const newA = orderB !== orderA ? orderB : orderA - 1;
+        const newB = orderB !== orderA ? orderA : orderA;
+
+        await Promise.all([
+            Api.patch('/v1/categories/' + a.id, { sortOrder: newA }),
+            Api.patch('/v1/categories/' + b.id, { sortOrder: newB }),
+        ]);
+        await CategoriesStore.fetch();
+    } catch (error) {
+        toastError(error);
+    } finally {
+        moving.value = false;
+    }
+};
 
 // Modals
 const showCreateModal = ref(false);
