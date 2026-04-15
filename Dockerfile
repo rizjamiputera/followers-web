@@ -8,11 +8,14 @@ ENV IMAGE_TAG=${IMAGE_TAG}
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json to the container
-COPY package* ./
+# Enable pnpm via corepack
+RUN corepack enable
+
+# Copy package manifests to the container
+COPY package.json pnpm-lock.yaml ./
 
 # Install dependencies
-RUN npm install --verbose
+RUN pnpm install --frozen-lockfile
 
 # Copy the rest of the application code
 COPY . .
@@ -21,5 +24,5 @@ COPY . .
 # LABEL image_tag=$IMAGE_TAG
 
 # Command to run your application
-CMD npm run build && node ./.output/server/index.mjs
+CMD pnpm run build && node ./.output/server/index.mjs
 
