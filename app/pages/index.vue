@@ -43,6 +43,10 @@
 
         <!-- <PagesIndexEvents /> -->
         <PagesIndexLatest />
+
+        <!-- One section per category admin has enabled for the home page.
+             Server-rendered so each section ships in the initial HTML. -->
+        <PagesIndexCategorySection v-for="cat in homeCategories" :key="cat.id" :category="cat" />
     </div>
 </template>
 
@@ -68,6 +72,10 @@ useSeoMeta({
 
 const { isEmpty } = storeToRefs(useLatestArticleStore());
 const { from_second_events, first_event } = storeToRefs(useUpcomingEventStore());
+
+const CategoriesStore = useCategoriesStore();
+if (!CategoriesStore.loaded) await CategoriesStore.fetch();
+const { homeCategories } = storeToRefs(CategoriesStore);
 
 // Featured content data
 const featuredArticles = ref<any[]>([])

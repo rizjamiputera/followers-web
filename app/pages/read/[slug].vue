@@ -1,7 +1,11 @@
 <template>
     <section>
-        <!-- TAGS -->
-        <div class="flex flex-wrap gap-2">
+        <!-- CATEGORY + TAGS -->
+        <div class="flex flex-wrap gap-2 items-center">
+            <NuxtLink v-if="data?.category" :to="`/kategori/${data.category.slug}`" prefetch-on="interaction"
+                class="badge badge-success text-white bg-green-main border-0 rounded-full">
+                {{ data.category.name }}
+            </NuxtLink>
             <template v-for="tag in tags" :key="tag.id">
                 <div
                     class="badge badge-success badge-ghost badge-outline border-green-main/20 text-green-main capitalize rounded-full line-clamp-1 text-ellipsis">
@@ -115,7 +119,7 @@ const { data: article, error } = await useAsyncData(
     async () => {
         try {
             return await $fetch<Article & { stats?: any }>(`${apiUri}/v1/article/read/${slug}`, {
-                query: { includes: 'content,author,tags.tag,stats' },
+                query: { includes: 'content,author,tags.tag,stats,category' },
                 headers: Api.headers(),
             });
         } catch (e: any) {

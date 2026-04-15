@@ -1,7 +1,11 @@
 <template>
     <section>
-        <!-- TAGS -->
-        <div class="flex flex-wrap gap-2">
+        <!-- CATEGORY + TAGS -->
+        <div class="flex flex-wrap gap-2 items-center">
+            <NuxtLink v-if="data?.category" :to="`/kategori/${data.category.slug}`" prefetch-on="interaction"
+                class="badge badge-success text-white bg-green-main border-0 rounded-full">
+                {{ data.category.name }}
+            </NuxtLink>
             <template v-for="tag in tags" :key="tag.id">
                 <div
                     class="badge badge-success badge-ghost badge-outline border-green-main/20 text-green-main capitalize rounded-full line-clamp-1 text-ellipsis">
@@ -225,7 +229,7 @@ const { data: eventPayload } = await useAsyncData(
     async () => {
         try {
             return await $fetch<Event & { stats?: any }>(`${apiUri}/v1/event/read/${slug}`, {
-                query: { includes: 'content,author,tags.tag,stats,registrationConfig' },
+                query: { includes: 'content,author,tags.tag,stats,registrationConfig,category' },
                 headers: Api.headers(),
             });
         } catch (e: any) {

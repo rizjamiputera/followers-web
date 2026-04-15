@@ -46,6 +46,23 @@
                     <NuxtLink to="/kegiatan" prefetch-on="interaction" class="text-nowrap text-white-main"
                         @click="$emit('close')">Kegiatan</NuxtLink>
                 </li>
+                <li v-if="navCategories.length">
+                    <details>
+                        <summary class="text-white-main">Kategori</summary>
+                        <ul class="pl-2">
+                            <li v-for="c in navCategories" :key="c.id">
+                                <NuxtLink :to="`/kategori/${c.slug}`" prefetch-on="interaction"
+                                    class="text-nowrap text-white-main justify-between"
+                                    @click="$emit('close')">
+                                    <span>{{ c.name }}</span>
+                                    <span v-if="c._count" class="text-xs opacity-70">
+                                        {{ c._count.articles + c._count.events }}
+                                    </span>
+                                </NuxtLink>
+                            </li>
+                        </ul>
+                    </details>
+                </li>
                 <li>
                     <NuxtLink to="/creator" prefetch-on="interaction" class="text-nowrap text-white-main"
                         @click="$emit('close')">Penulis</NuxtLink>
@@ -89,6 +106,8 @@ const props = defineProps<{
 // const isOpen = computed(() => props.menuProduct.some(m => route.path.startsWith(m.url)))
 
 const AuthStore = useAuthStore();
+const CategoriesStore = useCategoriesStore();
+const { navCategories } = storeToRefs(CategoriesStore);
 
 const { user } = storeToRefs(AuthStore);
 </script>

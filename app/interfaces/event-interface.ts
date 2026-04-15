@@ -1,3 +1,4 @@
+import type { Category } from "./category-interface"
 import type { Content, ContentStats, ContentStatus, ReactionType, Tag } from "./content-interface"
 import type { User } from "./user-interface"
 import type { EventRegistrationConfig, EventRegistration } from "./event-registration-interface"
@@ -23,6 +24,8 @@ export interface Event {
     publishedAt?: string // actual publish time
     author?: User
     authorId: string
+    category?: Category | null
+    categoryId?: string | null
     // approvals   ArticleApproval[]
     tags?: Tag[]
     // comments?: Comment[]

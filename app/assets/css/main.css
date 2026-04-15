@@ -94,25 +94,32 @@ hr {
     @apply border-t border-border-main/30;
 }
 
-.navbar .menu .sliding-bg {
-    position: absolute;
-    top: -100vh;
-    bottom: -14px;
-    width: 0;
-    height: calc(100vh + 50px);
+/* Navbar menu item — base style */
+.navbar .menu .nav-link {
+    @apply text-nowrap rounded-full transition-colors duration-200;
+}
+.navbar .menu .nav-link:hover {
+    @apply text-green-main bg-green-50/10;
+}
+
+/* Active state — solid green pill that sits only under the item. */
+.navbar .menu > li > a.router-link-exact-active,
+.navbar .menu > li > a.router-link-active:not(.router-link-exact-active),
+.navbar .menu > li > summary.nav-summary-active {
     background-color: var(--color-success);
-    border-radius: 0 0 100px 100px;
-    z-index: -1;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    opacity: 0;
+    color: #F4F2EE;
+    border-radius: 9999px;
+}
+.navbar .menu > li > a.router-link-exact-active:hover,
+.navbar .menu > li > a.router-link-active:hover,
+.navbar .menu > li > summary.nav-summary-active:hover {
+    background-color: var(--color-success);
+    color: #F4F2EE;
 }
 
-.navbar .menu .sliding-bg.active {
-    opacity: 1;
-}
-
-.navbar .menu .router-link-active {
-    @apply text-[#F4F2EE] relative;
+/* Active category inside the dropdown — subtle highlight, not a full pill. */
+.navbar .menu details > ul > li > a.router-link-active {
+    @apply text-green-main bg-green-main/10 font-semibold;
 }
 
 .navbar .menu .router-link-active.group,
