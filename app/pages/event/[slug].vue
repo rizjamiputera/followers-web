@@ -1,7 +1,11 @@
 <template>
     <section>
-        <!-- TAGS -->
-        <div class="flex flex-wrap gap-2">
+        <!-- CATEGORY + TAGS -->
+        <div class="flex flex-wrap gap-2 items-center">
+            <NuxtLink v-if="data?.category" :to="`/kategori/${data.category.slug}`" prefetch-on="interaction"
+                class="badge badge-success text-white bg-green-main border-0 rounded-full">
+                {{ data.category.name }}
+            </NuxtLink>
             <template v-for="tag in tags" :key="tag.id">
                 <div
                     class="badge badge-success badge-ghost badge-outline border-green-main/20 text-green-main capitalize rounded-full line-clamp-1 text-ellipsis">
@@ -225,7 +229,7 @@ const { data: eventPayload } = await useAsyncData(
     async () => {
         try {
             return await $fetch<Event & { stats?: any }>(`${apiUri}/v1/event/read/${slug}`, {
-                query: { includes: 'content,author,tags.tag,stats,registrationConfig' },
+                query: { includes: 'content,author,tags.tag,stats,registrationConfig,category' },
                 headers: Api.headers(),
             });
         } catch (e: any) {
@@ -256,6 +260,43 @@ useSeoMeta({
     twitterCard: 'summary_large_image',
     ogSiteName: 'FollowersBicara.com',
     ogUrl: webUri + '/event/' + slug
+});
+
+useHead({
+    link: [{ rel: 'canonical', href: `${webUri}/event/${slug}` }],
+    script: eventPayload.value ? [
+        {
+            type: 'application/ld+json',
+            id: 'event-jsonld',
+            innerHTML: JSON.stringify({
+                '@context': 'https://schema.org',
+                '@type': 'Event',
+                name: eventPayload.value.title,
+                description: eventPayload.value.excerpt,
+                image: eventPayload.value.image_portrait_md || eventPayload.value.image_md || `${webUri}/logo-hitam.jpg`,
+                startDate: eventPayload.value.start_at,
+                endDate: eventPayload.value.end_at || undefined,
+                url: `${webUri}/event/${slug}`,
+                location: eventPayload.value.location ? {
+                    '@type': 'Place',
+                    name: eventPayload.value.location,
+                    address: (eventPayload.value as any).address
+                        ? { '@type': 'PostalAddress', streetAddress: (eventPayload.value as any).address }
+                        : undefined,
+                } : undefined,
+                organizer: {
+                    '@type': 'Organization',
+                    name: 'FollowersBicara',
+                    url: webUri,
+                },
+                performer: (eventPayload.value as any).author ? {
+                    '@type': 'Person',
+                    name: (eventPayload.value as any).author.name,
+                    url: `${webUri}/creator/${(eventPayload.value as any).author.username}`,
+                } : undefined,
+            }),
+        },
+    ] : [],
 });
 
 const handleShare = async () => {

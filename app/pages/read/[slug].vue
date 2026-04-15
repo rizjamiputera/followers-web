@@ -1,7 +1,11 @@
 <template>
     <section>
-        <!-- TAGS -->
-        <div class="flex flex-wrap gap-2">
+        <!-- CATEGORY + TAGS -->
+        <div class="flex flex-wrap gap-2 items-center">
+            <NuxtLink v-if="data?.category" :to="`/kategori/${data.category.slug}`" prefetch-on="interaction"
+                class="badge badge-success text-white bg-green-main border-0 rounded-full">
+                {{ data.category.name }}
+            </NuxtLink>
             <template v-for="tag in tags" :key="tag.id">
                 <div
                     class="badge badge-success badge-ghost badge-outline border-green-main/20 text-green-main capitalize rounded-full line-clamp-1 text-ellipsis">
@@ -115,7 +119,7 @@ const { data: article, error } = await useAsyncData(
     async () => {
         try {
             return await $fetch<Article & { stats?: any }>(`${apiUri}/v1/article/read/${slug}`, {
-                query: { includes: 'content,author,tags.tag,stats' },
+                query: { includes: 'content,author,tags.tag,stats,category' },
                 headers: Api.headers(),
             });
         } catch (e: any) {
@@ -147,6 +151,36 @@ useSeoMeta({
     twitterCard: 'summary_large_image',
     ogSiteName: 'FollowersBicara.com',
     ogUrl: webUri + '/read/' + route.params.slug
+});
+
+useHead({
+    link: [{ rel: 'canonical', href: `${webUri}/read/${slug}` }],
+    script: article.value ? [
+        {
+            type: 'application/ld+json',
+            id: 'article-jsonld',
+            innerHTML: JSON.stringify({
+                '@context': 'https://schema.org',
+                '@type': 'Article',
+                headline: article.value.title,
+                description: article.value.excerpt,
+                image: article.value.image_md || `${webUri}/logo-hitam.jpg`,
+                datePublished: article.value.publishedAt,
+                url: `${webUri}/read/${slug}`,
+                mainEntityOfPage: { '@type': 'WebPage', '@id': `${webUri}/read/${slug}` },
+                author: (article.value as any).author ? {
+                    '@type': 'Person',
+                    name: (article.value as any).author.name,
+                    url: `${webUri}/creator/${(article.value as any).author.username}`,
+                } : undefined,
+                publisher: {
+                    '@type': 'Organization',
+                    name: 'FollowersBicara',
+                    logo: { '@type': 'ImageObject', url: `${webUri}/logo.svg` },
+                },
+            }),
+        },
+    ] : [],
 });
 
 const handleShare = async () => {

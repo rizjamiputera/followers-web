@@ -10,14 +10,12 @@
         <div class="flex justify-between gap-4">
             <pagination :page :last_page @prev="--parameters.page" @next="++parameters.page" />
 
-            <div class="flex-1 flex gap-3 justify-end">
-                <Input v-model="search" placeholder="Cari event.." class="input-sm max-w-xs" />
-                <select v-model="selectedStatus" @change="updateStatus"
-                    class="select w-40 select-sm rounded-full focus:outline-green-main/40 border-green-main/20">
-                    <option value="">Semua Status</option>
-                    <option v-for="value in contentStatuses" :key="value" :value>{{ value.replace('_', ' ') }}</option>
-                </select>
-            </div>
+            <CpContentFilters
+                v-model:search="search"
+                v-model:status="filterStatus"
+                v-model:tag-slug="filterTagSlug"
+                v-model:category-id="filterCategoryId"
+                search-placeholder="Cari event.." />
         </div>
 
         <div class="overflow-x-auto rounded-2xl border border-green-main/5 bg-base-100">
@@ -190,7 +188,7 @@
 <script lang="ts" setup>
 import dayjs from 'dayjs';
 import { LucideBookmark, LucideEye, LucideLink, LucideShare2, LucideThumbsDown, LucideThumbsUp, LucideUsers } from 'lucide-vue-next';
-import { contentStatuses, type ContentStatus } from '~/interfaces/content-interface';
+import type { ContentStatus } from '~/interfaces/content-interface';
 import type { Event } from '~/interfaces/event-interface';
 import { Module, Permission } from '~/interfaces/user-interface';
 
@@ -253,19 +251,23 @@ watch(() => search.value, () => {
     }, 2000);
 });
 
-const selectedStatus = ref<ContentStatus | ''>('')
-const updateStatus = (e: any) => {
-    const selected = e.target.value
-
-    MyEventsStore.status = selected ? selected : undefined;
-
-    // prevent double api call, because page is watch
-    if (MyEventsStore.parameters.page == 1) {
-        get()
-    } else {
-        MyEventsStore.parameters.page = 1;
-    }
+const refetch = () => {
+    if (MyEventsStore.parameters.page == 1) get()
+    else MyEventsStore.parameters.page = 1;
 }
+
+const filterStatus = computed({
+    get: () => (MyEventsStore.status ?? '') as ContentStatus | '',
+    set: (v) => { MyEventsStore.status = v || undefined; refetch(); }
+});
+const filterTagSlug = computed({
+    get: () => MyEventsStore.tagSlug ?? '',
+    set: (v) => { MyEventsStore.tagSlug = v || undefined; refetch(); }
+});
+const filterCategoryId = computed({
+    get: () => MyEventsStore.categoryId ?? '',
+    set: (v) => { MyEventsStore.categoryId = v || undefined; refetch(); }
+});
 
 
 // PREVIEW

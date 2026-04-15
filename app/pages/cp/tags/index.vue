@@ -11,6 +11,9 @@
         <div class="flex justify-between gap-4">
             <div class="text-sm text-gray-600">
                 Total tags: {{ tags.length }}
+                <span v-if="authorTags.length" class="ml-2 badge badge-warning badge-sm">
+                    {{ authorTags.length }} nama penulis
+                </span>
             </div>
 
             <div class="flex-1 flex gap-3 justify-end">
@@ -28,7 +31,6 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <!-- <th>Color</th> -->
                         <th>Name</th>
                         <th>Slug</th>
                         <th class="text-center">Content Count</th>
@@ -37,24 +39,16 @@
                 </thead>
                 <tbody>
                     <tr v-if="filteredTags.length === 0 && !isLoading">
-                        <td :colspan="canEdit || canDelete ? 6 : 5" class="text-center text-green-main font-light">
+                        <td :colspan="canEdit || canDelete ? 4 : 3" class="text-center text-green-main font-light">
                             {{ search ? 'No tags found matching your search' : 'No tags available' }}
                         </td>
                     </tr>
-                    <tr v-for="tag in filteredTags" :key="tag.id">
-                        <td v-if="false">
-                            <!-- <div class="flex items-center gap-2">
-                                <div v-if="tag.color" class="w-6 h-6 rounded border border-gray-200"
-                                    :style="{ backgroundColor: tag.color }"></div>
-                                <div v-else class="w-6 h-6 rounded border border-gray-200 bg-gray-100">
-                                    <span class="text-xs text-gray-400 flex items-center justify-center h-full">-</span>
-                                </div>
-                                <span v-if="tag.color" class="text-xs text-gray-600">{{ tag.color }}</span>
-                            </div> -->
-                        </td>
+                    <tr v-for="tag in filteredTags" :key="tag.id"
+                        :class="isAuthorTag(tag) ? 'bg-warning/5' : ''">
                         <td>
                             <div class="flex items-center gap-2 capitalize">
                                 <span class="font-medium">{{ tag.name }}</span>
+                                <span v-if="isAuthorTag(tag)" class="badge badge-warning badge-xs">nama penulis</span>
                             </div>
                         </td>
                         <td>
@@ -68,6 +62,10 @@
                                 <Button v-if="canEdit" @click="openEditModal(tag)" class="btn-sm btn-outline-green">
                                     <LucidePencilLine class="h-3 w-3" />
                                     Edit
+                                </Button>
+                                <Button v-if="canDelete" @click="openMergeModal(tag)" class="btn-sm btn-outline btn-sm">
+                                    <LucideGitMerge class="h-3 w-3" />
+                                    Gabung
                                 </Button>
                                 <Button v-if="canDelete" @click="confirmDelete(tag)" class="btn-sm btn-outline-red">
                                     <LucideTrash2 class="h-3 w-3 stroke-error" />
@@ -85,6 +83,10 @@
     <LazyCpTagForm v-if="showCreateModal || showEditModal" :show="showCreateModal || showEditModal" @close="closeModals"
         :data="editingTag" />
 
+    <!-- Merge Modal -->
+    <LazyCpTagMerge v-if="showMergeModal && mergingTag" :show="showMergeModal" :source="mergingTag" :tags="tags"
+        @close="showMergeModal = false" />
+
     <!-- Delete Confirmation Modal -->
     <LazyCpTagRemove v-if="showDeleteModal && tagToDelete" :show="showDeleteModal" :data="tagToDelete"
         @close="showDeleteModal = false" />
@@ -94,7 +96,8 @@
 import {
     LucidePlus,
     LucideTrash2,
-    LucidePencilLine
+    LucidePencilLine,
+    LucideGitMerge,
 } from 'lucide-vue-next'
 import type { Tag, CreateTagDto } from '~/interfaces/content-interface'
 import { Module, Permission } from '~/interfaces/user-interface'
@@ -120,27 +123,42 @@ const canDelete = computed(() => AuthStore.can(Module.ARTICLE, Permission.DELETE
 // Data
 const TagsStore = useTagsStore();
 const { tags, search, filteredTags, isLoading } = storeToRefs(TagsStore);
-const { get, create, update, remove } = TagsStore;
+const { get } = TagsStore;
+
+// Author tag detection: load usernames and flag tags that match
+const usernames = ref<string[]>([]);
+const loadUsernames = async () => {
+    try {
+        const res = await Api.get('/v1/creator?limit=500') as any;
+        const list = Array.isArray(res) ? res : (res?.data ?? []);
+        usernames.value = list.map((u: any) => u.username).filter(Boolean);
+    } catch { /* non-critical */ }
+};
+
+const isAuthorTag = (tag: Tag) =>
+    usernames.value.includes(tag.slug) || usernames.value.includes(tag.name?.toLowerCase().replace(/\s+/g, '-'));
+
+const authorTags = computed(() => tags.value.filter(isAuthorTag));
 
 // Modals
 const showCreateModal = ref(false)
 const showEditModal = ref(false)
 const showDeleteModal = ref(false)
+const showMergeModal = ref(false)
 
-// Form
-const formData = ref<CreateTagDto & { id?: string }>({
-    name: '',
-    color: ''
-})
-// const isSubmitting = ref(false)
+const formData = ref<CreateTagDto & { id?: string }>({ name: '', color: '' })
 const editingTag = ref<Tag | null>(null)
-
-// Delete
 const tagToDelete = ref<Tag | null>(null)
+const mergingTag = ref<Tag | null>(null)
 
 const openEditModal = (tag: Tag) => {
     editingTag.value = tag
     showEditModal.value = true
+}
+
+const openMergeModal = (tag: Tag) => {
+    mergingTag.value = tag
+    showMergeModal.value = true
 }
 
 const closeModals = () => {
@@ -155,10 +173,10 @@ const confirmDelete = (tag: Tag) => {
     showDeleteModal.value = true
 }
 
-
-
-// Initialize
-onMounted(get)
+onMounted(async () => {
+    await get();
+    await loadUsernames();
+});
 </script>
 
 <style>

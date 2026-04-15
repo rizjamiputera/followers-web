@@ -43,8 +43,29 @@
                         @click="$emit('close')">Home</NuxtLink>
                 </li>
                 <li>
+                    <NuxtLink to="/search" prefetch-on="interaction" class="text-nowrap text-white-main"
+                        @click="$emit('close')">Cari</NuxtLink>
+                </li>
+                <li>
                     <NuxtLink to="/kegiatan" prefetch-on="interaction" class="text-nowrap text-white-main"
                         @click="$emit('close')">Kegiatan</NuxtLink>
+                </li>
+                <li v-if="navCategories.length">
+                    <details>
+                        <summary class="text-white-main" :class="{ 'nav-summary-active': isCategoryRoute }">Kategori</summary>
+                        <ul class="pl-2">
+                            <li v-for="c in navCategories" :key="c.id">
+                                <NuxtLink :to="`/kategori/${c.slug}`" prefetch-on="interaction"
+                                    class="text-nowrap text-white-main justify-between"
+                                    @click="$emit('close')">
+                                    <span>{{ c.name }}</span>
+                                    <span v-if="c._count" class="text-xs opacity-70">
+                                        {{ c._count.articles + c._count.events }}
+                                    </span>
+                                </NuxtLink>
+                            </li>
+                        </ul>
+                    </details>
                 </li>
                 <li>
                     <NuxtLink to="/creator" prefetch-on="interaction" class="text-nowrap text-white-main"
@@ -85,10 +106,12 @@ const props = defineProps<{
     menuProduct: any[]
 }>()
 
-// const route = useRoute();
-// const isOpen = computed(() => props.menuProduct.some(m => route.path.startsWith(m.url)))
+const route = useRoute();
+const isCategoryRoute = computed(() => route.path.startsWith('/kategori'));
 
 const AuthStore = useAuthStore();
+const CategoriesStore = useCategoriesStore();
+const { navCategories } = storeToRefs(CategoriesStore);
 
 const { user } = storeToRefs(AuthStore);
 </script>

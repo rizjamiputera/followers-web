@@ -13,24 +13,41 @@
                 </div>
                 <div class="navbar-center hidden lg:flex">
                     <!-- MENU -->
-                    <ul ref="menuRef" class="menu menu-horizontal px-1 relative">
-                        <div class="sliding-bg"></div>
-                        <!-- MENU ITEM -->
+                    <ul class="menu menu-horizontal px-1">
                         <li>
-                            <NuxtLink to="/" prefetch-on="interaction"
-                                class="text-nowrapp hover:text-green-main hover:bg-green-50/10 transition-all duration-200 rounded-lg">
+                            <NuxtLink to="/" prefetch-on="interaction" class="nav-link">
                                 Home
                             </NuxtLink>
                         </li>
                         <li>
-                            <NuxtLink to="/kegiatan" prefetch-on="interaction"
-                                class="text-nowrapp hover:text-green-main hover:bg-green-50/10 transition-all duration-200 rounded-lg">
+                            <NuxtLink to="/kegiatan" prefetch-on="interaction" class="nav-link">
                                 Kegiatan
                             </NuxtLink>
                         </li>
                         <li>
-                            <NuxtLink to="/creator" prefetch-on="interaction"
-                                class="text-nowrapp hover:text-green-main hover:bg-green-50/10 transition-all duration-200 rounded-lg">
+                            <details ref="categoryDetails">
+                                <summary class="nav-link" :class="{ 'nav-summary-active': isCategoryRoute }">
+                                    Kategori
+                                </summary>
+                                <ul class="bg-base-100 rounded-box shadow-md z-50 w-56 p-2 max-h-96 overflow-auto">
+                                    <li v-for="c in navCategories" :key="c.id">
+                                        <NuxtLink :to="`/kategori/${c.slug}`" prefetch-on="interaction"
+                                            class="justify-between rounded-lg"
+                                            @click="closeCategoryDropdown">
+                                            <span>{{ c.name }}</span>
+                                            <span v-if="c._count" class="text-xs opacity-60">
+                                                {{ c._count.articles + c._count.events }}
+                                            </span>
+                                        </NuxtLink>
+                                    </li>
+                                    <li v-if="!navCategories.length" class="text-xs opacity-60 px-3 py-2">
+                                        Belum ada kategori
+                                    </li>
+                                </ul>
+                            </details>
+                        </li>
+                        <li>
+                            <NuxtLink to="/creator" prefetch-on="interaction" class="nav-link">
                                 Penulis
                             </NuxtLink>
                         </li>
@@ -53,6 +70,10 @@
                     </ul>
                 </div>
                 <div class="navbar-end gap-5">
+                    <NuxtLink to="/search" prefetch-on="interaction" aria-label="Cari"
+                        class="btn btn-ghost btn-circle btn-sm text-green-main hover:bg-green-main/10">
+                        <LucideSearch :size="18" />
+                    </NuxtLink>
                     <ClientOnly>
                         <LazyButtonLink v-if="!user" to="/auth/login" prefetch-on="interaction"
                             class="btn-sm btn-success text-success bg-success/10 font-medium h-9">
@@ -106,7 +127,7 @@
 
 <script lang="ts" setup>
 import dayjs from 'dayjs';
-import { LucideArrowRight } from 'lucide-vue-next';
+import { LucideArrowRight, LucideSearch } from 'lucide-vue-next';
 
 const emits = defineEmits(['open'])
 defineProps<{
@@ -114,48 +135,43 @@ defineProps<{
 }>()
 
 const AuthStore = useAuthStore();
+const CategoriesStore = useCategoriesStore();
+const { navCategories } = storeToRefs(CategoriesStore);
 
 const { user } = storeToRefs(AuthStore);
 const { handleLogout } = AuthStore;
 
 const show_product_menu = ref<boolean>(false);
-const menuRef = ref<HTMLElement>();
+const route = useRoute();
 
-const updateSlidingBackground = () => {
-    if (!menuRef.value) return;
+// The Kategori dropdown summary is "active" on any /kategori/* route.
+const isCategoryRoute = computed(() => route.path.startsWith('/kategori'));
 
-    const activeLink = menuRef.value.querySelector('.router-link-active');
-    const slidingBg = menuRef.value.querySelector('.sliding-bg') as HTMLElement;
+// <details> ref so we can close the dropdown on link click or outside click.
+const categoryDetails = ref<HTMLDetailsElement>();
 
-    if (!slidingBg) return;
+function closeCategoryDropdown() {
+    if (categoryDetails.value) categoryDetails.value.open = false;
+}
 
-    if (activeLink) {
-        const parentLi = activeLink.closest('li') as HTMLElement;
-        if (parentLi) {
-            const rect = parentLi.getBoundingClientRect();
-            const menuRect = menuRef.value.getBoundingClientRect();
-
-            slidingBg.style.left = `${parentLi.offsetLeft}px`;
-            slidingBg.style.width = `${parentLi.offsetWidth}px`;
-            slidingBg.classList.add('active');
-        }
-    } else {
-        slidingBg.classList.remove('active');
+function handleClickOutside(e: MouseEvent) {
+    if (!categoryDetails.value?.open) return;
+    if (!(e.target instanceof Node)) return;
+    if (!categoryDetails.value.contains(e.target)) {
+        categoryDetails.value.open = false;
     }
-};
+}
 
 onMounted(() => {
-    nextTick(() => {
-        updateSlidingBackground();
-    });
+    document.addEventListener('click', handleClickOutside);
 });
 
-// Watch for route changes
-watch(() => useRoute().path, () => {
-    nextTick(() => {
-        updateSlidingBackground();
-    });
+onBeforeUnmount(() => {
+    document.removeEventListener('click', handleClickOutside);
 });
+
+// Close the dropdown on any route change (catches in-dropdown navigation).
+watch(() => route.path, () => closeCategoryDropdown());
 
 // const checkScreenSize = () => {
 //     if (typeof window !== 'undefined') {

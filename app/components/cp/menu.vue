@@ -103,6 +103,11 @@
                                 v-if="can(Module.ARTICLE, Permission.CREATE) || can(Module.EVENT, Permission.CREATE) || can(Module.ARTICLE, Permission.EDIT) || can(Module.EVENT, Permission.EDIT)">
                                 <NuxtLink to="/cp/tags" prefetch-on="interaction">Tags</NuxtLink>
                             </li>
+
+                            <!-- CATEGORY MANAGEMENT -->
+                            <li v-if="can(Module.ARTICLE, Permission.READ)">
+                                <NuxtLink to="/cp/categories" prefetch-on="interaction">Kategori</NuxtLink>
+                            </li>
                         </ClientOnly>
                     </ul>
                 </template>
