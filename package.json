@@ -12,7 +12,7 @@
         "release:stg": "pnpm version patch --tag-version-prefix='stg-' -m 'release: stg-%s'",
         "release:stg:minor": "pnpm version minor --tag-version-prefix='stg-' -m 'release: stg-%s'",
         "release:stg:major": "pnpm version major --tag-version-prefix='stg-' -m 'release: stg-%s'",
-        "release:promote": "node scripts/release-promote.js"
+        "release:promote": "node scripts/release-promote.cjs"
     },
     "dependencies": {
         "@pinia/nuxt": "^0.11.2",
