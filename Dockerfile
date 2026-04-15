@@ -1,25 +1,29 @@
-# Use a base image with Node.js installed
-FROM node:23.11.1-alpine3.22
+# syntax=docker/dockerfile:1.6
 
-# Build argument for image tag
-ARG IMAGE_TAG=latest
-ENV IMAGE_TAG=${IMAGE_TAG}
-
-# Set the working directory inside the container
+# ─── Builder ───────────────────────────────────────────────
+FROM node:23.11.1-alpine3.22 AS builder
+RUN apk add --no-cache python3 make g++
+RUN corepack enable
 WORKDIR /app
 
-# Copy package.json and package-lock.json to the container
-COPY package* ./
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
-# Install dependencies
-RUN npm install --verbose
-
-# Copy the rest of the application code
 COPY . .
+RUN pnpm run build
 
-# add a label for the image tag (metadata)
-# LABEL image_tag=$IMAGE_TAG
+# ─── Runtime ───────────────────────────────────────────────
+FROM node:23.11.1-alpine3.22 AS runtime
+RUN apk add --no-cache tini
+WORKDIR /app
 
-# Command to run your application
-CMD npm run build && node ./.output/server/index.mjs
+ENV NODE_ENV=production \
+    PORT=3000 \
+    HOST=0.0.0.0
 
+COPY --from=builder /app/.output ./.output
+
+EXPOSE 3000
+
+ENTRYPOINT ["/sbin/tini", "--"]
+CMD ["node", "./.output/server/index.mjs"]

@@ -1,17 +1,13 @@
 # services / containers
+#
+# Runtime env lives in .env.production on the VPS (gitignored).
+# See .env.production.example for required keys.
 services:
-    # express app
     web-followers:
-        build:
-            context: .
-            dockerfile: Dockerfile
+        image: ghcr.io/rizjamiputera/followers-web:${WEB_IMAGE_TAG:-latest}
         container_name: web-followers
-        # image: followers-dev:1.2.0-2
-        # image: ${IMAGE_TAG:-web-followers-main:latest}
-        image: web-followers-main:latest
+        pull_policy: always
         restart: always
+        env_file: .env.production
         ports:
             - 3333:3000
-        environment:
-            NUXT_PUBLIC_WEB_URI: https://followersbicara.com
-            NUXT_PUBLIC_API_URI: https://api.followersbicara.com
