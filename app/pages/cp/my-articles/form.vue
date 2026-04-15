@@ -77,6 +77,16 @@
                 </div>
 
                 <div>
+                    <label class="text-sm font-medium">Kategori</label>
+                    <select v-model="dataDto.categoryId" class="select select-bordered w-full mt-1">
+                        <option :value="null">-- Tanpa Kategori --</option>
+                        <option v-for="cat in categories" :key="cat.id" :value="cat.id">
+                            {{ cat.name }}
+                        </option>
+                    </select>
+                </div>
+
+                <div>
                     <TagInput v-model="articleTags" label="Tags" hint="Tambahkan tags untuk mengkategorikan artikel ini"
                         placeholder="Ketik untuk menambah tags..." :max-tags="10" />
                 </div>
@@ -217,6 +227,10 @@ const AuthStore = useAuthStore();
 const canApprove = computed(() => AuthStore.can(Module.ARTICLE, Permission.APPROVE));
 const canPublish = computed(() => AuthStore.can(Module.ARTICLE, Permission.PUBLISH));
 
+const CategoriesStore = useCategoriesStore();
+const { categories } = storeToRefs(CategoriesStore);
+onMounted(async () => { if (!CategoriesStore.loaded) await CategoriesStore.fetch(); });
+
 const { public: { webUri } } = useRuntimeConfig();
 
 const router = useRouter()
@@ -260,6 +274,8 @@ watch(article, (newArticle) => {
         dataDto.value.image_md = newArticle.image_md
 
         dataDto.value.content = { content: newArticle.content!.content };
+
+        dataDto.value.categoryId = newArticle.categoryId ?? null;
 
         // Set tags
         if (newArticle.tags) {
@@ -337,6 +353,7 @@ const isArticle = Joi.object({
     image_md: IsString.optional().allow(null, ''),
     excerpt: IsString.max(250).label('Ringkasan'),
     tags: Joi.array().items(Joi.string()).optional(),
+    categoryId: Joi.string().uuid().optional().allow(null, ''),
     content: IsContent
 })
 
@@ -360,6 +377,7 @@ const validate = () => {
         // console.log(dataDto.value.content)
         validatedData.value = Validate(isArticle, dataDto.value);
         validatedData.value.content = validatedData.value.content.content;
+        if (validatedData.value.categoryId === '') validatedData.value.categoryId = null;
 
         if (status.value == "PUBLISHED") {
             if (article.value) {

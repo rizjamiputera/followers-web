@@ -154,6 +154,16 @@
         </div>
 
         <div>
+            <label class="text-sm font-medium">Kategori</label>
+            <select v-model="dataDto.categoryId" class="select select-bordered w-full mt-1">
+                <option :value="null">-- Tanpa Kategori --</option>
+                <option v-for="cat in categories" :key="cat.id" :value="cat.id">
+                    {{ cat.name }}
+                </option>
+            </select>
+        </div>
+
+        <div>
             <TagInput v-model="eventTags" label="Tags" hint="Tambahkan tags untuk mengkategorikan event ini"
                 placeholder="Ketik untuk menambah tags..." :max-tags="10" />
         </div>
@@ -290,6 +300,10 @@ const AuthStore = useAuthStore();
 const canApprove = computed(() => AuthStore.can(Module.EVENT, Permission.APPROVE));
 const canPublish = computed(() => AuthStore.can(Module.EVENT, Permission.PUBLISH));
 
+const CategoriesStore = useCategoriesStore();
+const { categories } = storeToRefs(CategoriesStore);
+onMounted(async () => { if (!CategoriesStore.loaded) await CategoriesStore.fetch(); });
+
 const { public: { webUri } } = useRuntimeConfig();
 
 const router = useRouter()
@@ -394,6 +408,8 @@ watch(event, (newEvent) => {
         dataDto.value.start_at = newEvent.start_at
         dataDto.value.end_at = newEvent.end_at
 
+        dataDto.value.categoryId = newEvent.categoryId ?? null;
+
         // Set tags
         if (newEvent.tags) {
             eventTags.value = newEvent.tags.map(t => t.name)
@@ -483,6 +499,7 @@ const isEvent = Joi.object({
     location: IsString.optional(),
     address: IsString.optional(),
     tags: Joi.array().items(Joi.string()).optional(),
+    categoryId: Joi.string().uuid().optional().allow(null, ''),
     start_at: Joi.date().optional(),
     end_at: Joi.date().optional(),
 })
@@ -506,6 +523,7 @@ const validate = () => {
     try {
         validatedData.value = Validate(isEvent, dataDto.value);
         validatedData.value.content = validatedData.value.content.content;
+        if (validatedData.value.categoryId === '') validatedData.value.categoryId = null;
 
         if (status.value == "PUBLISHED") {
             if (event.value) {
