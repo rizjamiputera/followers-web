@@ -43,6 +43,10 @@
                         @click="$emit('close')">Home</NuxtLink>
                 </li>
                 <li>
+                    <NuxtLink to="/search" prefetch-on="interaction" class="text-nowrap text-white-main"
+                        @click="$emit('close')">Cari</NuxtLink>
+                </li>
+                <li>
                     <NuxtLink to="/kegiatan" prefetch-on="interaction" class="text-nowrap text-white-main"
                         @click="$emit('close')">Kegiatan</NuxtLink>
                 </li>

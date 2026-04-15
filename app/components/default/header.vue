@@ -70,6 +70,10 @@
                     </ul>
                 </div>
                 <div class="navbar-end gap-5">
+                    <NuxtLink to="/search" prefetch-on="interaction" aria-label="Cari"
+                        class="btn btn-ghost btn-circle btn-sm text-green-main hover:bg-green-main/10">
+                        <LucideSearch :size="18" />
+                    </NuxtLink>
                     <ClientOnly>
                         <LazyButtonLink v-if="!user" to="/auth/login" prefetch-on="interaction"
                             class="btn-sm btn-success text-success bg-success/10 font-medium h-9">
@@ -123,7 +127,7 @@
 
 <script lang="ts" setup>
 import dayjs from 'dayjs';
-import { LucideArrowRight } from 'lucide-vue-next';
+import { LucideArrowRight, LucideSearch } from 'lucide-vue-next';
 
 const emits = defineEmits(['open'])
 defineProps<{
