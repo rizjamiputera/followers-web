@@ -71,6 +71,23 @@ docker compose -f docker-compose-production.yml up -d
 Staging is the same with `docker-compose-staging.yml`, `.env.staging`,
 and `STG_WEB_IMAGE_TAG`.
 
+## Monitoring (Uptime Kuma)
+
+Reuse the existing `quran-uptime-kuma` container on the VPS at
+`127.0.0.1:3030`. SSH-tunnel to the UI:
+
+```bash
+ssh -L 3030:127.0.0.1:3030 deploy@VPS_HOST
+# open http://localhost:3030
+```
+
+Add HTTP monitors:
+
+| Name | URL | Interval |
+|---|---|---|
+| followers-web prod | `https://followersbicara.com` | 60s |
+| followers-web stg  | `https://stg.followersbicara.com` | 300s |
+
 ## Debugging
 
 ```bash
