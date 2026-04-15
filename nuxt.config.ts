@@ -1,5 +1,7 @@
 import tailwindcss from "@tailwindcss/vite";
 
+const isProd = process.env.NUXT_PUBLIC_ENV === 'production';
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     compatibilityDate: '2025-07-15',
@@ -13,8 +15,21 @@ export default defineNuxtConfig({
     runtimeConfig: {
         public: {
             apiUri: "",
-            webUri: ""
+            webUri: "",
+            env: "",
         },
     },
-    modules: ['@pinia/nuxt'],
+    modules: ['@pinia/nuxt', '@nuxtjs/robots'],
+
+    // Non-production envs are blocked from indexing. Emits both
+    // robots.txt (Disallow: /) and X-Robots-Tag: noindex, nofollow.
+    robots: isProd
+        ? {
+              groups: [{ userAgent: ['*'], allow: ['/'] }],
+          }
+        : {
+              groups: [{ userAgent: ['*'], disallow: ['/'] }],
+              metaTag: true,
+              header: true,
+          },
 })

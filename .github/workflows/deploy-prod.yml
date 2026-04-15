@@ -57,6 +57,8 @@ jobs:
               with:
                   context: .
                   push: true
+                  build-args: |
+                      NUXT_PUBLIC_ENV=production
                   tags: |
                       ${{ steps.img.outputs.name }}:${{ github.ref_name }}
                       ${{ steps.img.outputs.name }}:latest

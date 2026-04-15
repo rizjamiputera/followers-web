@@ -39,6 +39,7 @@
         "vue3-carousel": "^0.16.0"
     },
     "devDependencies": {
+        "@nuxtjs/robots": "^6.0.7",
         "daisyui": "^5.0.46"
     }
 }

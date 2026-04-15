@@ -6,6 +6,9 @@ RUN apk add --no-cache python3 make g++
 RUN corepack enable
 WORKDIR /app
 
+ARG NUXT_PUBLIC_ENV=production
+ENV NUXT_PUBLIC_ENV=${NUXT_PUBLIC_ENV}
+
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 
