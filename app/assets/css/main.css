@@ -122,6 +122,26 @@ hr {
     @apply text-green-main bg-green-main/10 font-semibold;
 }
 
+/* Side menu (mobile) active link — green pill on dark background */
+.side-menu a.router-link-exact-active {
+    background-color: var(--color-green-main);
+    color: #F4F2EE;
+    border-radius: 0.75rem;
+}
+.side-menu a.router-link-exact-active:hover {
+    background-color: var(--color-green-main);
+    color: #F4F2EE;
+}
+.side-menu a.router-link-active:not(.router-link-exact-active) {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-radius: 0.75rem;
+}
+.side-menu details > summary.nav-summary-active {
+    background-color: var(--color-green-main);
+    color: #F4F2EE;
+    border-radius: 0.75rem;
+}
+
 .navbar .menu .router-link-active.group,
 .product-menu .router-link-active.group,
 .side-menu .router-link-active.group {

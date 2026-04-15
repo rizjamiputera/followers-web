@@ -48,7 +48,7 @@
                 </li>
                 <li v-if="navCategories.length">
                     <details>
-                        <summary class="text-white-main">Kategori</summary>
+                        <summary class="text-white-main" :class="{ 'nav-summary-active': isCategoryRoute }">Kategori</summary>
                         <ul class="pl-2">
                             <li v-for="c in navCategories" :key="c.id">
                                 <NuxtLink :to="`/kategori/${c.slug}`" prefetch-on="interaction"
@@ -102,8 +102,8 @@ const props = defineProps<{
     menuProduct: any[]
 }>()
 
-// const route = useRoute();
-// const isOpen = computed(() => props.menuProduct.some(m => route.path.startsWith(m.url)))
+const route = useRoute();
+const isCategoryRoute = computed(() => route.path.startsWith('/kategori'));
 
 const AuthStore = useAuthStore();
 const CategoriesStore = useCategoriesStore();
