@@ -102,28 +102,41 @@ import { ReactionType } from '~/interfaces/content-interface';
 const route = useRoute();
 const ReadArticleStore = useReadArticleStore();
 const { data, tags, content, stats, isNotFound, auth_reaction, auth_bookmarked, contentId } = storeToRefs(ReadArticleStore);
-const { get, getStats, recordVisit } = ReadArticleStore;
-ReadArticleStore.slug = route.params.slug as string;
+const { getStats, recordVisit } = ReadArticleStore;
+const slug = route.params.slug as string;
+ReadArticleStore.slug = slug;
 
-// Server-side data fetching for SEO
-const { public: { apiUri } } = useRuntimeConfig();
-const { data: articleData } = await useFetch(`${apiUri}/v1/article/read/${route.params.slug}`, {
-    server: true,
-});
+const { public: { apiUri, webUri } } = useRuntimeConfig();
 
-// hydrate store with light data
-if (articleData.value) {
-    ReadArticleStore.data = articleData.value as Article;
+// Single SSR + client-hydration fetch with all includes. Same payload
+// serves the crawler (SEO) and the in-browser reader — no duplicate fetch.
+const { data: article, error } = await useAsyncData(
+    `article-${slug}`,
+    async () => {
+        try {
+            return await $fetch<Article & { stats?: any }>(`${apiUri}/v1/article/read/${slug}`, {
+                query: { includes: 'content,author,tags.tag,stats' },
+                headers: Api.headers(),
+            });
+        } catch (e: any) {
+            if (e?.response?.status === 404 || e?.statusCode === 404) return null;
+            throw e;
+        }
+    }
+);
+
+if (!article.value) {
+    ReadArticleStore.isNotFound = true;
+} else {
+    const { stats: _stats, ...rest } = article.value as any;
+    ReadArticleStore.data = rest;
+    ReadArticleStore.stats = _stats;
 }
 
-// 2. Client-side (full fetch for readers)
+// Visit is a side-effect, not a data fetch — keep client-only.
 onMounted(() => {
-    get();
     recordVisit(route.path);
 })
-
-// SEO and META
-const { public: { webUri } } = useRuntimeConfig();
 
 useSeoMeta({
     title: () => data?.value?.title ?? '-',

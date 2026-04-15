@@ -84,30 +84,29 @@ const combinedFeaturedContent = computed(() => {
     })
 })
 
-// Fetch featured content
-const loadingFeatured = ref<boolean>(true);
-const fetchFeaturedContent = async () => {
-    try {
-        loadingFeatured.value = true;
-        // Use single endpoint for all homepage data
-        const homepageData = await Api.get('/v1/home-page/data') as any
-
-        featuredArticles.value = Array.isArray(homepageData?.featuredArticles) ? homepageData.featuredArticles : []
-        featuredEvents.value = Array.isArray(homepageData?.featuredEvents) ? homepageData.featuredEvents : []
-    } catch (error) {
-        console.error('Error fetching featured content:', error)
-    } finally {
-        loadingFeatured.value = false;
+// SSR + hydration fetch so crawlers see the homepage shell with data.
+const { data: homepageData, pending: loadingFeatured } = await useAsyncData(
+    'homepage-data',
+    async () => {
+        try {
+            return await Api.get('/v1/home-page/data') as any;
+        } catch (e) {
+            console.error('Error fetching featured content:', e);
+            return null;
+        }
     }
-}
+);
+
+watchEffect(() => {
+    featuredArticles.value = Array.isArray(homepageData.value?.featuredArticles) ? homepageData.value.featuredArticles : [];
+    featuredEvents.value = Array.isArray(homepageData.value?.featuredEvents) ? homepageData.value.featuredEvents : [];
+});
 
 const firstFeaturedArticle = computed<Article>(() => {
     return featuredArticles.value[0];
 })
 
-// Fetch on mount
 onMounted(() => {
     recordVisit();
-    fetchFeaturedContent()
 })
 </script>

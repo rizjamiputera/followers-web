@@ -172,38 +172,34 @@ const content = computed(() => {
     return profile.value.biography.content
 })
 
-// Fetch creator profile
 const { public: { apiUri, webUri } } = useRuntimeConfig();
 
-try {
-    // Server-side fetch for SEO
-    const { data: profileData } = await useFetch(`${apiUri}/v1/creator/public/${username}?includes=user`, {
-        server: true,
-    });
-
-    if (profileData.value) {
-        profile.value = profileData.value as Profile;
-    } else {
-        isNotFound.value = true;
+// Single SSR + hydration fetch with all relations. Crawler and reader
+// see the same data; no client re-fetch required.
+const { data: profileData } = await useAsyncData(
+    `creator-${username}`,
+    async () => {
+        try {
+            return await $fetch<Profile>(`${apiUri}/v1/creator/public/${username}`, {
+                query: { includes: 'user,biography,socialLinks' },
+                headers: Api.headers(),
+            });
+        } catch (e: any) {
+            if (e?.response?.status === 404 || e?.statusCode === 404) return null;
+            throw e;
+        }
     }
-} catch (error) {
+);
+
+if (!profileData.value) {
     isNotFound.value = true;
-} finally {
-    isLoading.value = false;
+} else {
+    profile.value = profileData.value;
 }
+isLoading.value = false;
 
-const getData = async () => {
-    const response = await Api.get(`/v1/creator/public/${username}?includes=user,biography,socialLinks`);
-
-    if (response) {
-        profile.value = response as Profile;
-    }
-}
-
-// re-fetch to get complete relation
 onMounted(() => {
     recordVisit();
-    getData();
 });
 
 // SEO Meta

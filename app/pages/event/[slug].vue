@@ -202,8 +202,9 @@ import { useEventRegistrationStore } from '~/stores/event-registration-store';
 const route = useRoute();
 const ReadEventStore = useReadEventStore();
 const { data, tags, content, stats, isNotFound, auth_reaction, contentId } = storeToRefs(ReadEventStore);
-const { get, getStats, recordVisit } = ReadEventStore;
-ReadEventStore.slug = route.params.slug as string;
+const { getStats, recordVisit } = ReadEventStore;
+const slug = route.params.slug as string;
+ReadEventStore.slug = slug;
 
 // Registration store
 const registrationStore = useEventRegistrationStore()
@@ -215,25 +216,36 @@ const isUpdatingRegistration = ref(false)
 const registrationFormData = ref<Record<string, any>>({})
 const cancellationReason = ref('')
 
-// Server-side data fetching for SEO
-const { public: { apiUri } } = useRuntimeConfig();
-const { data: eventData } = await useFetch(`${apiUri}/v1/event/read/${route.params.slug}`, {
-    server: true,
-});
+const { public: { apiUri, webUri } } = useRuntimeConfig();
 
-// hydrate store with light data
-if (eventData.value) {
-    ReadEventStore.data = eventData.value as Event;
+// Single SSR + hydration fetch with all includes. Same payload powers
+// the crawler, the page's SEO meta, and the in-browser reader.
+const { data: eventPayload } = await useAsyncData(
+    `event-${slug}`,
+    async () => {
+        try {
+            return await $fetch<Event & { stats?: any }>(`${apiUri}/v1/event/read/${slug}`, {
+                query: { includes: 'content,author,tags.tag,stats,registrationConfig' },
+                headers: Api.headers(),
+            });
+        } catch (e: any) {
+            if (e?.response?.status === 404 || e?.statusCode === 404) return null;
+            throw e;
+        }
+    }
+);
+
+if (!eventPayload.value) {
+    ReadEventStore.isNotFound = true;
+} else {
+    const { stats: _stats, ...rest } = eventPayload.value as any;
+    ReadEventStore.data = rest;
+    ReadEventStore.stats = _stats;
 }
 
-// 2. Client-side (full fetch for readers)
 onMounted(() => {
-    get();
     recordVisit(route.path);
 })
-
-// SEO and META
-const { public: { webUri } } = useRuntimeConfig();
 
 useSeoMeta({
     title: () => data?.value?.title ?? '-',
@@ -243,7 +255,7 @@ useSeoMeta({
     ogImage: () => data?.value?.image_md ?? (webUri + '/logo-hitam.jpg'),
     twitterCard: 'summary_large_image',
     ogSiteName: 'FollowersBicara.com',
-    ogUrl: webUri + '/read/' + route.params.slug
+    ogUrl: webUri + '/event/' + slug
 });
 
 const handleShare = async () => {

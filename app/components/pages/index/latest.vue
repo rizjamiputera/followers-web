@@ -58,16 +58,18 @@
 import { DefaultBody } from '#components';
 
 const LatestArticleStore = useLatestArticleStore();
-const { get, reset } = LatestArticleStore;
+const { get } = LatestArticleStore;
 
 const { isLoading, latest_articles, total, page, last_page, parameters, isEmpty } = storeToRefs(LatestArticleStore);
 LatestArticleStore.authorId = undefined;
 
-// load first data
-onMounted(() => {
-    reset();
-    get();
-})
+// SSR the first page so crawlers see real articles in the initial HTML.
+// Pinia hydration carries the state to the client — no re-fetch on mount.
+await useAsyncData('latest-articles-initial', async () => {
+    LatestArticleStore.reset();
+    await LatestArticleStore.get();
+    return true;
+});
 
 watch(() => parameters.value.page, () => {
     get();
