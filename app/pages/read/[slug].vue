@@ -153,6 +153,36 @@ useSeoMeta({
     ogUrl: webUri + '/read/' + route.params.slug
 });
 
+useHead({
+    link: [{ rel: 'canonical', href: `${webUri}/read/${slug}` }],
+    script: article.value ? [
+        {
+            type: 'application/ld+json',
+            id: 'article-jsonld',
+            innerHTML: JSON.stringify({
+                '@context': 'https://schema.org',
+                '@type': 'Article',
+                headline: article.value.title,
+                description: article.value.excerpt,
+                image: article.value.image_md || `${webUri}/logo-hitam.jpg`,
+                datePublished: article.value.publishedAt,
+                url: `${webUri}/read/${slug}`,
+                mainEntityOfPage: { '@type': 'WebPage', '@id': `${webUri}/read/${slug}` },
+                author: (article.value as any).author ? {
+                    '@type': 'Person',
+                    name: (article.value as any).author.name,
+                    url: `${webUri}/creator/${(article.value as any).author.username}`,
+                } : undefined,
+                publisher: {
+                    '@type': 'Organization',
+                    name: 'FollowersBicara',
+                    logo: { '@type': 'ImageObject', url: `${webUri}/logo.svg` },
+                },
+            }),
+        },
+    ] : [],
+});
+
 const handleShare = async () => {
     if (!data?.value) return;
 

@@ -262,6 +262,43 @@ useSeoMeta({
     ogUrl: webUri + '/event/' + slug
 });
 
+useHead({
+    link: [{ rel: 'canonical', href: `${webUri}/event/${slug}` }],
+    script: eventPayload.value ? [
+        {
+            type: 'application/ld+json',
+            id: 'event-jsonld',
+            innerHTML: JSON.stringify({
+                '@context': 'https://schema.org',
+                '@type': 'Event',
+                name: eventPayload.value.title,
+                description: eventPayload.value.excerpt,
+                image: eventPayload.value.image_portrait_md || eventPayload.value.image_md || `${webUri}/logo-hitam.jpg`,
+                startDate: eventPayload.value.start_at,
+                endDate: eventPayload.value.end_at || undefined,
+                url: `${webUri}/event/${slug}`,
+                location: eventPayload.value.location ? {
+                    '@type': 'Place',
+                    name: eventPayload.value.location,
+                    address: (eventPayload.value as any).address
+                        ? { '@type': 'PostalAddress', streetAddress: (eventPayload.value as any).address }
+                        : undefined,
+                } : undefined,
+                organizer: {
+                    '@type': 'Organization',
+                    name: 'FollowersBicara',
+                    url: webUri,
+                },
+                performer: (eventPayload.value as any).author ? {
+                    '@type': 'Person',
+                    name: (eventPayload.value as any).author.name,
+                    url: `${webUri}/creator/${(eventPayload.value as any).author.username}`,
+                } : undefined,
+            }),
+        },
+    ] : [],
+});
+
 const handleShare = async () => {
     if (!data?.value) return;
 
