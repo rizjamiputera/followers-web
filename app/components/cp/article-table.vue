@@ -7,20 +7,13 @@
         <div class="flex justify-between gap-4">
             <pagination :page :last_page @prev="--parameters.page" @next="++parameters.page" />
 
-            <div class="flex-1 flex gap-3 justify-end">
-                <Input v-model="search" placeholder="Cari artikel.." class="input-sm max-w-xs" />
-
-                <!-- now no subtitle then show all status, so no need status filter if has subtitle -->
-                <template v-if="!subtitle">
-                    <select v-model="selectedStatus" @change="updateStatus"
-                        class="select w-40 select-sm rounded-full focus:outline-green-main/40 border-green-main/20">
-                        <option value="">Semua Status</option>
-                        <option v-for="value in contentStatuses" :key="value" :value>
-                            {{ value.replace('_', ' ') }}
-                        </option>
-                    </select>
-                </template>
-            </div>
+            <CpContentFilters
+                v-model:search="search"
+                v-model:status="filterStatus"
+                v-model:tag-slug="filterTagSlug"
+                v-model:category-id="filterCategoryId"
+                :hide-status="!!subtitle"
+                search-placeholder="Cari artikel.." />
         </div>
 
         <div class="overflow-x-auto rounded-2xl border border-green-main/5 bg-base-100">
@@ -179,7 +172,7 @@
 import dayjs from 'dayjs';
 import { LucideBookmark, LucideEye, LucideLink, LucideShare2, LucideThumbsDown, LucideThumbsUp } from 'lucide-vue-next';
 import type { Article } from '~/interfaces/article-interface';
-import { contentStatuses, type ContentStatus } from '~/interfaces/content-interface';
+import type { ContentStatus } from '~/interfaces/content-interface';
 import { Module, Permission } from '~/interfaces/user-interface';
 
 const props = defineProps<{
@@ -228,19 +221,23 @@ watch(() => search.value, () => {
     }, 2000);
 });
 
-const selectedStatus = ref<ContentStatus | ''>('')
-const updateStatus = (e: any) => {
-    const selected = e.target.value
-
-    ArticlesStore.status = selected ? selected : undefined;
-
-    // prevent double api call, because page is watch
-    if (ArticlesStore.parameters.page == 1) {
-        get()
-    } else {
-        ArticlesStore.parameters.page = 1;
-    }
+const refetch = () => {
+    if (ArticlesStore.parameters.page == 1) get()
+    else ArticlesStore.parameters.page = 1;
 }
+
+const filterStatus = computed({
+    get: () => (ArticlesStore.status ?? '') as ContentStatus | '',
+    set: (v) => { ArticlesStore.status = v || undefined; refetch(); }
+});
+const filterTagSlug = computed({
+    get: () => ArticlesStore.tagSlug ?? '',
+    set: (v) => { ArticlesStore.tagSlug = v || undefined; refetch(); }
+});
+const filterCategoryId = computed({
+    get: () => ArticlesStore.categoryId ?? '',
+    set: (v) => { ArticlesStore.categoryId = v || undefined; refetch(); }
+});
 
 
 // PREVIEW

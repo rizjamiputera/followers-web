@@ -9,6 +9,8 @@ interface MyEventsStoreState {
     parameters: PaginationParameters
     search: string
     status?: ContentStatus
+    tagSlug?: string
+    categoryId?: string
     isLoading: boolean
     isError: boolean
 }
@@ -23,6 +25,8 @@ export const useMyEventsStore = defineStore('my-events', {
         },
         search: '',
         status: undefined,
+        tagSlug: undefined,
+        categoryId: undefined,
         isLoading: false,
         isError: false
     }),
@@ -36,6 +40,8 @@ export const useMyEventsStore = defineStore('my-events', {
                     includes: state.parameters.includes.join(','),
                     search: state.search,
                     status: state.status,
+                    tags: state.tagSlug || undefined,
+                    categoryId: state.categoryId || undefined,
                     sortBy: 'createdAt',
                     order: 'desc'
                 },

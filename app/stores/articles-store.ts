@@ -10,6 +10,8 @@ interface ArticlesStoreState {
     search: string
     status?: ContentStatus
     authorId?: string
+    tagSlug?: string
+    categoryId?: string
     isLoading: boolean
     isError: boolean
 }
@@ -25,6 +27,8 @@ export const useArticlesStore = defineStore('articles', {
         search: '',
         status: undefined,
         authorId: undefined,
+        tagSlug: undefined,
+        categoryId: undefined,
         isLoading: false,
         isError: false
     }),
@@ -39,6 +43,8 @@ export const useArticlesStore = defineStore('articles', {
                     search: state.search,
                     authorId: state.authorId,
                     status: state.status,
+                    tags: state.tagSlug || undefined,
+                    categoryId: state.categoryId || undefined,
                     sortBy: 'createdAt',
                     order: 'desc'
                 },
@@ -69,6 +75,8 @@ export const useArticlesStore = defineStore('articles', {
             this.search = '';
             this.status = undefined;
             this.authorId = undefined;
+            this.tagSlug = undefined;
+            this.categoryId = undefined;
             this.isLoading = false;
             this.isError = false;
 

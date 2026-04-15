@@ -10,6 +10,8 @@ interface EventsStoreState {
     search: string
     status?: ContentStatus
     authorId?: string
+    tagSlug?: string
+    categoryId?: string
     sortBy: string
     order: OrderBy
     isLoading: boolean
@@ -27,6 +29,8 @@ export const useEventsStore = defineStore('events', {
         search: '',
         status: undefined,
         authorId: undefined,
+        tagSlug: undefined,
+        categoryId: undefined,
         sortBy: 'createdAt',
         order: OrderBy.DESC,
         isLoading: false,
@@ -43,6 +47,8 @@ export const useEventsStore = defineStore('events', {
                     search: state.search,
                     authorId: state.authorId,
                     status: state.status,
+                    tags: state.tagSlug || undefined,
+                    categoryId: state.categoryId || undefined,
                     sortBy: state.sortBy,
                     order: 'desc'
                 },
@@ -73,6 +79,8 @@ export const useEventsStore = defineStore('events', {
             this.search = '';
             this.status = undefined;
             this.authorId = undefined;
+            this.tagSlug = undefined;
+            this.categoryId = undefined;
             this.isLoading = false;
             this.isError = false;
 
