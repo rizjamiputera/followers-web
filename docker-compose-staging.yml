@@ -4,7 +4,7 @@
 # See .env.staging.example for required keys.
 services:
     stg-web-followers:
-        image: ghcr.io/putera-/followers-web:${STG_WEB_IMAGE_TAG:-stg-latest}
+        image: ghcr.io/rizjamiputera/followers-web:${STG_WEB_IMAGE_TAG:-stg-latest}
         container_name: stg-web-followers
         pull_policy: always
         restart: always

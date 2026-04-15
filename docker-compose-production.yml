@@ -4,7 +4,7 @@
 # See .env.production.example for required keys.
 services:
     web-followers:
-        image: ghcr.io/putera-/followers-web:${WEB_IMAGE_TAG:-latest}
+        image: ghcr.io/rizjamiputera/followers-web:${WEB_IMAGE_TAG:-latest}
         container_name: web-followers
         pull_policy: always
         restart: always
