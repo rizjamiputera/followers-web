@@ -77,6 +77,19 @@ jobs:
                       git fetch --tags --force origin
                       git checkout "$TAG"
 
+                      # ── Pre-flight: require .env.staging ──
+                      if [ ! -f .env.staging ]; then
+                          echo "ERROR: $PROJECT_DIR/.env.staging is missing."
+                          echo "Hint: copy .env.staging.example and fill in real values."
+                          exit 1
+                      fi
+                      for key in NUXT_PUBLIC_WEB_URI NUXT_PUBLIC_API_URI; do
+                          if ! grep -qE "^${key}=.+" .env.staging; then
+                              echo "ERROR: .env.staging missing or empty: $key"
+                              exit 1
+                          fi
+                      done
+
                       echo "==> Pulling Web image ghcr.io/${{ github.repository }}:${TAG}..."
                       export STG_WEB_IMAGE_TAG="$TAG"
                       docker compose -f docker-compose-staging.yml pull stg-web-followers

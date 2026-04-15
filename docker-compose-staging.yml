@@ -1,13 +1,13 @@
 # services / containers
+#
+# Runtime env lives in .env.staging on the VPS (gitignored).
+# See .env.staging.example for required keys.
 services:
-    # express app
     stg-web-followers:
         image: ghcr.io/putera-/followers-web:${STG_WEB_IMAGE_TAG:-stg-latest}
         container_name: stg-web-followers
         pull_policy: always
         restart: always
+        env_file: .env.staging
         ports:
             - 3777:3000
-        environment:
-            NUXT_PUBLIC_WEB_URI: https://stg.followersbicara.com
-            NUXT_PUBLIC_API_URI: https://stg-api.followersbicara.com

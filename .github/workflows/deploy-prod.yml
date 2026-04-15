@@ -77,6 +77,19 @@ jobs:
                       git fetch --tags --force origin
                       git checkout "$TAG"
 
+                      # ── Pre-flight: require .env.production ──
+                      if [ ! -f .env.production ]; then
+                          echo "ERROR: $PROJECT_DIR/.env.production is missing."
+                          echo "Hint: copy .env.production.example and fill in real values."
+                          exit 1
+                      fi
+                      for key in NUXT_PUBLIC_WEB_URI NUXT_PUBLIC_API_URI; do
+                          if ! grep -qE "^${key}=.+" .env.production; then
+                              echo "ERROR: .env.production missing or empty: $key"
+                              exit 1
+                          fi
+                      done
+
                       echo "==> Pulling Web image ghcr.io/${{ github.repository }}:${TAG}..."
                       export WEB_IMAGE_TAG="$TAG"
                       docker compose -f docker-compose-production.yml pull web-followers
