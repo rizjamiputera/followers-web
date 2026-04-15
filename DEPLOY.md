@@ -15,14 +15,19 @@ pre-flight env check → `docker compose pull && up -d`.
 
 ## Release commands
 
-```bash
-# Production
-git checkout main && git pull
-git tag v1.8.6 && git push origin v1.8.6
+Staging and production share the same commit — promote the tested staging
+build to prod without rebuilding.
 
-# Staging
-git checkout stg && git pull
-git tag stg-0.1.0 && git push origin stg-0.1.0
+```bash
+# 1. Cut a staging release
+pnpm release:stg          # patch
+pnpm release:stg:minor    # minor
+pnpm release:stg:major    # major
+git push origin main --follow-tags
+
+# 2. Once staging verified green, promote same commit to prod
+pnpm release:promote
+git push origin v<version>
 ```
 
 ## VPS bootstrap (one-time per environment)
