@@ -245,3 +245,12 @@ table th {
 .carousel__prev svg {
     fill: white !important;
 }
+
+/* Auto-detect text direction in rendered article content (e.g. Arabic → RTL).
+   `unicode-bidi: plaintext` resolves each line's base direction from its own
+   content (like dir="auto"), per bidi paragraph. So Arabic lines render
+   right-to-left and right-aligned while Latin lines stay left-to-right —
+   even when both share one paragraph separated by <br>. */
+.tiptap-content :is(p, h1, h2, h3, h4, h5, h6, li, blockquote, td, th) {
+    unicode-bidi: plaintext;
+}
