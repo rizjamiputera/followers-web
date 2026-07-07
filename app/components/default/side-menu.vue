@@ -71,6 +71,10 @@
                     <NuxtLink to="/creator" prefetch-on="interaction" class="text-nowrap text-white-main"
                         @click="$emit('close')">Penulis</NuxtLink>
                 </li>
+                <li>
+                    <NuxtLink to="/pemateri" prefetch-on="interaction" class="text-nowrap text-white-main"
+                        @click="$emit('close')">Pemateri</NuxtLink>
+                </li>
                 <template v-if="false">
                     <li>
                         <!-- <details :open="isOpen"> -->
