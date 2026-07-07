@@ -90,6 +90,12 @@
                     <TagInput v-model="articleTags" label="Tags" hint="Tambahkan tags untuk mengkategorikan artikel ini"
                         placeholder="Ketik untuk menambah tags..." :max-tags="10" />
                 </div>
+
+                <div>
+                    <SpeakerInput v-model="articleSpeakers" label="Pemateri"
+                        hint="Pemateri kajian sumber artikel ini. Pilih yang sudah ada atau ketik nama untuk membuat baru."
+                        placeholder="Ketik nama pemateri..." />
+                </div>
             </div>
 
             <div class="max-md:hidden py-3">
@@ -208,6 +214,7 @@
 import Joi from 'joi';
 import { LucideCheckCircle2, LucideLoader, LucideXCircle } from 'lucide-vue-next';
 import type { Article, ArticleDto } from '~/interfaces/article-interface';
+import type { SelectedSpeaker } from '~/interfaces/speaker-interface';
 import type { ContentStatus, PhotoContent } from '~/interfaces/content-interface';
 import { Module, Permission } from '~/interfaces/user-interface';
 
@@ -251,11 +258,12 @@ const dataDto = ref<Partial<ArticleDto>>({
 
 const newPhotos = ref<PhotoContent[] | null>(null)
 const articleTags = ref<string[]>([])
+const articleSpeakers = ref<SelectedSpeaker[]>([])
 
 const get = async () => {
     if (!id) return;
 
-    article.value = await Api.get('/v1/article/my/' + id + '?includes=content,tags.tag') as Article;
+    article.value = await Api.get('/v1/article/my/' + id + '?includes=content,tags.tag,speakers.speaker') as Article;
 
     // initial at edit
     slugAvailable.value = true;
@@ -285,9 +293,19 @@ watch(article, (newArticle) => {
         }
 
         dataDto.value.tags = articleTags.value;
+
+        // Set pemateri
+        articleSpeakers.value = (newArticle.speakers ?? []).map(s => ({
+            speakerId: s.id,
+            name: s.name,
+            honorific: s.honorific,
+            credentials: s.credentials,
+            suffix: s.suffix,
+        }));
     } else {
         // Reset tags when no article
         articleTags.value = []
+        articleSpeakers.value = []
     }
 }, { immediate: true })
 
@@ -353,6 +371,14 @@ const isArticle = Joi.object({
     image_md: IsString.optional().allow(null, ''),
     excerpt: IsString.max(250).label('Ringkasan'),
     tags: Joi.array().items(Joi.string()).optional(),
+    speakers: Joi.array().items(Joi.object({
+        speakerId: Joi.string().uuid().optional(),
+        name: Joi.string().optional(),
+        honorific: Joi.string().optional().allow(null, ''),
+        credentials: Joi.string().optional().allow(null, ''),
+        suffix: Joi.string().optional().allow(null, ''),
+        role: Joi.string().optional().allow(null, ''),
+    })).optional(),
     categoryId: Joi.string().uuid().optional().allow(null, ''),
     content: IsContent
 })
@@ -374,6 +400,16 @@ const validate = () => {
     showConfirmDraftOrReview.value = false;
 
     try {
+        // Map selected pemateri to the API payload (existing -> speakerId, new -> fields)
+        dataDto.value.speakers = articleSpeakers.value.map(s => s.speakerId
+            ? { speakerId: s.speakerId }
+            : {
+                name: s.name,
+                honorific: s.honorific || undefined,
+                credentials: s.credentials || undefined,
+                suffix: s.suffix || undefined,
+            });
+
         // console.log(dataDto.value.content)
         validatedData.value = Validate(isArticle, dataDto.value);
         validatedData.value.content = validatedData.value.content.content;

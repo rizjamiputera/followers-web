@@ -168,6 +168,12 @@
                 placeholder="Ketik untuk menambah tags..." :max-tags="10" />
         </div>
 
+        <div>
+            <SpeakerInput v-model="eventSpeakers" label="Pemateri"
+                hint="Pemateri kajian pada kegiatan ini. Pilih yang sudah ada atau ketik nama untuk membuat baru."
+                placeholder="Ketik nama pemateri..." />
+        </div>
+
         <!-- location, address, start_at, end_at -->
         <Input v-model="dataDto.location" label="Lokasi" />
         <Textarea v-model="dataDto.address" label="Alamat" />
@@ -282,6 +288,7 @@ import Joi from 'joi';
 import { LucideCheckCircle2, LucideLoader, LucideXCircle, LucideUsers } from 'lucide-vue-next';
 import type { ContentStatus, PhotoContent } from '~/interfaces/content-interface';
 import type { Event, EventDto } from '~/interfaces/event-interface';
+import type { SelectedSpeaker } from '~/interfaces/speaker-interface';
 import { Module, Permission } from '~/interfaces/user-interface';
 
 definePageMeta({
@@ -324,6 +331,7 @@ const dataDto = ref<Partial<EventDto>>({
 
 const newPhotos = ref<PhotoContent[] | null>(null)
 const eventTags = ref<string[]>([])
+const eventSpeakers = ref<SelectedSpeaker[]>([])
 
 // Registration configuration
 const registrationConfig = ref<any>(null)
@@ -333,7 +341,7 @@ const registrationConfigData = ref<any>(null)
 const get = async () => {
     if (!id) return;
 
-    event.value = await Api.get('/v1/event/my/' + id + '?includes=content,registrationConfig,tags.tag') as Event;
+    event.value = await Api.get('/v1/event/my/' + id + '?includes=content,registrationConfig,tags.tag,speakers.speaker') as Event;
 
     // Load registration config if exists
     if (event.value.registrationConfig) {
@@ -416,9 +424,19 @@ watch(event, (newEvent) => {
         } else {
             eventTags.value = []
         }
+
+        // Set pemateri
+        eventSpeakers.value = (newEvent.speakers ?? []).map(s => ({
+            speakerId: s.id,
+            name: s.name,
+            honorific: s.honorific,
+            credentials: s.credentials,
+            suffix: s.suffix,
+        }));
     } else {
         // Reset tags when no event
         eventTags.value = []
+        eventSpeakers.value = []
     }
 }, { immediate: true })
 
@@ -499,6 +517,14 @@ const isEvent = Joi.object({
     location: IsString.optional(),
     address: IsString.optional(),
     tags: Joi.array().items(Joi.string()).optional(),
+    speakers: Joi.array().items(Joi.object({
+        speakerId: Joi.string().uuid().optional(),
+        name: Joi.string().optional(),
+        honorific: Joi.string().optional().allow(null, ''),
+        credentials: Joi.string().optional().allow(null, ''),
+        suffix: Joi.string().optional().allow(null, ''),
+        role: Joi.string().optional().allow(null, ''),
+    })).optional(),
     categoryId: Joi.string().uuid().optional().allow(null, ''),
     start_at: Joi.date().optional(),
     end_at: Joi.date().optional(),
@@ -521,6 +547,16 @@ const validate = () => {
     showConfirmDraftOrReview.value = false;
 
     try {
+        // Map selected pemateri to the API payload (existing -> speakerId, new -> fields)
+        dataDto.value.speakers = eventSpeakers.value.map(s => s.speakerId
+            ? { speakerId: s.speakerId }
+            : {
+                name: s.name,
+                honorific: s.honorific || undefined,
+                credentials: s.credentials || undefined,
+                suffix: s.suffix || undefined,
+            });
+
         validatedData.value = Validate(isEvent, dataDto.value);
         validatedData.value.content = validatedData.value.content.content;
         if (validatedData.value.categoryId === '') validatedData.value.categoryId = null;

@@ -1,6 +1,7 @@
 import type { Category } from "./category-interface"
 import type { Content, ContentStats, ContentStatus, ReactionType, Tag } from "./content-interface"
 import type { User } from "./user-interface"
+import type { Speaker, ContentSpeakerInput } from "./speaker-interface"
 
 
 export interface Article {
@@ -22,6 +23,7 @@ export interface Article {
     categoryId?: string | null
     // approvals   ArticleApproval[]
     tags?: Tag[]
+    speakers?: (Speaker & { role?: string | null })[]
     // comments?: Comment[]
     // reactions   ArticleReaction[]
     createdAt: string
@@ -37,6 +39,7 @@ export interface Article {
     authBookmark?: boolean
 }
 
-export interface ArticleDto extends Omit<Article, 'tags'> {
+export interface ArticleDto extends Omit<Article, 'tags' | 'speakers'> {
     tags?: string[]
+    speakers?: ContentSpeakerInput[]
 }

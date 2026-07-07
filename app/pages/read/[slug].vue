@@ -72,6 +72,17 @@
                         </div>
                     </div>
 
+                    <!-- PEMATERI -->
+                    <div v-if="data.speakers && data.speakers.length" class="flex flex-wrap items-center gap-2">
+                        <span class="text-sm font-medium text-gray-500">Pemateri:</span>
+                        <NuxtLink v-for="sp in data.speakers" :key="sp.id" :to="`/pemateri/${sp.slug}`"
+                            prefetch-on="interaction"
+                            class="badge badge-success badge-outline border-green-main/30 text-green-main rounded-full gap-1 hover:bg-green-main/10">
+                            <span v-if="sp.honorific" class="opacity-70">{{ sp.honorific }}&nbsp;</span>{{ sp.name }}
+                            <span v-if="sp.suffix" class="opacity-60" dir="rtl">{{ sp.suffix }}</span>
+                        </NuxtLink>
+                    </div>
+
                     <!-- content -->
                     <div v-if="content" class="prose max-w-none">
                         <WysiwygRenderer :content="content" />
@@ -119,7 +130,7 @@ const { data: article, error } = await useAsyncData(
     async () => {
         try {
             return await $fetch<Article & { stats?: any }>(`${apiUri}/v1/article/read/${slug}`, {
-                query: { includes: 'content,author,tags.tag,stats,category' },
+                query: { includes: 'content,author,tags.tag,stats,category,speakers.speaker' },
                 headers: Api.headers(),
             });
         } catch (e: any) {

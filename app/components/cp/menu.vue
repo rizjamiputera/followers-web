@@ -108,6 +108,11 @@
                             <li v-if="can(Module.ARTICLE, Permission.READ)">
                                 <NuxtLink to="/cp/categories" prefetch-on="interaction">Kategori</NuxtLink>
                             </li>
+
+                            <!-- PEMATERI MANAGEMENT -->
+                            <li v-if="can(Module.ARTICLE, Permission.READ)">
+                                <NuxtLink to="/cp/pemateri" prefetch-on="interaction">Pemateri</NuxtLink>
+                            </li>
                         </ClientOnly>
                     </ul>
                 </template>

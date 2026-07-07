@@ -2,6 +2,7 @@ import type { Category } from "./category-interface"
 import type { Content, ContentStats, ContentStatus, ReactionType, Tag } from "./content-interface"
 import type { User } from "./user-interface"
 import type { EventRegistrationConfig, EventRegistration } from "./event-registration-interface"
+import type { Speaker, ContentSpeakerInput } from "./speaker-interface"
 
 export interface Event {
     id: string
@@ -28,6 +29,7 @@ export interface Event {
     categoryId?: string | null
     // approvals   ArticleApproval[]
     tags?: Tag[]
+    speakers?: (Speaker & { role?: string | null })[]
     // comments?: Comment[]
     // reactions   ArticleReaction[]
     createdAt: string
@@ -47,6 +49,7 @@ export interface Event {
     // visitors    Visit[]
 }
 
-export interface EventDto extends Omit<Event, 'tags'> {
+export interface EventDto extends Omit<Event, 'tags' | 'speakers'> {
     tags?: string[]
+    speakers?: ContentSpeakerInput[]
 }

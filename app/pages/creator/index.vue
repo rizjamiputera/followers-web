@@ -184,7 +184,7 @@
                             </div>
                             <div class="text-center mb-3">
                                 <h3 class="font-bold text-lg text-gray-800 mb-1 line-clamp-1 group-hover:text-green-main transition-colors">
-                                    <span v-if="speaker.honorific" class="font-medium">{{ speaker.honorific }} </span>{{ speaker.name }}
+                                    <span v-if="speaker.honorific" class="font-medium">{{ speaker.honorific }}&nbsp;</span>{{ speaker.name }}
                                 </h3>
                                 <p v-if="speaker.credentials" class="text-sm text-gray-500 line-clamp-1">{{ speaker.credentials }}</p>
                             </div>

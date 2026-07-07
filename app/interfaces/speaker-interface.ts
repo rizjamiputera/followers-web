@@ -26,6 +26,28 @@ export interface SpeakerContent {
     event?: SpeakerContentEvent | null
 }
 
+// A speaker chosen in the article/event editor. Existing speakers carry a
+// speakerId; brand-new ones carry only the typed fields. The `name` is always
+// present for display.
+export interface SelectedSpeaker {
+    speakerId?: string
+    name: string
+    honorific?: string | null
+    credentials?: string | null
+    suffix?: string | null
+    role?: string | null
+}
+
+// Payload shape sent to the article/event API.
+export interface ContentSpeakerInput {
+    speakerId?: string
+    name?: string
+    honorific?: string
+    credentials?: string
+    suffix?: string
+    role?: string
+}
+
 export interface Speaker {
     id: string
     slug: string

@@ -34,7 +34,7 @@
                     <!-- Info -->
                     <div class="flex-1 text-center md:text-left">
                         <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-1">
-                            <span v-if="speaker.honorific" class="font-medium">{{ speaker.honorific }} </span>{{ speaker.name }}
+                            <span v-if="speaker.honorific" class="font-medium">{{ speaker.honorific }}&nbsp;</span>{{ speaker.name }}
                             <span v-if="speaker.suffix" class="text-xl text-green-main/80"> {{ speaker.suffix }}</span>
                         </h1>
                         <p v-if="speaker.credentials" class="text-green-main/70 mb-3">{{ speaker.credentials }}</p>
