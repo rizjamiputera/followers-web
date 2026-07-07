@@ -7,42 +7,72 @@
         <hr class="bg-green-main/30 mb-5">
 
         <!-- Write Comment -->
-        <div class="mb-4" v-if="user">
-            <Textarea v-model="comment" placeholder="Type comment here.." />
-            <div class="flex justify-end mt-2">
-                <Button class="btn-green font-cinzel tracking-wide" @click="submit">Submit</Button>
+        <div class="mb-8" v-if="user">
+            <div class="flex gap-3">
+                <Avatar :avatar="user.avatar_md" :name="user.name" class="w-9 h-9 shrink-0 max-sm:hidden" />
+                <div class="flex-1">
+                    <Textarea v-model="comment" placeholder="Tulis komentar yang baik..." />
+                    <div class="flex justify-end mt-2">
+                        <Button class="btn-green btn-sm font-cinzel tracking-wide" :disabled="!comment.trim()"
+                            @click="submit">Kirim</Button>
+                    </div>
+                </div>
             </div>
         </div>
-        <ButtonLink v-else to="/auth/login" class="btn-green w-full">
+        <ButtonLink v-else to="/auth/login" class="btn-green w-full mb-8">
             Login untuk memberikan komentar positif
         </ButtonLink>
 
-        <div v-if="comments.length === 0" class="text-gray-400">
-            Belum ada komentar
+        <div v-if="comments.length === 0 && !isLoading" class="text-center text-gray-400 py-8">
+            <div class="text-4xl mb-2">💬</div>
+            Belum ada komentar. Jadilah yang pertama!
         </div>
 
-        <div v-else class="flex flex-col gap-1">
-            <div v-for="comment in comments" :key="comment.id">
-                <ContentComment :comment />
+        <div v-else class="flex flex-col gap-6">
+            <div v-for="comment in comments" :key="comment.id" class="flex flex-col gap-3">
+                <ContentComment :comment @reply="openReply(comment)" />
 
-                <!-- Second level comments (replies) -->
-                <div v-if="comment.replies && comment.replies.length > 0" class="flex flex-col gap-1 pl-10">
-                    <template v-for="reply in comment.replies" :key="reply.id">
-                        <ContentComment :comment="reply" />
-                    </template>
+                <!-- Replies (single level, Instagram-style) with a thread line -->
+                <div v-if="comment.replies && comment.replies.length > 0"
+                    class="flex flex-col gap-3 ml-[1.125rem] pl-6 border-l-2 border-gray-100">
+                    <ContentComment v-for="reply in comment.replies" :key="reply.id" :comment="reply" compact
+                        @reply="openReply(comment, reply)" />
+                </div>
+
+                <!-- Reply composer -->
+                <div v-if="user && replyTarget?.topLevelId === comment.id"
+                    class="ml-[1.125rem] pl-6 border-l-2 border-green-main/20">
+                    <div v-if="replyTarget.mentioned"
+                        class="text-xs text-gray-500 mb-1.5 flex items-center gap-1.5">
+                        <LucideCornerDownRight :size="13" class="text-gray-400" />
+                        Membalas
+                        <span class="font-medium text-green-main">@{{ replyTarget.mentioned.name }}</span>
+                        <button type="button" @click="cancelReply"
+                            class="text-gray-400 hover:text-gray-600 ml-0.5">✕</button>
+                    </div>
+                    <Textarea v-model="replyText" placeholder="Tulis balasan..." />
+                    <div class="flex justify-end gap-2 mt-2">
+                        <Button class="btn-ghost btn-sm" @click="cancelReply">Batal</Button>
+                        <Button class="btn-green btn-sm font-cinzel tracking-wide"
+                            :disabled="!replyText.trim() || replySubmitting" @click="submitReply(comment)">
+                            <span v-if="replySubmitting" class="loading loading-spinner loading-xs"></span>
+                            Balas
+                        </Button>
+                    </div>
                 </div>
             </div>
 
             <ContentCommentSkeleton v-if="isLoading" v-for="n in 3" :key="n" />
 
             <div class="flex justify-center" v-if="stats && (stats.commentCount > comments.length)">
-                <Button class="btn-sm btn-green text-nowrap w-min" @click="loadMore">Load more comments</Button>
+                <Button class="btn-sm btn-outline-green text-nowrap w-min" @click="loadMore">Muat komentar lain</Button>
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
+import { LucideCornerDownRight } from 'lucide-vue-next';
 import type { Comment, ContentStats } from '~/interfaces/content-interface';
 const { user } = useAuthStore();
 
@@ -86,6 +116,61 @@ const submit = async () => {
 
     }
 }
+
+// REPLY (single level, Instagram-style: always attaches to the top-level
+// comment; replying to a reply just mentions that reply's author)
+const replyTarget = ref<{ topLevelId: string; mentioned?: { id: string; name: string } } | null>(null);
+const replyText = ref<string>('');
+const replySubmitting = ref<boolean>(false);
+
+const openReply = (topLevel: Comment, reply?: Comment) => {
+    if (!user) return;
+    const mentioned = reply?.user
+        ? { id: reply.user.id, name: reply.user.name ?? '' }
+        : undefined;
+    replyTarget.value = { topLevelId: topLevel.id, mentioned };
+    replyText.value = '';
+};
+
+const cancelReply = () => {
+    replyTarget.value = null;
+    replyText.value = '';
+};
+
+const submitReply = async (topLevel: Comment) => {
+    if (!props.stats || !replyTarget.value) return;
+    const text = replyText.value.trim();
+    if (!text || replySubmitting.value) return;
+
+    replySubmitting.value = true;
+    try {
+        const newReply = await Api.post('/v1/comment?includes=user', {
+            contentId: props.contentId,
+            comment: text,
+            statsId: props.stats.id,
+            parentId: replyTarget.value.topLevelId,
+            mentionedId: replyTarget.value.mentioned?.id,
+        }) as Comment;
+
+        // The create endpoint doesn't return `mentioned`; attach it locally.
+        if (replyTarget.value.mentioned) {
+            newReply.mentioned = {
+                id: replyTarget.value.mentioned.id,
+                name: replyTarget.value.mentioned.name,
+            } as any;
+        }
+
+        if (!topLevel.replies) topLevel.replies = [];
+        topLevel.replies.push(newReply);
+
+        cancelReply();
+        emits('addComment');
+    } catch (error) {
+        // Api.handleError already surfaces the error
+    } finally {
+        replySubmitting.value = false;
+    }
+};
 </script>
 
 <style scoped></style>

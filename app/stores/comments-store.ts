@@ -19,7 +19,7 @@ export const useCommentsStore = defineStore('comments', {
         parameters: {
             limit: 12,
             page: 1,
-            includes: ['user', 'reactions']
+            includes: ['user', 'reactions', 'replies']
         },
         isLoading: false,
         isError: false,
