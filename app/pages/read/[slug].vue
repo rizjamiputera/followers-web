@@ -73,14 +73,14 @@
                     </div>
 
                     <!-- PEMATERI -->
-                    <div v-if="data.speakers && data.speakers.length" class="flex flex-wrap items-center gap-2">
-                        <span class="text-sm font-medium text-gray-500">Pemateri:</span>
-                        <NuxtLink v-for="sp in data.speakers" :key="sp.id" :to="`/pemateri/${sp.slug}`"
-                            prefetch-on="interaction"
-                            class="badge badge-success badge-outline border-green-main/30 text-green-main rounded-full gap-1 hover:bg-green-main/10">
-                            <span v-if="sp.honorific" class="opacity-70">{{ sp.honorific }}&nbsp;</span>{{ sp.name }}
-                            <span v-if="sp.suffix" class="opacity-60" dir="rtl">{{ sp.suffix }}</span>
-                        </NuxtLink>
+                    <div v-if="data.speakers && data.speakers.length" class="text-sm">
+                        <span class="font-medium text-gray-500">Pemateri: </span>
+                        <template v-for="(sp, i) in data.speakers" :key="sp.id"><NuxtLink :to="`/pemateri/${sp.slug}`"
+                                prefetch-on="interaction"
+                                class="font-medium text-gray-800 hover:text-green-main transition-colors"><span
+                                    v-if="sp.honorific" class="font-normal text-gray-500">{{ sp.honorific }}&nbsp;</span>{{ sp.name }}<template
+                                    v-if="sp.suffix">&nbsp;<span class="text-gray-400" dir="rtl">{{ sp.suffix }}</span></template></NuxtLink><span
+                                v-if="i < data.speakers.length - 1" class="text-gray-400">, </span></template>
                     </div>
 
                     <!-- content -->

@@ -57,19 +57,28 @@
                             </div>
                         </div>
 
-                        <!-- location  schedule time -->
-                        <EventLocationSchedule :data />
-                    </div>
-
-                    <!-- PEMATERI -->
-                    <div v-if="data.speakers && data.speakers.length" class="flex flex-wrap items-center gap-2">
-                        <span class="text-sm font-medium text-gray-500">Pemateri:</span>
-                        <NuxtLink v-for="sp in data.speakers" :key="sp.id" :to="`/pemateri/${sp.slug}`"
-                            prefetch-on="interaction"
-                            class="badge badge-success badge-outline border-green-main/30 text-green-main rounded-full gap-1 hover:bg-green-main/10">
-                            <span v-if="sp.honorific" class="opacity-70">{{ sp.honorific }}&nbsp;</span>{{ sp.name }}
-                            <span v-if="sp.suffix" class="opacity-60" dir="rtl">{{ sp.suffix }}</span>
-                        </NuxtLink>
+                        <!-- location · schedule · pemateri (one cohesive card) -->
+                        <EventLocationSchedule :data class="mt-2">
+                            <template #pemateri>
+                                <div v-if="data.speakers && data.speakers.length"
+                                    class="flex items-start gap-3 p-3.5">
+                                    <div class="grid place-items-center w-9 h-9 rounded-xl bg-green-main/10 text-green-main shrink-0">
+                                        <LucideMic2 :size="18" />
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <div class="text-xs text-gray-400 mb-0.5">Pemateri</div>
+                                        <div class="text-sm">
+                                            <template v-for="(sp, i) in data.speakers" :key="sp.id"><NuxtLink
+                                                    :to="`/pemateri/${sp.slug}`" prefetch-on="interaction"
+                                                    class="font-medium text-gray-800 hover:text-green-main transition-colors"><span
+                                                        v-if="sp.honorific" class="font-normal text-gray-500">{{ sp.honorific }}&nbsp;</span>{{ sp.name }}<template
+                                                        v-if="sp.suffix">&nbsp;<span class="text-gray-400" dir="rtl">{{ sp.suffix }}</span></template></NuxtLink><span
+                                                    v-if="i < data.speakers.length - 1" class="text-gray-400">, </span></template>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </EventLocationSchedule>
                     </div>
 
                     <!-- content -->
@@ -207,7 +216,7 @@
 <script lang="ts" setup>
 import {
     LucideShare2, LucideThumbsDown, LucideThumbsUp, LucideX,
-    LucideAlertTriangle, LucideCheckCircle, LucideXCircle, LucideLoader2
+    LucideAlertTriangle, LucideCheckCircle, LucideXCircle, LucideLoader2, LucideMic2
 } from 'lucide-vue-next';
 import { ReactionType } from '~/interfaces/content-interface';
 import type { Event } from '~/interfaces/event-interface';
