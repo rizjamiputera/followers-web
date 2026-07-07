@@ -25,6 +25,13 @@
                 {{ value.replace('_', ' ') }}
             </option>
         </select>
+
+        <select v-if="showSort" v-model="sort"
+            class="select w-48 select-sm rounded-full focus:outline-green-main/40 border-green-main/20">
+            <option v-for="opt in CONTENT_SORT_OPTIONS" :key="opt.key" :value="opt.key">
+                {{ opt.label }}
+            </option>
+        </select>
     </div>
 </template>
 
@@ -35,9 +42,11 @@ const search = defineModel<string>('search', { default: '' });
 const status = defineModel<ContentStatus | ''>('status', { default: '' });
 const tagSlug = defineModel<string>('tagSlug', { default: '' });
 const categoryId = defineModel<string>('categoryId', { default: '' });
+const sort = defineModel<string>('sort', { default: 'newest' });
 
 defineProps<{
     hideStatus?: boolean
+    showSort?: boolean
     searchPlaceholder?: string
 }>();
 

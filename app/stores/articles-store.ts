@@ -12,6 +12,7 @@ interface ArticlesStoreState {
     authorId?: string
     tagSlug?: string
     categoryId?: string
+    sort: string
     isLoading: boolean
     isError: boolean
 }
@@ -29,11 +30,13 @@ export const useArticlesStore = defineStore('articles', {
         authorId: undefined,
         tagSlug: undefined,
         categoryId: undefined,
+        sort: 'newest',
         isLoading: false,
         isError: false
     }),
     getters: {
         apiPath: (state) => {
+            const sort = resolveContentSort(state.sort);
             return queryString.stringifyUrl({
                 url: '/v1/article',
                 query: {
@@ -45,8 +48,8 @@ export const useArticlesStore = defineStore('articles', {
                     status: state.status,
                     tags: state.tagSlug || undefined,
                     categoryId: state.categoryId || undefined,
-                    sortBy: 'createdAt',
-                    order: 'desc'
+                    sortBy: sort.sortBy,
+                    order: sort.order
                 },
             });
         },
@@ -77,6 +80,7 @@ export const useArticlesStore = defineStore('articles', {
             this.authorId = undefined;
             this.tagSlug = undefined;
             this.categoryId = undefined;
+            this.sort = 'newest';
             this.isLoading = false;
             this.isError = false;
 

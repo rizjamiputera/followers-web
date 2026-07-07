@@ -14,6 +14,7 @@ interface EventsStoreState {
     categoryId?: string
     sortBy: string
     order: OrderBy
+    sort: string
     isLoading: boolean
     isError: boolean
 }
@@ -33,11 +34,13 @@ export const useEventsStore = defineStore('events', {
         categoryId: undefined,
         sortBy: 'createdAt',
         order: OrderBy.DESC,
+        sort: 'newest',
         isLoading: false,
         isError: false
     }),
     getters: {
         apiPath: (state) => {
+            const sort = resolveContentSort(state.sort);
             return queryString.stringifyUrl({
                 url: '/v1/event',
                 query: {
@@ -49,8 +52,8 @@ export const useEventsStore = defineStore('events', {
                     status: state.status,
                     tags: state.tagSlug || undefined,
                     categoryId: state.categoryId || undefined,
-                    sortBy: state.sortBy,
-                    order: 'desc'
+                    sortBy: sort.sortBy,
+                    order: sort.order
                 },
             });
         },
@@ -81,6 +84,7 @@ export const useEventsStore = defineStore('events', {
             this.authorId = undefined;
             this.tagSlug = undefined;
             this.categoryId = undefined;
+            this.sort = 'newest';
             this.isLoading = false;
             this.isError = false;
 

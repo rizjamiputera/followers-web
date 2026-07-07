@@ -12,7 +12,9 @@
                 v-model:status="filterStatus"
                 v-model:tag-slug="filterTagSlug"
                 v-model:category-id="filterCategoryId"
+                v-model:sort="filterSort"
                 :hide-status="!!subtitle"
+                show-sort
                 search-placeholder="Cari event.." />
         </div>
 
@@ -51,6 +53,9 @@
                                     <div class="join join-horizontal">
                                         <div class="badge max-sm:badge-sm join-item font-light rounded-l-full">
                                             <LucideEye :size="14" /> {{ dt.stats?.readCount }}
+                                        </div>
+                                        <div class="badge max-sm:badge-sm join-item font-light">
+                                            <LucideMessageCircle :size="14" /> {{ dt.stats?.commentCount }}
                                         </div>
                                         <div class="badge max-sm:badge-sm join-item font-light">
                                             <LucideShare2 :size="14" /> {{ dt.stats?.shareCount }}
@@ -185,7 +190,7 @@
 
 <script lang="ts" setup>
 import dayjs from 'dayjs';
-import { LucideBookmark, LucideEye, LucideLink, LucideShare2, LucideThumbsDown, LucideThumbsUp, LucideUsers } from 'lucide-vue-next';
+import { LucideBookmark, LucideEye, LucideLink, LucideShare2, LucideThumbsDown, LucideThumbsUp, LucideUsers, LucideMessageCircle } from 'lucide-vue-next';
 import type { ContentStatus } from '~/interfaces/content-interface';
 import type { Event } from '~/interfaces/event-interface';
 import { Module, Permission } from '~/interfaces/user-interface';
@@ -259,6 +264,10 @@ const filterTagSlug = computed({
 const filterCategoryId = computed({
     get: () => EventsStore.categoryId ?? '',
     set: (v) => { EventsStore.categoryId = v || undefined; refetch(); }
+});
+const filterSort = computed({
+    get: () => EventsStore.sort,
+    set: (v) => { EventsStore.sort = v || 'newest'; refetch(); }
 });
 
 
