@@ -30,13 +30,13 @@
 
         <div v-else class="flex flex-col gap-6">
             <div v-for="comment in comments" :key="comment.id" class="flex flex-col gap-3">
-                <ContentComment :comment @reply="openReply(comment)" />
+                <ContentComment :comment @reply="openReply(comment)" @delete="askDelete(comment)" />
 
                 <!-- Replies (single level, Instagram-style) with a thread line -->
                 <div v-if="comment.replies && comment.replies.length > 0"
                     class="flex flex-col gap-3 ml-[1.125rem] pl-6 border-l-2 border-gray-100">
                     <ContentComment v-for="reply in comment.replies" :key="reply.id" :comment="reply" compact
-                        @reply="openReply(comment, reply)" />
+                        @reply="openReply(comment, reply)" @delete="askDelete(reply, comment)" />
                 </div>
 
                 <!-- Reply composer -->
@@ -48,7 +48,7 @@
                         Membalas
                         <span class="font-medium text-green-main">@{{ replyTarget.mentioned.name }}</span>
                         <button type="button" @click="cancelReply"
-                            class="text-gray-400 hover:text-gray-600 ml-0.5">✕</button>
+                            class="text-gray-400 hover:text-gray-600 ml-0.5 cursor-pointer">✕</button>
                     </div>
                     <Textarea v-model="replyText" placeholder="Tulis balasan..." />
                     <div class="flex justify-end gap-2 mt-2">
@@ -64,10 +64,28 @@
 
             <ContentCommentSkeleton v-if="isLoading" v-for="n in 3" :key="n" />
 
-            <div class="flex justify-center" v-if="stats && (stats.commentCount > comments.length)">
+            <div class="flex justify-center" v-if="!isLoading && comments.length < total">
                 <Button class="btn-sm btn-outline-green text-nowrap w-min" @click="loadMore">Muat komentar lain</Button>
             </div>
         </div>
+
+        <!-- Delete confirm -->
+        <Modal :show="!!deleteTarget" @close="deleteTarget = null">
+            <div class="p-6">
+                <h3 class="text-lg font-semibold mb-2">Hapus Komentar</h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    Yakin ingin menghapus komentar ini?
+                    <span v-if="deleteTarget && !deleteTarget.parent">Balasan pada komentar ini juga akan terhapus.</span>
+                </p>
+                <div class="flex justify-end gap-2">
+                    <Button class="btn-ghost" @click="deleteTarget = null">Batal</Button>
+                    <Button class="btn-error" :disabled="deleting" @click="confirmDelete">
+                        <span v-if="deleting" class="loading loading-spinner loading-xs"></span>
+                        Hapus
+                    </Button>
+                </div>
+            </div>
+        </Modal>
     </div>
 </template>
 
@@ -86,7 +104,7 @@ const props = defineProps<{
 const CommentsStore = useCommentsStore();
 const { get } = CommentsStore;
 
-const { isLoading, comments } = storeToRefs(CommentsStore);
+const { isLoading, comments, total } = storeToRefs(CommentsStore);
 const { loadMore } = CommentsStore;
 CommentsStore.contentId = props.contentId;
 CommentsStore.parameters.page = 1;
@@ -135,6 +153,37 @@ const openReply = (topLevel: Comment, reply?: Comment) => {
 const cancelReply = () => {
     replyTarget.value = null;
     replyText.value = '';
+};
+
+// DELETE (author or admin). Deleting a top-level comment also removes its
+// replies (handled by the backend); mirror that in local state.
+const deleteTarget = ref<{ comment: Comment; parent?: Comment } | null>(null);
+const deleting = ref<boolean>(false);
+
+const askDelete = (comment: Comment, parent?: Comment) => {
+    deleteTarget.value = { comment, parent };
+};
+
+const confirmDelete = async () => {
+    if (!deleteTarget.value || deleting.value) return;
+    const { comment, parent } = deleteTarget.value;
+    deleting.value = true;
+    try {
+        await Api.remove('/v1/comment/' + comment.id);
+
+        if (parent) {
+            parent.replies = (parent.replies ?? []).filter(r => r.id !== comment.id);
+        } else {
+            comments.value = comments.value.filter(c => c.id !== comment.id);
+        }
+
+        deleteTarget.value = null;
+        emits('addComment'); // resync stats (comment count)
+    } catch (error) {
+        // Api.handleError surfaces the error
+    } finally {
+        deleting.value = false;
+    }
 };
 
 const submitReply = async (topLevel: Comment) => {

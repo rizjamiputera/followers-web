@@ -28,6 +28,7 @@ export enum Module {
     ARTICLE = 'ARTICLE',
     EVENT = 'EVENT',
     USER = 'USER',
+    COMMENT = 'COMMENT',
 }
 
 export enum Permission {

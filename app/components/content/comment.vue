@@ -14,10 +14,14 @@
                     {{ comment.comment }}
                 </div>
             </div>
-            <div v-if="user && !hideReply" class="flex items-center gap-4 mt-1 ml-3.5">
-                <button type="button" @click="$emit('reply')"
-                    class="text-xs font-semibold text-gray-400 hover:text-green-main transition-colors">
+            <div v-if="user" class="flex items-center gap-4 mt-1 ml-3.5">
+                <button v-if="!hideReply" type="button" @click="$emit('reply')"
+                    class="text-xs font-semibold text-gray-400 hover:text-green-main transition-colors cursor-pointer">
                     Balas
+                </button>
+                <button v-if="canDelete" type="button" @click="$emit('delete')"
+                    class="text-xs font-semibold text-gray-400 hover:text-red-500 transition-colors cursor-pointer">
+                    Hapus
                 </button>
             </div>
         </div>
@@ -27,16 +31,25 @@
 <script lang="ts" setup>
 import type { Comment } from '~/interfaces/content-interface';
 import { getRelativeTime } from '~/utils/get-relative-time';
+import { Module, Permission } from '~/interfaces/user-interface';
 
-defineProps<{
+const props = defineProps<{
     comment: Comment
     hideReply?: boolean
     compact?: boolean
 }>()
 
-defineEmits<{ reply: [] }>()
+defineEmits<{ reply: [], delete: [] }>()
 
-const { user } = useAuthStore();
+const authStore = useAuthStore();
+const { user } = authStore;
+
+// Author can delete their own comment; admins/moderators can delete any.
+const canDelete = computed(() => {
+    if (!authStore.user) return false;
+    return props.comment.user?.id === authStore.user.id
+        || authStore.can(Module.COMMENT, Permission.DELETE);
+});
 </script>
 
 <style></style>

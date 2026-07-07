@@ -35,6 +35,10 @@ button {
     @apply gap-2 overflow-hidden text-nowrap;
 }
 
+button:not(:disabled) {
+    @apply cursor-pointer;
+}
+
 /* button>div {
     @apply flex justify-between gap-3;
 } */
