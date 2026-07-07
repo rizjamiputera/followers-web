@@ -142,14 +142,95 @@
                     <p>Semua penulis telah ditampilkan</p>
                 </div>
             </div>
+
+            <!-- ===== PEMATERI ===== -->
+            <div class="mt-12 pt-8 border-t border-green-main/15">
+                <div class="mb-6">
+                    <DefaultTitle>Pemateri</DefaultTitle>
+                    <DefaultSubtitle>Para pemateri yang ilmunya menjadi bacaan</DefaultSubtitle>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+                    <template v-if="speakers.length === 0 && !speakersLoading">
+                        <div class="col-span-full text-center py-10">
+                            <div class="text-5xl mb-3">🎙️</div>
+                            <div class="text-lg text-green-main/70 mb-1">Belum ada pemateri</div>
+                            <div class="text-gray-500 text-sm">Pemateri akan muncul setelah ditautkan ke kajian</div>
+                        </div>
+                    </template>
+
+                    <template v-for="(speaker, n) in speakers" :key="speaker.slug || n">
+                        <NuxtLink :to="`/pemateri/${speaker.slug}`" prefetch-on="interaction"
+                            class="group bg-white border border-green-main/20 rounded-xl p-4 hover:shadow-lg hover:border-green-main/40 transition-all duration-300 hover:-translate-y-1">
+                            <div class="flex justify-center mb-4">
+                                <div class="relative">
+                                    <Image v-if="speaker.avatar_md" :src="speaker.avatar_md"
+                                        class="w-20 h-20 rounded-full bg-cover bg-center border-3 border-green-main/20 group-hover:border-green-main/40 transition-colors" />
+                                    <div v-else
+                                        class="w-20 h-20 rounded-full bg-gradient-to-br from-green-main/20 to-green-main/40 flex items-center justify-center border-3 border-green-main/20">
+                                        <span class="text-2xl font-bold text-green-main">{{
+                                            speaker.name?.charAt(0)?.toUpperCase() }}</span>
+                                    </div>
+                                    <div v-if="speaker.verified"
+                                        class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-main rounded-full flex items-center justify-center"
+                                        title="Terverifikasi">
+                                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                clip-rule="evenodd"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center mb-3">
+                                <h3 class="font-bold text-lg text-gray-800 mb-1 line-clamp-1 group-hover:text-green-main transition-colors">
+                                    <span v-if="speaker.honorific" class="font-medium">{{ speaker.honorific }} </span>{{ speaker.name }}
+                                </h3>
+                                <p v-if="speaker.credentials" class="text-sm text-gray-500 line-clamp-1">{{ speaker.credentials }}</p>
+                            </div>
+                            <div class="flex justify-center items-center gap-1 text-sm text-gray-600">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                {{ speaker._count?.contents || 0 }} kajian
+                            </div>
+                        </NuxtLink>
+                    </template>
+
+                    <template v-if="speakersLoading">
+                        <div v-for="m in 4" :key="`sk-${m}`" class="bg-white border border-green-main/20 rounded-xl p-4 animate-pulse">
+                            <div class="flex justify-center mb-4">
+                                <div class="w-20 h-20 rounded-full bg-green-main/20"></div>
+                            </div>
+                            <div class="text-center mb-3">
+                                <div class="h-5 bg-green-main/20 rounded w-3/4 mx-auto mb-2"></div>
+                                <div class="h-4 bg-green-main/20 rounded w-1/2 mx-auto"></div>
+                            </div>
+                            <div class="flex justify-center">
+                                <div class="h-4 bg-green-main/20 rounded w-20"></div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="flex justify-center mt-8">
+                    <Button v-if="speakers.length < speakersTotal && !speakersLoading"
+                        class="btn btn-green font-cinzel tracking-wide px-8 py-3 text-lg" @click="loadMoreSpeakers">
+                        Lihat lebih banyak pemateri
+                    </Button>
+                </div>
+            </div>
         </div>
     </section>
 </template>
 
 <script lang="ts" setup>
+import type { Paginate } from '~/interfaces/app-interface'
+import type { Speaker } from '~/interfaces/speaker-interface'
 
 // SEO and META
-const { public: { webUri } } = useRuntimeConfig();
+const { public: { webUri, apiUri } } = useRuntimeConfig();
 const title = 'Creator - Followers Bicara';
 const description = "Ruang dakwah, tempat para ustadz berbagi ilmu, nasihat, dan inspirasi.";
 
@@ -198,6 +279,38 @@ const loadMore = () => {
 
 
 onUnmounted(reset);
+
+// ===== PEMATERI (speakers) — direct fetch, no Pinia =====
+const SPEAKER_LIMIT = 12;
+const speakers = useState<Speaker[]>('creator-speakers', () => []);
+const speakersTotal = useState<number>('creator-speakers-total', () => 0);
+const speakersPage = ref(1);
+const speakersLoading = ref(false);
+
+async function loadSpeakers(reset = false) {
+    speakersLoading.value = true;
+    try {
+        const res = await $fetch<Paginate<Speaker[]>>(`${apiUri}/v1/speakers`, {
+            query: { page: speakersPage.value, limit: SPEAKER_LIMIT, sortBy: 'name', order: 'asc' },
+        });
+        speakersTotal.value = res.total;
+        speakers.value = reset ? res.data : [...speakers.value, ...res.data];
+    } finally {
+        speakersLoading.value = false;
+    }
+}
+
+// SSR-fetch the first page so the section is crawlable and hydrates cleanly
+await useAsyncData('creator-speakers-initial', async () => {
+    speakersPage.value = 1;
+    await loadSpeakers(true);
+    return true;
+});
+
+function loadMoreSpeakers() {
+    speakersPage.value++;
+    loadSpeakers(false);
+}
 </script>
 
 <style></style>

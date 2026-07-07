@@ -27,10 +27,14 @@ function toArray<T>(res: PaginatedResponse<T>): T[] {
     return []
 }
 
+function isoDate(d: Date): string {
+    return d.toISOString().split('T')[0] ?? ''
+}
+
 function formatDate(dateStr?: string): string {
-    if (!dateStr) return new Date().toISOString().split('T')[0]
+    if (!dateStr) return isoDate(new Date())
     const d = new Date(dateStr)
-    return isNaN(d.getTime()) ? new Date().toISOString().split('T')[0] : d.toISOString().split('T')[0]
+    return isNaN(d.getTime()) ? isoDate(new Date()) : isoDate(d)
 }
 
 function urlEntry(loc: string, lastmod?: string): string {
@@ -61,7 +65,7 @@ export default defineEventHandler(async (event) => {
     const categories = categoriesResult.status === 'fulfilled' ? toArray(categoriesResult.value) : []
     const speakers = speakersResult.status === 'fulfilled' ? toArray(speakersResult.value) : []
 
-    const staticPages = ['/', '/kegiatan', '/creator', '/pemateri']
+    const staticPages = ['/', '/kegiatan', '/creator']
 
     const entries: string[] = [
         ...staticPages.map(path => urlEntry(`${base}${path}`, today)),

@@ -51,11 +51,6 @@
                                 Penulis
                             </NuxtLink>
                         </li>
-                        <li>
-                            <NuxtLink to="/pemateri" prefetch-on="interaction" class="nav-link">
-                                Pemateri
-                            </NuxtLink>
-                        </li>
                         <template v-if="false">
                             <li>
                                 <button @click="show_product_menu = !show_product_menu"
