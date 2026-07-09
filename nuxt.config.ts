@@ -1,6 +1,8 @@
 import tailwindcss from "@tailwindcss/vite";
 
 const isProd = process.env.NUXT_PUBLIC_ENV === 'production';
+const webUri = (process.env.NUXT_PUBLIC_WEB_URI ?? '').replace(/\/$/, '');
+const sitemapUrl = `${webUri}/sitemap.xml`;
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -9,7 +11,7 @@ export default defineNuxtConfig({
     css: ['~/assets/css/main.css'],
     app: {
         head: {
-            htmlAttrs: { 'data-theme': 'light' },
+            htmlAttrs: { 'data-theme': 'light', lang: 'id' },
         },
     },
     vite: {
@@ -31,6 +33,7 @@ export default defineNuxtConfig({
     robots: isProd
         ? {
               groups: [{ userAgent: ['*'], allow: ['/'] }],
+              sitemap: sitemapUrl,
           }
         : {
               groups: [{ userAgent: ['*'], disallow: ['/'] }],

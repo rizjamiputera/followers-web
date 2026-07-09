@@ -56,18 +56,65 @@ import type { Article } from '~/interfaces/article-interface';
 
 // SEO and META
 const { public: { webUri } } = useRuntimeConfig();
-const title = 'Followers Bicara';
-const description = "Ruang dakwah, tempat para ustadz berbagi ilmu, nasihat, dan inspirasi.";
+const siteName = 'FollowersBicara.com';
+const title = 'Followers Bicara — Ruang Dakwah, Ilmu, dan Inspirasi Islami';
+const description = "Ruang dakwah tempat para ustadz berbagi ilmu, nasihat, dan inspirasi. Baca artikel Islami terbaru dan ikuti kajian serta kegiatan dakwah.";
+const ogImage = webUri + '/logo-hitam.jpg';
 
 useSeoMeta({
     title: () => title,
     ogTitle: () => title,
+    twitterTitle: () => title,
     description: () => description,
     ogDescription: () => description,
-    ogImage: () => webUri + '/logo-hitam.jpg',
+    twitterDescription: () => description,
+    ogImage: () => ogImage,
+    twitterImage: () => ogImage,
     twitterCard: 'summary_large_image',
-    ogSiteName: 'FollowersBicara.com',
-    ogUrl: webUri
+    ogType: 'website',
+    ogLocale: 'id_ID',
+    ogSiteName: siteName,
+    ogUrl: webUri,
+});
+
+// Canonical + structured data (Organization + WebSite) so search engines can
+// build the knowledge panel and a sitelinks search box for the homepage.
+useHead({
+    link: [{ rel: 'canonical', href: webUri }],
+    script: [
+        {
+            type: 'application/ld+json',
+            innerHTML: JSON.stringify({
+                '@context': 'https://schema.org',
+                '@graph': [
+                    {
+                        '@type': 'Organization',
+                        '@id': `${webUri}/#organization`,
+                        name: siteName,
+                        url: webUri,
+                        logo: ogImage,
+                        description,
+                    },
+                    {
+                        '@type': 'WebSite',
+                        '@id': `${webUri}/#website`,
+                        name: siteName,
+                        url: webUri,
+                        inLanguage: 'id-ID',
+                        publisher: { '@id': `${webUri}/#organization` },
+                        potentialAction: {
+                            '@type': 'SearchAction',
+                            target: {
+                                '@type': 'EntryPoint',
+                                urlTemplate: `${webUri}/search?q={search_term_string}`,
+                            },
+                            'query-input': 'required name=search_term_string',
+                        },
+                    },
+                ],
+            }),
+        },
+    ],
 });
 
 const { isEmpty } = storeToRefs(useLatestArticleStore());
