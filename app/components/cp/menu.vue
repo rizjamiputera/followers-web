@@ -34,6 +34,9 @@
                             <li v-if="can(Module.USER, Permission.READ)">
                                 <NuxtLink to="/cp/creators" prefetch-on="interaction">Creator</NuxtLink>
                             </li>
+                            <li v-if="isSuperOrAdmin">
+                                <NuxtLink to="/cp/settings" prefetch-on="interaction">Site Settings</NuxtLink>
+                            </li>
                         </ul>
                     </template>
 

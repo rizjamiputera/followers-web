@@ -54,67 +54,29 @@
 import { PagesIndexLatest } from '#components';
 import type { Article } from '~/interfaces/article-interface';
 
-// SEO and META
+// SEO and META. Site title/tagline/description/OG image are admin-editable
+// via Site Settings; site-wide Organization + WebSite JSON-LD lives in app.vue.
 const { public: { webUri } } = useRuntimeConfig();
-const siteName = 'FollowersBicara.com';
-const title = 'Followers Bicara — Ruang Dakwah, Ilmu, dan Inspirasi Islami';
-const description = "Ruang dakwah tempat para ustadz berbagi ilmu, nasihat, dan inspirasi. Baca artikel Islami terbaru dan ikuti kajian serta kegiatan dakwah.";
-const ogImage = webUri + '/logo-hitam.jpg';
+const { settings } = storeToRefs(useSiteSettingsStore());
+
+const title = computed(() => `${settings.value.site_title} — ${settings.value.tagline}`);
+const description = computed(() => settings.value.meta_description);
 
 useSeoMeta({
-    title: () => title,
-    ogTitle: () => title,
-    twitterTitle: () => title,
-    description: () => description,
-    ogDescription: () => description,
-    twitterDescription: () => description,
-    ogImage: () => ogImage,
-    twitterImage: () => ogImage,
-    twitterCard: 'summary_large_image',
+    title: () => title.value,
+    ogTitle: () => title.value,
+    twitterTitle: () => title.value,
+    description: () => description.value,
+    ogDescription: () => description.value,
+    twitterDescription: () => description.value,
     ogType: 'website',
     ogLocale: 'id_ID',
-    ogSiteName: siteName,
     ogUrl: webUri,
 });
 
-// Canonical + structured data (Organization + WebSite) so search engines can
-// build the knowledge panel and a sitelinks search box for the homepage.
+// Homepage canonical (ogImage/ogSiteName/description defaults come from app.vue).
 useHead({
     link: [{ rel: 'canonical', href: webUri }],
-    script: [
-        {
-            type: 'application/ld+json',
-            innerHTML: JSON.stringify({
-                '@context': 'https://schema.org',
-                '@graph': [
-                    {
-                        '@type': 'Organization',
-                        '@id': `${webUri}/#organization`,
-                        name: siteName,
-                        url: webUri,
-                        logo: ogImage,
-                        description,
-                    },
-                    {
-                        '@type': 'WebSite',
-                        '@id': `${webUri}/#website`,
-                        name: siteName,
-                        url: webUri,
-                        inLanguage: 'id-ID',
-                        publisher: { '@id': `${webUri}/#organization` },
-                        potentialAction: {
-                            '@type': 'SearchAction',
-                            target: {
-                                '@type': 'EntryPoint',
-                                urlTemplate: `${webUri}/search?q={search_term_string}`,
-                            },
-                            'query-input': 'required name=search_term_string',
-                        },
-                    },
-                ],
-            }),
-        },
-    ],
 });
 
 const { isEmpty } = storeToRefs(useLatestArticleStore());
