@@ -15,13 +15,34 @@ const { settings } = storeToRefs(settingsStore);
 
 const abs = (url: string) => (/^https?:\/\//.test(url) ? url : base + url);
 
+const ogImageUrl = computed(() => abs(settings.value.og_image));
+// The default share card is a known 1200x630 PNG. Uploaded images are resized
+// to 1200px wide (variable height) as webp by the backend pipeline.
+const ogIsDefault = computed(
+    () => !settings.value.og_image || /\/og-image\.png$/i.test(settings.value.og_image),
+);
+const ogImageType = computed(() => {
+    const u = ogImageUrl.value;
+    if (/\.png$/i.test(u)) return 'image/png';
+    if (/\.webp$/i.test(u)) return 'image/webp';
+    if (/\.jpe?g$/i.test(u)) return 'image/jpeg';
+    return undefined;
+});
+
 // Site-wide meta defaults. Individual pages override title/description/etc.
+// Explicit image dimensions/type help stricter scrapers (e.g. WhatsApp Web)
+// render the large preview reliably.
 useSeoMeta({
     ogSiteName: () => settings.value.site_title,
     description: () => settings.value.meta_description,
     ogDescription: () => settings.value.meta_description,
-    ogImage: () => abs(settings.value.og_image),
-    twitterImage: () => abs(settings.value.og_image),
+    ogImage: () => ogImageUrl.value,
+    ogImageSecureUrl: () => ogImageUrl.value,
+    ogImageType: () => ogImageType.value,
+    ogImageWidth: () => 1200,
+    ogImageHeight: () => (ogIsDefault.value ? 630 : undefined),
+    ogImageAlt: () => `${settings.value.site_title} — ${settings.value.tagline}`,
+    twitterImage: () => ogImageUrl.value,
     twitterCard: 'summary_large_image',
 });
 
