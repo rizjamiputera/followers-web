@@ -1,5 +1,5 @@
 <template>
-    <LazyModal v-if="show" :show max-width="max-w-md" @close="$emit('close')">
+    <LazyModal v-if="show" :show :max-width="maxWidth" @close="$emit('close')">
         <div class="flex flex-col gap-2">
             <div class="font-semibold">{{ title }}</div>
             <div v-if="message" class="text-sm text-gray-500">{{ message }}</div>
@@ -28,11 +28,13 @@ withDefaults(defineProps<{
     confirmText?: string
     cancelText?: string
     confirmClass?: string
+    maxWidth?: string
     loading?: boolean
 }>(), {
     confirmText: 'Ya',
     cancelText: 'Batal',
     confirmClass: 'btn-green',
+    maxWidth: 'max-w-md',
     loading: false,
 });
 </script>

@@ -156,52 +156,22 @@
         </div>
     </div>
 
-    <LazyModal v-if="confirm_cancel" :show="confirm_cancel" @close="confirm_cancel = false">
-        Are you sure to discard?
-        <div class="modal-action">
-            <Button @click="confirm_cancel = false">Lanjutkan</Button>
-            <ButtonLink to="/cp/my-articles" class="btn-green">
-                Yes
-            </ButtonLink>
+    <ConfirmModal v-if="confirm_cancel" :show="confirm_cancel" title="Batalkan perubahan?"
+        message="Perubahan yang belum disimpan akan hilang." confirm-text="Ya, keluar" cancel-text="Lanjutkan edit"
+        @close="confirm_cancel = false" @confirm="navigateTo('/cp/my-articles')" />
+
+    <ConfirmModal v-if="canPublish && showConfirmPublish" :show="showConfirmPublish" title="Yakin publish artikel ini?"
+        confirm-text="Publish" max-width="max-w-lg" :loading="isSubmitting" @close="showConfirmPublish = false"
+        @confirm="submit">
+        <div class="text-sm mt-1 min-h-[340px]">
+            Atur Jadwal:
+            <DateTimePicker v-model="publishedAt" />
         </div>
-    </LazyModal>
+    </ConfirmModal>
 
-    <LazyModal v-if="canPublish && showConfirmPublish" :show="showConfirmPublish" @close="showConfirmPublish = false">
-        <div class="flex flex-col gap-2">
-            <div>Yakin publish artikel ini?</div>
-            <div class="text-sm h-[350px]">
-                Atur Jadwal:
-                <DateTimePicker v-model="publishedAt" />
-            </div>
-        </div>
-
-        <div class="modal-action">
-            <Button @click="showConfirmPublish = false" :disabled="isSubmitting">No</Button>
-
-            <!-- publish -->
-            <Button @click="submit" :disabled="isSubmitting" class="btn-green">
-                <LucideLoader :size="20" v-show="isSubmitting" class="animate-spin" />
-                Publish
-            </Button>
-        </div>
-    </LazyModal>
-
-    <LazyModal v-if="showConfirmDraftOrReview" :show="showConfirmDraftOrReview"
-        @close="showConfirmDraftOrReview = false">
-        {{
-            status == "ON_REVIEW"
-                ? 'Yakin simpan & ajukan approval?'
-                : status != null ? `Yakin simpan sebagai ${status.toLowerCase().replace('_', ' ')}?` : 'Yakin?'
-        }}
-        <div class="modal-action">
-            <Button @click="showConfirmDraftOrReview = false" :disabled="isSubmitting">No</Button>
-
-            <Button @click="submit" :disabled="isSubmitting" class="btn-black">
-                <LucideLoader :size="20" v-show="isSubmitting" class="animate-spin" />
-                Simpan
-            </Button>
-        </div>
-    </LazyModal>
+    <ConfirmModal v-if="showConfirmDraftOrReview" :show="showConfirmDraftOrReview" :title="confirmSaveTitle"
+        confirm-text="Simpan" confirm-class="btn-black" :loading="isSubmitting"
+        @close="showConfirmDraftOrReview = false" @confirm="submit" />
 
     <LazyModal v-if="show_preview" :show="show_preview" @close="show_preview = false" max-width="max-w-4xl">
         <div class="p-4">
@@ -391,6 +361,13 @@ const isSubmitting = ref<boolean>(false);
 const validatedData = ref<Record<string, any>>({});
 
 const status = ref<ContentStatus | null>(null);
+const confirmSaveTitle = computed(() =>
+    status.value === 'ON_REVIEW'
+        ? 'Yakin simpan & ajukan approval?'
+        : status.value != null
+            ? `Yakin simpan sebagai ${status.value.toLowerCase().replace('_', ' ')}?`
+            : 'Yakin?'
+);
 const publishedAt = ref<string | null>(new Date().toISOString())
 
 const validate = () => {

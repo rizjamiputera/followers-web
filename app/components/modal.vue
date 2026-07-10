@@ -1,6 +1,6 @@
 <template>
     <ClientOnly>
-        <Teleport defer to="#__nuxt">
+        <Teleport defer to="body">
             <input type="checkbox" v-model="_show" class="modal-toggle" />
             <div class="modal" role="dialog">
                 <div class="modal-box w-11/12 py-10 bg-transparent shadow-none max-h-screen overflow-hidden flex flex-col justify-center"

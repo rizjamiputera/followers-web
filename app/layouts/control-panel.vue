@@ -1,6 +1,6 @@
 <template>
     <ClientOnly>
-        <main class="drawer lg:drawer-open">
+        <main class="drawer lg:drawer-open overflow-x-clip">
             <input id="my-drawer" type="checkbox" class="drawer-toggle" />
             <Header />
             <div data-theme="light" class="drawer-content min-h-screen bg-white-main pt-16 relative">

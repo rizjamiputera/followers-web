@@ -50,7 +50,7 @@
             </div>
         </div>
 
-        <label v-if="hint" class="label"><span class="label-text-alt">{{ hint }}</span></label>
+        <p v-if="hint" class="mt-1 text-xs text-gray-500">{{ hint }}</p>
     </div>
 </template>
 

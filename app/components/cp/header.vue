@@ -1,5 +1,5 @@
 <template>
-    <header data-theme="light" class="fixed z-50 navbar bg-white/80 backdrop-blur-sm shadow-sm w-screen">
+    <header data-theme="light" class="fixed z-50 navbar bg-white/80 backdrop-blur-sm shadow-sm w-full">
         <div class="w-full mx-auto relative">
             <div class="flex justify-between px-2 md:px-6">
                 <div class="navbar-start gap-4 max-w-60">

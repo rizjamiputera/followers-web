@@ -186,12 +186,22 @@ section,
 
 
 /* TOAST */
+/* Push toasts below the fixed ~64px header and give side gutters so long
+   messages never get clipped by the container's overflow. */
+.v-toast {
+    padding: 5rem 0.75rem 1rem !important;
+    z-index: 99999 !important;
+}
+
 .v-toast>.v-toast__item {
-    @apply rounded-full min-h-[2em]
+    @apply rounded-2xl min-h-[2em];
+    max-width: min(92vw, 460px);
+    width: fit-content;
 }
 
 .v-toast .v-toast__text {
-    @apply !py-4
+    @apply !py-3 !px-5;
+    overflow-wrap: anywhere;
 }
 
 
