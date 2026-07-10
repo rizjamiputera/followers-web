@@ -137,10 +137,6 @@
                     :disabled="isLoading">
                     Lihat lebih banyak
                 </Button>
-                <div v-else-if="creators.length >= total && creators.length > 0" class="text-center text-gray-500">
-                    <div class="text-2xl mb-2">✨</div>
-                    <p>Semua penulis telah ditampilkan</p>
-                </div>
             </div>
 
             <!-- ===== PEMATERI ===== -->
@@ -150,12 +146,34 @@
                     <DefaultSubtitle>Para pemateri yang ilmunya menjadi bacaan</DefaultSubtitle>
                 </div>
 
+                <!-- Search Bar (Pemateri) -->
+                <div class="mb-6">
+                    <div class="relative max-w-md">
+                        <input v-model="speakerSearch" type="text" placeholder="Cari pemateri berdasarkan nama atau gelar..."
+                            class="w-full px-4 py-3 pl-10 pr-4 border border-green-main/30 rounded-xl focus:outline-none focus:border-green-main focus:ring-1 focus:ring-green-main"
+                            @input="onSpeakerSearchInput" />
+                        <div class="absolute left-3 top-1/2 transform -translate-y-1/2">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
                     <template v-if="speakers.length === 0 && !speakersLoading">
                         <div class="col-span-full text-center py-10">
-                            <div class="text-5xl mb-3">🎙️</div>
-                            <div class="text-lg text-green-main/70 mb-1">Belum ada pemateri</div>
-                            <div class="text-gray-500 text-sm">Pemateri akan muncul setelah ditautkan ke kajian</div>
+                            <template v-if="speakerSearch">
+                                <div class="text-5xl mb-3">🔍</div>
+                                <div class="text-lg text-green-main/70 mb-1">Pemateri tidak ditemukan</div>
+                                <div class="text-gray-500 text-sm">Tidak ada hasil untuk “{{ speakerSearch }}” — coba kata kunci lain</div>
+                            </template>
+                            <template v-else>
+                                <div class="text-5xl mb-3">🎙️</div>
+                                <div class="text-lg text-green-main/70 mb-1">Belum ada pemateri</div>
+                                <div class="text-gray-500 text-sm">Pemateri akan muncul setelah ditautkan ke kajian</div>
+                            </template>
                         </div>
                     </template>
 
@@ -286,12 +304,20 @@ const speakers = useState<Speaker[]>('creator-speakers', () => []);
 const speakersTotal = useState<number>('creator-speakers-total', () => 0);
 const speakersPage = ref(1);
 const speakersLoading = ref(false);
+const speakerSearch = ref('');
+let speakerSearchTimeout: NodeJS.Timeout;
 
 async function loadSpeakers(reset = false) {
     speakersLoading.value = true;
     try {
         const res = await $fetch<Paginate<Speaker[]>>(`${apiUri}/v1/speakers`, {
-            query: { page: speakersPage.value, limit: SPEAKER_LIMIT, sortBy: 'name', order: 'asc' },
+            query: {
+                page: speakersPage.value,
+                limit: SPEAKER_LIMIT,
+                sortBy: 'name',
+                order: 'asc',
+                ...(speakerSearch.value.trim() ? { search: speakerSearch.value.trim() } : {}),
+            },
         });
         speakersTotal.value = res.total;
         speakers.value = reset ? res.data : [...speakers.value, ...res.data];
@@ -306,6 +332,15 @@ await useAsyncData('creator-speakers-initial', async () => {
     await loadSpeakers(true);
     return true;
 });
+
+// Debounced search — reset to page 1 and refetch from the top
+const onSpeakerSearchInput = () => {
+    clearTimeout(speakerSearchTimeout);
+    speakerSearchTimeout = setTimeout(() => {
+        speakersPage.value = 1;
+        loadSpeakers(true);
+    }, 500);
+};
 
 function loadMoreSpeakers() {
     speakersPage.value++;
