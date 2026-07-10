@@ -47,9 +47,9 @@
         </div>
 
         <div v-else-if="profile" class="space-y-8">
-            <!-- Profile Header -->
+            <!-- Profile Header (centered) -->
             <div class="bg-gradient-to-r from-green-main/10 to-green-main/20 rounded-2xl p-6 md:p-8">
-                <div class="flex flex-col md:flex-row gap-6 items-center md:items-start">
+                <div class="flex flex-col gap-6 items-center">
                     <!-- Avatar -->
                     <div class="relative">
                         <Image v-if="profile.user?.avatar_md" :src="profile.user.avatar_md"
@@ -60,27 +60,18 @@
                                 {{ profile.user?.name?.charAt(0)?.toUpperCase() }}
                             </span>
                         </div>
-                        <!-- Verification badge -->
-                        <div v-if="false"
-                            class="absolute -bottom-2 -right-2 w-10 h-10 bg-green-main rounded-full flex items-center justify-center border-3 border-white">
-                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd"
-                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                    clip-rule="evenodd"></path>
-                            </svg>
-                        </div>
                     </div>
 
                     <!-- Profile Info -->
-                    <div class="flex-1 text-center md:text-left">
-                        <div class="flex items-center gap-3">
+                    <div class="flex-1 text-center">
+                        <div class="flex items-center justify-center gap-3">
                             <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">{{ profile.user?.name }}</h1>
                             <FollowButton v-if="profile.user" :userId="profile.user.id" @updated="getData" />
                         </div>
                         <p class="text-green-main/70 mb-4">@{{ profile.user?.username }}</p>
 
                         <!-- Stats -->
-                        <div class="flex justify-center md:justify-start items-center gap-6 mb-4">
+                        <div class="flex justify-center items-center gap-6 mb-4">
                             <div class="text-center">
                                 <div class="text-2xl font-bold text-green-main">{{ profile.totalArticles || 0 }}</div>
                                 <div class="text-sm text-gray-600">Artikel</div>
@@ -93,7 +84,7 @@
 
                         <!-- Specializations -->
                         <div v-if="profile.specializations && profile.specializations.length > 0"
-                            class="flex flex-wrap justify-center md:justify-start gap-2 mb-4">
+                            class="flex flex-wrap justify-center gap-2 mb-4">
                             <div v-for="spec in profile.specializations" :key="spec"
                                 class="badge badge-success badge-outline">
                                 {{ spec }}
