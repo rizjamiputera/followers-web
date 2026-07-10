@@ -34,64 +34,50 @@
                         class="c-card group">
 
                         <!-- Avatar -->
-                        <div class="flex justify-center mb-4">
+                        <div class="cc-avatar-row flex justify-center mb-4">
                             <div class="relative">
                                 <Image v-if="creator.user?.avatar_md" :src="creator.user.avatar_md"
-                                    class="w-20 h-20 rounded-full bg-cover bg-center border-3 border-green-main/20 group-hover:border-green-main/40 transition-colors" />
+                                    class="cc-avatar rounded-full bg-cover bg-center border-3 border-green-main/20 group-hover:border-green-main/40 transition-colors" />
                                 <div v-else
-                                    class="w-20 h-20 rounded-full bg-gradient-to-br from-green-main/20 to-green-main/40 flex items-center justify-center border-3 border-green-main/20">
-                                    <span class="text-2xl font-bold text-green-main">{{
+                                    class="cc-avatar rounded-full bg-gradient-to-br from-green-main/20 to-green-main/40 flex items-center justify-center border-3 border-green-main/20">
+                                    <span class="cc-avatar-initial text-2xl font-bold text-green-main">{{
                                         creator.user?.name?.charAt(0)?.toUpperCase() }}</span>
                                 </div>
-                                <!-- Verification badge -->
-                                <div v-if="false"
-                                    class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-main rounded-full flex items-center justify-center">
-                                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                            clip-rule="evenodd"></path>
-                                    </svg>
+                            </div>
+                        </div>
+
+                        <div class="cc-body">
+                            <!-- Name and Stats -->
+                            <div class="cc-head text-center mb-3">
+                                <h3
+                                    class="cc-name font-bold text-lg text-gray-800 mb-1 line-clamp-1 group-hover:text-green-main transition-colors">
+                                    {{ creator.user?.name }}
+                                </h3>
+                                <div class="cc-stats flex justify-center items-center gap-3 text-sm">
+                                    <span class="flex items-center gap-1.5 text-gray-600" title="Artikel">
+                                        <LucideFileText :size="15" class="text-green-main/80 shrink-0" />
+                                        <b class="font-semibold text-gray-800 tabular-nums">{{ creator.totalArticles || 0 }}</b>
+                                    </span>
+                                    <span class="w-px h-3.5 bg-green-main/15"></span>
+                                    <span class="flex items-center gap-1.5 text-gray-600" title="Pengikut">
+                                        <LucideUsers :size="15" class="text-green-main/80 shrink-0" />
+                                        <b class="font-semibold text-gray-800 tabular-nums">{{ creator.totalFollowers || 0 }}</b>
+                                    </span>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Name and Stats -->
-                        <div class="text-center mb-3">
-                            <h3
-                                class="font-bold text-lg text-gray-800 mb-1 line-clamp-1 group-hover:text-green-main transition-colors">
-                                {{ creator.user?.name }}
-                            </h3>
-                            <div class="flex justify-center items-center gap-4 text-sm text-gray-600">
-                                <span class="flex items-center gap-1">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                                        </path>
-                                    </svg>
-                                    {{ creator.totalArticles || 0 }}
-                                </span>
-                                <span class="flex items-center gap-1">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
-                                        </path>
-                                    </svg>
-                                    {{ creator.totalFollowers || 0 }}
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Specializations -->
-                        <div v-if="creator.specializations && creator.specializations.length > 0" class="mb-3">
-                            <div class="flex flex-wrap gap-1 justify-center">
-                                <span v-for="spec in creator.specializations.slice(0, 3)" :key="spec"
-                                    class="px-2 py-1 bg-green-main/10 text-green-main text-xs rounded-full font-medium">
-                                    {{ spec }}
-                                </span>
-                                <span v-if="creator.specializations.length > 3"
-                                    class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full font-medium">
-                                    +{{ creator.specializations.length - 3 }}
-                                </span>
+                            <!-- Specializations -->
+                            <div v-if="creator.specializations && creator.specializations.length > 0" class="cc-meta mb-3">
+                                <div class="flex flex-wrap gap-1 justify-center">
+                                    <span v-for="spec in creator.specializations.slice(0, 3)" :key="spec"
+                                        class="px-2 py-1 bg-green-main/10 text-green-main text-xs rounded-full font-medium">
+                                        {{ spec }}
+                                    </span>
+                                    <span v-if="creator.specializations.length > 3"
+                                        class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full font-medium">
+                                        +{{ creator.specializations.length - 3 }}
+                                    </span>
+                                </div>
                             </div>
                         </div>
 
@@ -180,17 +166,17 @@
                     <template v-for="(speaker, n) in speakers" :key="speaker.slug || n">
                         <NuxtLink :to="`/pemateri/${speaker.slug}`" prefetch-on="interaction"
                             class="c-card group">
-                            <div class="flex justify-center mb-4">
+                            <div class="cc-avatar-row flex justify-center mb-4">
                                 <div class="relative">
                                     <Image v-if="speaker.avatar_md" :src="speaker.avatar_md"
-                                        class="w-20 h-20 rounded-full bg-cover bg-center border-3 border-green-main/20 group-hover:border-green-main/40 transition-colors" />
+                                        class="cc-avatar rounded-full bg-cover bg-center border-3 border-green-main/20 group-hover:border-green-main/40 transition-colors" />
                                     <div v-else
-                                        class="w-20 h-20 rounded-full bg-gradient-to-br from-green-main/20 to-green-main/40 flex items-center justify-center border-3 border-green-main/20">
-                                        <span class="text-2xl font-bold text-green-main">{{
+                                        class="cc-avatar rounded-full bg-gradient-to-br from-green-main/20 to-green-main/40 flex items-center justify-center border-3 border-green-main/20">
+                                        <span class="cc-avatar-initial text-2xl font-bold text-green-main">{{
                                             speaker.name?.charAt(0)?.toUpperCase() }}</span>
                                     </div>
                                     <div v-if="speaker.verified"
-                                        class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-main rounded-full flex items-center justify-center"
+                                        class="cc-badge absolute -bottom-1 -right-1 w-6 h-6 bg-green-main rounded-full flex items-center justify-center"
                                         title="Terverifikasi">
                                         <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd"
@@ -200,18 +186,17 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="text-center mb-3">
-                                <h3 class="font-bold text-lg text-gray-800 mb-1 line-clamp-1 group-hover:text-green-main transition-colors">
-                                    <span v-if="speaker.honorific" class="font-medium">{{ speaker.honorific }}&nbsp;</span>{{ speaker.name }}
-                                </h3>
-                                <p v-if="speaker.credentials" class="text-sm text-gray-500 line-clamp-1">{{ speaker.credentials }}</p>
-                            </div>
-                            <div class="flex justify-center items-center gap-1 text-sm text-gray-600">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                                {{ speaker._count?.contents || 0 }} kajian
+                            <div class="cc-body">
+                                <div class="cc-head text-center mb-3">
+                                    <h3 class="cc-name font-bold text-lg text-gray-800 mb-1 line-clamp-1 group-hover:text-green-main transition-colors">
+                                        <span v-if="speaker.honorific" class="font-medium">{{ speaker.honorific }}&nbsp;</span>{{ speaker.name }}
+                                    </h3>
+                                    <p v-if="speaker.credentials" class="cc-meta text-sm text-gray-500 line-clamp-1">{{ speaker.credentials }}</p>
+                                </div>
+                                <div class="cc-stats flex justify-center items-center gap-1.5 text-sm text-gray-600" title="Jumlah kajian">
+                                    <LucideBookOpen :size="15" class="text-green-main/80 shrink-0" />
+                                    <b class="font-semibold text-gray-800 tabular-nums">{{ speaker._count?.contents || 0 }}</b> kajian
+                                </div>
                             </div>
                         </NuxtLink>
                     </template>
@@ -245,6 +230,7 @@
 </template>
 
 <script lang="ts" setup>
+import { LucideFileText, LucideUsers, LucideBookOpen } from 'lucide-vue-next'
 import type { Paginate } from '~/interfaces/app-interface'
 import type { Speaker } from '~/interfaces/speaker-interface'
 
@@ -376,5 +362,17 @@ function loadMoreSpeakers() {
 }
 @media (prefers-reduced-motion: reduce) {
     .creator-lab .c-card { transition: none; }
+}
+
+/* ===== In-card content ===== */
+.creator-lab .cc-avatar { width: 80px; height: 80px; }
+
+/* Stat pill — compact, hugs its content, centered */
+.creator-lab .cc-stats {
+    width: fit-content;
+    margin: 0 auto;
+    padding: 4px 11px;
+    background: rgba(0, 116, 38, .07);
+    border-radius: 999px;
 }
 </style>
