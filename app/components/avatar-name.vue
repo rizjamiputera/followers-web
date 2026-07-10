@@ -1,5 +1,5 @@
 <template>
-    <NuxtLink :to="'/@' + user.username" class="flex-1 flex items-center gap-1">
+    <NuxtLink :to="'/creator/' + user.username" class="flex-1 flex items-center gap-1">
         <LazyAvatar v-if="user.avatar_md" :avatar="user.avatar_md" :name="user.name" :class="avatar_width" />
         <div class="font-cinzel flex-1 line-clamp-1">
             {{ user.name }}

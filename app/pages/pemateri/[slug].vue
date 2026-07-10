@@ -47,7 +47,7 @@
                         </div>
 
                         <!-- Linked user (also a platform writer) -->
-                        <NuxtLink v-if="speaker.user?.username" :to="`/@${speaker.user.username}`"
+                        <NuxtLink v-if="speaker.user?.username" :to="`/creator/${speaker.user.username}`"
                             class="inline-flex items-center gap-1 text-sm text-green-main hover:underline">
                             Juga penulis di sini &rarr;
                         </NuxtLink>
@@ -56,7 +56,7 @@
             </div>
 
             <!-- Bio -->
-            <div v-if="speaker.bio" class="max-w-3xl">
+            <div v-if="speaker.bio">
                 <h2 class="font-cinzel tracking-wide font-bold text-green-main mb-3">Tentang Pemateri</h2>
                 <p class="text-gray-700 whitespace-pre-line leading-relaxed">{{ speaker.bio }}</p>
             </div>
@@ -65,12 +65,32 @@
             <div>
                 <h2 class="font-cinzel tracking-wide font-bold text-green-main mb-4">Kajian</h2>
 
+                <!-- Search (only when there are kajian) -->
+                <div v-if="contents.length > 0" class="mb-6">
+                    <div class="relative max-w-md">
+                        <input v-model="kajianSearch" type="text" placeholder="Cari kajian..."
+                            class="w-full px-4 py-3 pl-10 pr-4 border border-green-main/30 rounded-xl focus:outline-none focus:border-green-main focus:ring-1 focus:ring-green-main" />
+                        <div class="absolute left-3 top-1/2 -translate-y-1/2">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
                 <div v-if="contents.length === 0" class="text-gray-500 italic py-6">
                     Belum ada kajian yang ditautkan ke pemateri ini.
                 </div>
 
+                <div v-else-if="filteredContents.length === 0" class="text-center py-10">
+                    <div class="text-4xl mb-2">🔍</div>
+                    <div class="text-green-main/70">Kajian tidak ditemukan</div>
+                    <div class="text-gray-500 text-sm">Tidak ada hasil untuk “{{ kajianSearch }}”</div>
+                </div>
+
                 <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-                    <template v-for="(c, n) in contents" :key="n">
+                    <template v-for="(c, n) in filteredContents" :key="n">
                         <NuxtLink v-if="c.article" :to="`/read/${c.article.slug}`" prefetch-on="interaction"
                             class="group bg-white border border-green-main/20 rounded-xl overflow-hidden hover:shadow-lg hover:border-green-main/40 transition-all duration-300 hover:-translate-y-1">
                             <div class="aspect-video bg-green-main/10 overflow-hidden">
@@ -129,6 +149,17 @@ const { data: speaker } = await useAsyncData<Speaker | null>(
 
 const isNotFound = computed(() => !speaker.value)
 const contents = computed(() => speaker.value?.contents ?? [])
+
+// Client-side search over the already-loaded kajian (articles + events).
+const kajianSearch = ref('')
+const filteredContents = computed(() => {
+    const q = kajianSearch.value.trim().toLowerCase()
+    if (!q) return contents.value
+    return contents.value.filter((c: any) => {
+        const title = c.article?.title || c.event?.title || ''
+        return title.toLowerCase().includes(q)
+    })
+})
 
 const displayName = computed(() =>
     speaker.value
