@@ -1,5 +1,5 @@
 <template>
-    <section>
+    <section class="creator-lab">
         <div class="flex flex-col gap-4">
             <div>
                 <DefaultTitle>Penulis</DefaultTitle>
@@ -31,7 +31,7 @@
                 </template>
                 <template v-for="(creator, n) in creators" :key="creator.slug || n">
                     <NuxtLink :to="'/@' + creator.user?.username" prefetch-on="interaction"
-                        class="group bg-white border border-green-main/20 rounded-xl p-4 hover:shadow-lg hover:border-green-main/40 transition-all duration-300 hover:-translate-y-1">
+                        class="c-card group">
 
                         <!-- Avatar -->
                         <div class="flex justify-center mb-4">
@@ -179,7 +179,7 @@
 
                     <template v-for="(speaker, n) in speakers" :key="speaker.slug || n">
                         <NuxtLink :to="`/pemateri/${speaker.slug}`" prefetch-on="interaction"
-                            class="group bg-white border border-green-main/20 rounded-xl p-4 hover:shadow-lg hover:border-green-main/40 transition-all duration-300 hover:-translate-y-1">
+                            class="c-card group">
                             <div class="flex justify-center mb-4">
                                 <div class="relative">
                                     <Image v-if="speaker.avatar_md" :src="speaker.avatar_md"
@@ -240,6 +240,7 @@
                 </div>
             </div>
         </div>
+
     </section>
 </template>
 
@@ -348,4 +349,32 @@ function loadMoreSpeakers() {
 }
 </script>
 
-<style></style>
+<style>
+/* ===== Creator/Speaker card — soft green glow dissolving into white ===== */
+.creator-lab .c-card {
+    display: block;
+    position: relative;
+    overflow: hidden;
+    padding: 1.15rem 1rem 0.95rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(0, 116, 38, .12);
+    background-color: #fff;
+    background-image: linear-gradient(180deg,
+        rgba(0, 116, 38, .15) 0,
+        rgba(66, 230, 134, .07) 84px,
+        rgba(255, 255, 255, 0) 210px);
+    background-repeat: no-repeat;
+    transition: transform .28s cubic-bezier(.2, .7, .3, 1), box-shadow .28s, border-color .28s, background-image .28s;
+}
+.creator-lab .c-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 38px -18px rgba(10, 60, 25, .3);
+    background-image: linear-gradient(180deg,
+        rgba(0, 116, 38, .2) 0,
+        rgba(66, 230, 134, .09) 84px,
+        rgba(255, 255, 255, 0) 210px);
+}
+@media (prefers-reduced-motion: reduce) {
+    .creator-lab .c-card { transition: none; }
+}
+</style>
