@@ -105,56 +105,94 @@
 
             <!-- Main Content -->
             <ClientOnly>
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div>
                     <!-- Biography -->
-                    <div class="lg:col-span-2">
-                        <h2 class="font-cinzel tracking-wide font-bold text-green-main mb-4">Tentang Penulis</h2>
-                        <div v-if="content" class="prose prose-lg max-w-none">
-                            <WysiwygRenderer :content="content" />
-                        </div>
-                        <div v-else class="text-gray-500 italic">
-                            Penulis belum menambahkan biografi.
-                        </div>
+                    <h2 class="font-cinzel tracking-wide font-bold text-green-main mb-4">Tentang Penulis</h2>
+                    <div v-if="content" class="prose prose-lg max-w-none">
+                        <WysiwygRenderer :content="content" />
+                    </div>
+                    <div v-else class="text-gray-500 italic">
+                        Penulis belum menambahkan biografi.
                     </div>
 
-                    <!-- Sidebar -->
-                    <div class="space-y-6">
-                        <!-- Social Links -->
-                        <div v-if="profile.socialLinks && profile.socialLinks.length > 0">
-                            <h3 class="font-cinzel tracking-wide font-bold text-green-main mb-4">Media Sosial</h3>
-                            <div class="space-y-3">
-                                <a v-for="social in profile.socialLinks" :key="social.platform" :href="social.url"
-                                    target="_blank"
-                                    class="flex items-center gap-3 p-2 border border-gray-200 rounded-lg hover:border-green-main hover:bg-green-main/5 transition-colors">
-                                    <div class="w-8 h-8 rounded bg-gray-100 flex items-center justify-center">
-                                        <SocialIcon :platform="social.platform" class="w-5 h-5" />
-                                    </div>
-                                    <div class="flex-1">
-                                        <div class="text-sm text-gray-600">{{ social.handle || social.url }}</div>
-                                    </div>
-                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14">
-                                        </path>
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-
-                        <div>
-                            <LazyArticleLatestSm v-if="profile" :authorId="profile.userId"
-                                :authorName="profile.user?.name" />
+                    <!-- Social Links (compact row) -->
+                    <div v-if="profile.socialLinks && profile.socialLinks.length > 0" class="mt-8">
+                        <h3 class="font-cinzel tracking-wide font-bold text-green-main mb-3">Media Sosial</h3>
+                        <div class="flex flex-wrap gap-2.5">
+                            <a v-for="social in profile.socialLinks" :key="social.platform" :href="social.url"
+                                target="_blank" rel="noopener"
+                                class="inline-flex items-center gap-2 py-2 px-3.5 border border-gray-200 rounded-full hover:border-green-main hover:bg-green-main/5 transition-colors">
+                                <SocialIcon :platform="social.platform" class="w-4 h-4" />
+                                <span class="text-sm text-gray-600">{{ social.handle || social.platform }}</span>
+                            </a>
                         </div>
                     </div>
                 </div>
             </ClientOnly>
+
+            <!-- Latest articles by this author -->
+            <div v-if="profile" class="mt-12 pt-8 border-t border-green-main/15">
+                <h2 class="font-cinzel tracking-wide font-bold text-green-main text-xl mb-5">Artikel Terbaru</h2>
+
+                <!-- Search -->
+                <div class="mb-6">
+                    <div class="relative max-w-md">
+                        <input v-model="articleSearch" type="text" placeholder="Cari artikel penulis ini..."
+                            class="w-full px-4 py-3 pl-10 pr-4 border border-green-main/30 rounded-xl focus:outline-none focus:border-green-main focus:ring-1 focus:ring-green-main"
+                            @input="onArticleSearchInput" />
+                        <div class="absolute left-3 top-1/2 -translate-y-1/2">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-5">
+                    <ArticleCard v-for="(a, n) in articles" :key="a.id || n" :data="a" />
+
+                    <template v-if="articlesLoading">
+                        <div v-for="m in 3" :key="`ask-${m}`"
+                            class="border border-green-main/20 rounded-xl p-3 animate-pulse">
+                            <div class="aspect-video rounded-lg bg-green-main/20 mb-3"></div>
+                            <div class="h-4 bg-green-main/20 rounded w-3/4 mb-2"></div>
+                            <div class="h-3 bg-green-main/20 rounded w-full mb-1"></div>
+                            <div class="h-3 bg-green-main/20 rounded w-2/3"></div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Empty / no results -->
+                <div v-if="articles.length === 0 && !articlesLoading" class="text-center py-12">
+                    <template v-if="articleSearch">
+                        <div class="text-4xl mb-2">🔍</div>
+                        <div class="text-green-main/70">Artikel tidak ditemukan</div>
+                        <div class="text-gray-500 text-sm">Tidak ada hasil untuk “{{ articleSearch }}”</div>
+                    </template>
+                    <template v-else>
+                        <div class="text-4xl mb-2">📝</div>
+                        <div class="text-green-main/70">Belum ada artikel</div>
+                    </template>
+                </div>
+
+                <!-- Load more -->
+                <div class="flex justify-center mt-8">
+                    <Button v-if="articles.length < articlesTotal && !articlesLoading"
+                        class="btn btn-green font-cinzel tracking-wide px-8 py-3 text-lg" @click="loadMoreArticles">
+                        Lihat lebih banyak
+                    </Button>
+                </div>
+            </div>
         </div>
     </section>
 </template>
 
 <script lang="ts" setup>
 import type { Profile } from '~/interfaces/user-interface';
+import type { Article } from '~/interfaces/article-interface';
+import type { Paginate } from '~/interfaces/app-interface';
 
 // Get route params
 const route = useRoute();
@@ -197,6 +235,57 @@ if (!profileData.value) {
     profile.value = profileData.value;
 }
 isLoading.value = false;
+
+// ===== Latest articles by this author — search + load more =====
+const ARTICLE_LIMIT = 9;
+const articles = useState<Article[]>(`creator-articles-${username}`, () => []);
+const articlesTotal = useState<number>(`creator-articles-total-${username}`, () => 0);
+const articlesPage = ref(1);
+const articlesLoading = ref(false);
+const articleSearch = ref('');
+let articleSearchTimeout: NodeJS.Timeout;
+
+async function loadArticles(reset = false) {
+    if (!profile.value?.userId) return;
+    articlesLoading.value = true;
+    try {
+        const res = await $fetch<Paginate<Article[]>>(`${apiUri}/v1/article/published`, {
+            query: {
+                authorId: profile.value.userId,
+                page: articlesPage.value,
+                limit: ARTICLE_LIMIT,
+                sortBy: 'publishedAt',
+                order: 'desc',
+                includes: 'author,tags.tag',
+                ...(articleSearch.value.trim() ? { search: articleSearch.value.trim() } : {}),
+            },
+        });
+        articlesTotal.value = res.total;
+        articles.value = reset ? res.data : [...articles.value, ...res.data];
+    } finally {
+        articlesLoading.value = false;
+    }
+}
+
+// SSR-fetch the first page so the section is crawlable and hydrates cleanly
+await useAsyncData(`creator-articles-initial-${username}`, async () => {
+    articlesPage.value = 1;
+    await loadArticles(true);
+    return true;
+});
+
+const onArticleSearchInput = () => {
+    clearTimeout(articleSearchTimeout);
+    articleSearchTimeout = setTimeout(() => {
+        articlesPage.value = 1;
+        loadArticles(true);
+    }, 500);
+};
+
+function loadMoreArticles() {
+    articlesPage.value++;
+    loadArticles(false);
+}
 
 onMounted(() => {
     recordVisit();
