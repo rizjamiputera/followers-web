@@ -47,7 +47,7 @@
                         </div>
 
                         <!-- Linked user (also a platform writer) -->
-                        <NuxtLink v-if="speaker.user?.username" :to="`/@${speaker.user.username}`"
+                        <NuxtLink v-if="speaker.user?.username" :to="`/creator/${speaker.user.username}`"
                             class="inline-flex items-center gap-1 text-sm text-green-main hover:underline">
                             Juga penulis di sini &rarr;
                         </NuxtLink>
