@@ -23,7 +23,7 @@
         </div>
 
         <!-- Articles List -->
-        <div class="card bg-base-100 shadow">
+        <div class="card cp-surface shadow">
             <div class="card-body">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="card-title">Published Articles</h2>
@@ -87,11 +87,9 @@
                                 </td>
                                 <td>
                                     <div class="flex items-center gap-2">
-                                        <div class="avatar avatar-xs">
-                                            <Avatar :src="article.author?.avatar" :name="article.author?.name"
-                                                class="w-6 h-6" />
-                                        </div>
-                                        <span class="text-sm">{{ article.author?.name }}</span>
+                                        <Avatar :avatar="article.author?.avatar_md" :name="article.author?.name"
+                                            class="w-6 h-6 shrink-0" />
+                                        <span class="text-sm text-gray-700 text-nowrap">{{ article.author?.name }}</span>
                                     </div>
                                 </td>
                                 <td>
@@ -228,7 +226,7 @@ const paginationRange = computed(() => {
 const loadArticles = async () => {
     loading.value = true
     try {
-        const response = await Api.get('/v1/article?status=PUBLISHED&limit=1000&include=author,stats') as any
+        const response = await Api.get('/v1/article?status=PUBLISHED&limit=1000&includes=author,stats') as any
         articles.value = response.data || []
     } catch (error) {
         console.error('Failed to load articles:', error)

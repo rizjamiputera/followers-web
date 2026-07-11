@@ -23,7 +23,7 @@
         </div>
 
         <!-- Events List -->
-        <div class="card bg-base-100 shadow">
+        <div class="card cp-surface shadow">
             <div class="card-body">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="card-title">Published Events</h2>
@@ -87,11 +87,9 @@
                                 </td>
                                 <td>
                                     <div class="flex items-center gap-2">
-                                        <div class="avatar avatar-xs">
-                                            <Avatar :src="event.author?.avatar" :name="event.author?.name"
-                                                class="w-6 h-6" />
-                                        </div>
-                                        <span class="text-sm">{{ event.author?.name }}</span>
+                                        <Avatar :avatar="event.author?.avatar_md" :name="event.author?.name"
+                                            class="w-6 h-6 shrink-0" />
+                                        <span class="text-sm text-gray-700 text-nowrap">{{ event.author?.name }}</span>
                                     </div>
                                 </td>
                                 <td>
@@ -241,7 +239,7 @@ const paginationRange = computed(() => {
 const loadEvents = async () => {
     loading.value = true
     try {
-        const response = await Api.get('/v1/event?status=PUBLISHED&limit=1000&include=author,stats,registrations') as any
+        const response = await Api.get('/v1/event?status=PUBLISHED&limit=1000&includes=author,stats,registrations') as any
         events.value = response.data || []
     } catch (error) {
         console.error('Failed to load events:', error)

@@ -1,6 +1,7 @@
 <template>
     <div class="flex-1 flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:justify-end">
-        <Input v-model="search" :placeholder="searchPlaceholder" class="input-sm w-full sm:max-w-xs" />
+        <Input v-if="!hideSearch" v-model="search" :placeholder="searchPlaceholder"
+            class="input-sm w-full sm:max-w-xs" />
 
         <!-- Mobile: 2-col grid of selects. Desktop: display:contents lets them
              flow directly into the parent's right-aligned wrapping row. -->
@@ -50,6 +51,7 @@ const sort = defineModel<string>('sort', { default: 'newest' });
 
 defineProps<{
     hideStatus?: boolean
+    hideSearch?: boolean
     showSort?: boolean
     searchPlaceholder?: string
 }>();
