@@ -1,21 +1,23 @@
 <template>
     <div ref="sectionRef" class="flex flex-col gap-4">
-        <div class="flex justify-between gap-2 items-center">
-            <div class="main-title">Articles {{ subtitle }}</div>
-        </div>
+        <div class="at-bar flex flex-col gap-4">
+            <div class="at-header flex justify-between gap-2 items-center">
+                <div class="main-title">Articles {{ subtitle }}</div>
+            </div>
 
-        <div class="flex justify-between gap-4">
-            <pagination :page :last_page @prev="--parameters.page" @next="++parameters.page" />
+            <div class="at-toolbar flex flex-col sm:flex-row sm:justify-between gap-3 sm:gap-4">
+                <pagination :page :last_page @prev="--parameters.page" @next="++parameters.page" />
 
-            <CpContentFilters
-                v-model:search="search"
-                v-model:status="filterStatus"
-                v-model:tag-slug="filterTagSlug"
-                v-model:category-id="filterCategoryId"
-                v-model:sort="filterSort"
-                :hide-status="!!subtitle"
-                show-sort
-                search-placeholder="Cari artikel.." />
+                <CpContentFilters
+                    v-model:search="search"
+                    v-model:status="filterStatus"
+                    v-model:tag-slug="filterTagSlug"
+                    v-model:category-id="filterCategoryId"
+                    v-model:sort="filterSort"
+                    :hide-status="!!subtitle"
+                    show-sort
+                    search-placeholder="Cari artikel.." />
+            </div>
         </div>
 
         <div class="overflow-x-auto rounded-2xl border border-green-main/5 bg-base-100">
@@ -269,4 +271,12 @@ const showConfirmPublish = ref<boolean>(false);
 const showConfirmTakeDown = ref<boolean>(false);
 </script>
 
-<style></style>
+<style>
+/* Elevated header/toolbar card floating above the table. */
+.at-bar {
+    background: #fff;
+    border-radius: 1.5rem;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 22px 48px -24px rgba(10, 60, 25, .4);
+}
+</style>

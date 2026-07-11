@@ -4,7 +4,7 @@
             <div class="main-title">Events {{ subtitle }}</div>
         </div>
 
-        <div class="flex justify-between gap-4">
+        <div class="flex flex-col sm:flex-row sm:justify-between gap-3 sm:gap-4">
             <pagination :page :last_page @prev="--parameters.page" @next="++parameters.page" />
 
             <CpContentFilters
