@@ -216,6 +216,15 @@ table th {
     @apply text-green-main
 }
 
+/* Warm CP content-card surface so it harmonizes with the warm-paper shell
+   instead of a stark cool white. Zebra stripes are warmed to match. */
+.cp-surface {
+    background-color: #fdfcf8;
+}
+.cp-surface .table-zebra tbody tr:nth-child(even) {
+    background-color: #f4f1e9;
+}
+
 /* DATE TIME PICKER */
 .vc-popover-content-wrapper {
     @apply !z-50

@@ -1,7 +1,7 @@
 <template>
     <!-- Sidebar content here -->
     <div ref="drawerMenu" class="menu bg-base-200 text-base-content h-full w-60 p-4 text-base">
-        <div class="h-full flex flex-col gap-2 max-h-full overflow-y-auto">
+        <div class="h-full flex flex-col gap-2 max-h-full overflow-y-auto -mr-4 pr-4">
             <div class="flex-1">
                 <ul class="">
                     <li>
