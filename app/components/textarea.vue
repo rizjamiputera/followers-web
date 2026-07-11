@@ -4,11 +4,11 @@
             <span class="text-error">{{ required ? '*' : '' }}</span>
         </legend>
         <textarea v-bind="inputAttrs" v-model="inputValue"
-            class="textarea rounded-2xl border-gray-300/50 w-full h-24"></textarea>
-        <p class="label" v-if="bottomLabel">{{ bottomLabel }}</p>
+            class="textarea rounded-2xl bg-white-main border-green-main/20 focus:outline-green-main/40 w-full h-24"></textarea>
+        <p class="text-xs text-gray-500 mt-1" v-if="bottomLabel">{{ bottomLabel }}</p>
     </fieldset>
     <textarea v-else v-bind="inputAttrs" v-model="inputValue"
-        class="textarea rounded-2xl border-gray-300/50 focus:outline-green-main w-full h-24"></textarea>
+        class="textarea rounded-2xl bg-white-main border-green-main/20 focus:outline-green-main/40 w-full h-24"></textarea>
 </template>
 
 <script lang="ts" setup>

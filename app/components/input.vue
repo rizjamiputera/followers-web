@@ -5,7 +5,7 @@
         </legend>
         <input v-bind="inputAttrs" v-model="inputValue"
             class="input rounded-full bg-white-main focus:outline-green-main/40 border-green-main/20 w-full" :class />
-        <p class="label" v-if="bottomLabel">{{ bottomLabel }}</p>
+        <p class="text-xs text-gray-500 mt-1" v-if="bottomLabel">{{ bottomLabel }}</p>
     </fieldset>
     <input v-else v-bind="inputAttrs" v-model="inputValue"
         class="input rounded-full bg-white-main focus:outline-green-main/40 border-green-main/20 w-full" :class />

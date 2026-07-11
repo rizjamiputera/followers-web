@@ -1,11 +1,13 @@
 <template>
     <div class="form-control w-full">
-        <label v-if="label" class="label"><span class="label-text">{{ label }}</span></label>
+        <label v-if="label" class="text-sm font-medium mb-1.5 block">{{ label }}</label>
 
         <div class="space-y-2">
             <div class="relative">
                 <input v-model="query" @input="onInput" @focus="showSuggestions = true" @keydown="onKeyDown"
-                    :placeholder="placeholder" class="input input-bordered w-full" type="text" />
+                    :placeholder="placeholder"
+                    class="input rounded-full bg-white-main focus:outline-green-main/40 border-green-main/20 w-full"
+                    type="text" />
 
                 <div v-if="showSuggestions && query.trim()"
                     class="absolute top-full left-0 right-0 z-50 bg-base-100 shadow-lg border border-green-main/20 rounded-lg max-h-56 overflow-y-auto mt-1">

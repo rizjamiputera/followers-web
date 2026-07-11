@@ -1,43 +1,53 @@
 <template>
-    <div class="flex flex-col gap-3 relative">
-        <div class="flex justify-between items-center gap-3">
-            <div>
-                <div v-if="event" class="badge badge-lg rounded-full" :class="contentStatusBadgeColor(event.status)">
-                    {{ event.status.replace('_', ' ') }}
+    <div class="flex flex-col gap-5">
+        <!-- Sticky action bar -->
+        <div
+            class="sticky top-16 z-30 -mx-5 sm:-mx-10 px-5 sm:px-10 py-2.5 bg-white-main/95 backdrop-blur-sm border-b border-green-main/10">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div class="flex items-center gap-2 min-w-0">
+                    <div v-if="event" class="badge badge-lg rounded-full shrink-0"
+                        :class="contentStatusBadgeColor(event.status)">
+                        {{ event.status.replace('_', ' ') }}
+                    </div>
+                    <span class="font-cinzel font-bold text-green-main truncate">
+                        {{ event ? 'Edit Kegiatan' : 'Kegiatan Baru' }}
+                    </span>
                 </div>
-            </div>
-            <div class="flex flex-wrap gap-1">
-                <Button class="max-sm:btn-sm mr-4" @click="show_preview = true">Preview</Button>
-                <Button class="max-sm:btn-sm" @click="confirm_cancel = true">Cancel</Button>
-                <ClientOnly>
-                    <Button class="max-sm:btn-sm btn-green" v-if="canApprove" @click="status = 'APPROVED'; validate()">
-                        Simpan & Approve
-                    </Button>
-                    <Button class="max-sm:btn-sm btn-green" v-else-if="canPublish"
-                        @click="status = 'PUBLISHED'; validate()">
-                        Simpan & Publish
-                    </Button>
-                    <Button class="max-sm:btn-sm btn-green" v-else @click="status = 'ON_REVIEW'; validate()">
-                        Simpan & Ajukan Approval
-                    </Button>
-                </ClientOnly>
-                <Button class="max-sm:btn-sm btn-black" @click="status = 'DRAFT'; validate()">Simpan Draft</Button>
-                <Button class="max-sm:btn-sm btn-black" @click="status = null; validate()">Simpan</Button>
+                <div class="flex items-center gap-1.5 flex-wrap sm:justify-end">
+                    <Button class="btn-sm btn-ghost" @click="confirm_cancel = true">Cancel</Button>
+                    <Button class="btn-sm btn-outline-green" @click="show_preview = true">Preview</Button>
+                    <span class="w-px h-6 bg-green-main/15 mx-1 max-sm:hidden"></span>
+                    <Button class="btn-sm btn-black" @click="status = 'DRAFT'; validate()">Draft</Button>
+                    <Button class="btn-sm btn-black" @click="status = null; validate()">Simpan</Button>
+                    <ClientOnly>
+                        <Button class="btn-sm btn-green" v-if="canApprove" @click="status = 'APPROVED'; validate()">
+                            Simpan &amp; Approve
+                        </Button>
+                        <Button class="btn-sm btn-green" v-else-if="canPublish"
+                            @click="status = 'PUBLISHED'; validate()">
+                            Simpan &amp; Publish
+                        </Button>
+                        <Button class="btn-sm btn-green" v-else @click="status = 'ON_REVIEW'; validate()">
+                            Ajukan Approval
+                        </Button>
+                    </ClientOnly>
+                </div>
             </div>
         </div>
 
-        <Input v-model="dataDto.title" label="Title" @keyup="checkTitleChange" />
+        <!-- Title -->
+        <Input v-model="dataDto.title" label="Title" placeholder="Judul kegiatan..." @keyup="checkTitleChange" />
+
+        <!-- Slug -->
         <div>
-            <div class="flex gap-1 items-center mb-2">
+            <div class="flex gap-1 items-center mb-1.5">
                 <label class="text-sm font-medium">Slug</label>
                 <div v-if="dataDto.slug != event?.slug">
-                    <LucideLoader v-if="checkingSlug" :size="24" class="stroke-green-main animate-spin" />
-                    <LucideCheckCircle2 v-else-if="slugAvailable" :size="24" class="stroke-green-main" />
-                    <LucideXCircle v-else-if="dataDto.title != ''" :size="24" class="stroke-red-800" />
+                    <LucideLoader v-if="checkingSlug" :size="20" class="stroke-green-main animate-spin" />
+                    <LucideCheckCircle2 v-else-if="slugAvailable" :size="20" class="stroke-green-main" />
+                    <LucideXCircle v-else-if="dataDto.title != ''" :size="20" class="stroke-red-800" />
                 </div>
             </div>
-
-            <span class="sm:hidden text-sm text-gray-600">{{ webUri }}/event/</span>
             <div class="flex gap-2">
                 <div class="join w-full">
                     <button class="max-sm:hidden btn join-item rounded-l-full btn-active font-light">
@@ -53,89 +63,133 @@
                     </ButtonLink>
                 </template>
             </div>
+            <span class="sm:hidden text-xs text-gray-500 mt-1.5 block break-all">{{ webUri }}/event/{{ dataDto.slug }}</span>
         </div>
 
-        <!-- Image Landscape -->
-        <div class="w-full flex flex-wrap gap-4 items-stretch">
-            <div class="flex-1 flex flex-col gap-5 max-sm:w-full">
-                <!-- IMAGE Portrait -->
-                <div class="flex-1">
-                    <div class="flex gap-1 items-start mb-1">
+        <!-- Ringkasan -->
+        <div>
+            <label class="text-sm font-medium">Ringkasan</label>
+            <p class="text-xs text-gray-500 mb-1.5">
+                Berisi maksimal 500 karakter punchline untuk menarik perhatian pembaca
+            </p>
+            <Textarea v-model="dataDto.excerpt" />
+        </div>
+
+        <!-- Konten (main) + Meta (sidebar) -->
+        <div class="flex flex-col lg:flex-row gap-6 items-start">
+            <!-- Detail + Konten -->
+            <div class="w-full lg:flex-1 order-2 lg:order-1 min-w-0 flex flex-col gap-4">
+                <!-- Detail Acara -->
+                <div class="flex flex-col gap-4 rounded-2xl border border-green-main/10 p-4">
+                    <div class="font-cinzel font-bold text-green-main">Detail Acara</div>
+                    <Input v-model="dataDto.location" label="Lokasi" placeholder="cth: Masjid Agung..." />
+                    <Textarea v-model="dataDto.address" label="Alamat" />
+                    <div class="grid sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-sm font-medium mb-1 block">Mulai</label>
+                            <DateTimePicker label="Start" v-model="dataDto.start_at" />
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium mb-1 block">Selesai</label>
+                            <DateTimePicker label="End" v-model="dataDto.end_at" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Konten -->
+                <div>
+                    <label class="text-sm font-medium mb-1.5 block">Konten</label>
+                    <div v-if="dataDto.content?.content">
+                        <TiptapEditor v-model="dataDto.content.content" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Images + meta -->
+            <div class="w-full lg:w-80 lg:shrink-0 order-1 lg:order-2 flex flex-col gap-4">
+                <!-- Image Portrait -->
+                <div>
+                    <div class="flex gap-2 items-start mb-1.5">
                         <div class="flex flex-col">
                             <label class="text-sm font-medium">Image Portrait</label>
-                            <div class="text-xs font-light">Image utama</div>
+                            <div class="text-xs text-gray-500">Image utama</div>
                         </div>
                         <ButtonChangePhotos @uploaded="handleNewPortraitPhoto" />
                     </div>
                     <LazyImage v-if="dataDto.image_portrait" :src="dataDto.image_portrait" alt="main image"
-                        class="max-h-85 aspect-3/4 bg-cover rounded-xl" />
-                    <div v-else class="bg-green-main/40 max-h-85 aspect-3/4 rounded-xl"></div>
+                        class="w-full aspect-3/4 bg-cover rounded-xl" />
+                    <div v-else
+                        class="w-full aspect-3/4 rounded-xl bg-green-main/10 border border-dashed border-green-main/30 flex items-center justify-center text-sm text-green-main/50">
+                        Belum ada gambar
+                    </div>
                 </div>
 
-                <!-- IMAGE Landscape -->
-                <div class="">
-                    <div class="flex items-start gap-1 mb-1">
+                <!-- Image Landscape -->
+                <div>
+                    <div class="flex items-start gap-2 mb-1.5">
                         <div class="flex flex-col">
                             <label class="text-sm font-medium">Image Landscape</label>
-                            <div class="text-xs font-light">Untuk slide di homepage</div>
+                            <div class="text-xs text-gray-500">Untuk slide di homepage</div>
                         </div>
                         <ButtonChangePhotos @uploaded="handleNewPhoto" />
                     </div>
-
-                    <div class="w-full sm:max-w-xs flex-shrink-0 aspect-video rounded-lg bg-cover bg-center overflow-hidden relative"
-                        :style="{ backgroundImage: `url(${dataDto.image})` }">
-
-                        <div class="bg-gradient-to-b from-black/0 to-black/50 w-full h-full"></div>
-                        <div class="absolute bottom-0 w-full p-3">
-                            <div class="flex flex-col gap-px w-full text-white">
-                                <!-- title -->
-                                <div v-if="dataDto.title" class="line-clamp-1 font-bold text-md">
-                                    {{ dataDto.title }}
+                    <div class="w-full aspect-video rounded-lg bg-cover bg-center overflow-hidden relative"
+                        :class="{ 'bg-green-main/10 border border-dashed border-green-main/30': !dataDto.image }"
+                        :style="dataDto.image ? { backgroundImage: `url(${dataDto.image})` } : {}">
+                        <template v-if="dataDto.image">
+                            <div class="bg-linear-to-b from-black/0 to-black/50 w-full h-full"></div>
+                            <div class="absolute bottom-0 w-full p-3">
+                                <div class="flex flex-col gap-px w-full text-white">
+                                    <div v-if="dataDto.title" class="line-clamp-1 font-bold text-md">{{ dataDto.title }}</div>
+                                    <div v-if="dataDto.excerpt" class="truncate text-sm w-full">{{ dataDto.excerpt }}</div>
                                 </div>
-                                <div v-else class="h-3 w-3/4 rounded-full bg-green-main/20"></div>
-
-                                <!-- exerpt -->
-                                <div v-if="dataDto.excerpt" class="truncate text-sm w-full text-thin">
-                                    {{ dataDto.excerpt }}
-                                </div>
-                                <template v-else>
-                                    <div class="h-3 w-full rounded-full bg-green-main/20"></div>
-                                </template>
                             </div>
+                        </template>
+                        <div v-else class="w-full h-full flex items-center justify-center text-sm text-green-main/50">
+                            Belum ada gambar
                         </div>
                     </div>
                 </div>
-            </div>
 
+                <!-- Kategori -->
+                <div>
+                    <label class="text-sm font-medium">Kategori</label>
+                    <select v-model="dataDto.categoryId"
+                        class="select rounded-full bg-white-main focus:outline-green-main/40 border-green-main/20 w-full mt-1">
+                        <option :value="null">-- Tanpa Kategori --</option>
+                        <option v-for="cat in categories" :key="cat.id" :value="cat.id">
+                            {{ cat.name }}
+                        </option>
+                    </select>
+                </div>
 
-            <div class="max-sm:hidden py-3">
-                <div class="h-full w-px bg-green-main/10"></div>
-            </div>
+                <!-- Tags -->
+                <TagInput v-model="eventTags" label="Tags" hint="Tambahkan tags untuk mengkategorikan event ini"
+                    placeholder="Ketik untuk menambah tags..." :max-tags="10" />
 
-            <!-- Preview -->
-            <div class="max-sm:w-full">
-                <label class="text-sm font-medium">Preview Portrait</label>
-                <div class="w-full sm:w-85 flex flex-col gap-2 border border-green-main/30 rounded-xl p-3">
-                    <!-- image -->
-                    <Image v-if="dataDto.image_portrait" :src="dataDto.image_portrait"
-                        class="flex-shrink-0 w-full aspect-3/4 rounded-lg bg-cover bg-no-repeat" />
-                    <div v-else class="flex-shrink-0 w-full aspect-3/4 rounded-lg bg-green-main/20" />
-                    <div class="flex-1 min-w-0">
-                        <div class="flex flex-col gap-2 w-full">
-                            <!-- title -->
+                <!-- Pemateri -->
+                <SpeakerInput v-model="eventSpeakers" label="Pemateri"
+                    hint="Pemateri kajian pada kegiatan ini. Pilih yang sudah ada atau ketik nama untuk membuat baru."
+                    placeholder="Ketik nama pemateri..." />
+
+                <!-- Live preview (desktop) -->
+                <div class="max-lg:hidden">
+                    <label class="text-sm font-medium">Preview</label>
+                    <div class="mt-1 flex flex-col gap-2 border border-green-main/30 rounded-xl p-3">
+                        <Image v-if="dataDto.image_portrait" :src="dataDto.image_portrait"
+                            class="w-full aspect-3/4 rounded-lg bg-cover bg-no-repeat" />
+                        <div v-else class="w-full aspect-3/4 rounded-lg bg-green-main/20" />
+                        <div class="flex flex-col gap-2 w-full min-w-0">
                             <DefaultBody v-if="dataDto.title" class="line-clamp-1 font-bold">
                                 {{ dataDto.title }}
                             </DefaultBody>
                             <div v-else class="h-5 w-3/4 rounded-full bg-green-main/20"></div>
-
                             <EventLocationSchedule :data="(dataDto as Event)" :skipAddress="true" />
-
-                            <!-- exerpt -->
                             <DefaultBody v-if="dataDto.excerpt" class="line-clamp-3">
                                 {{ dataDto.excerpt }}
                             </DefaultBody>
                             <template v-else>
-                                <div class="h-3 w-full rounded-full bg-green-main/20 mt-3"></div>
+                                <div class="h-3 w-full rounded-full bg-green-main/20 mt-1"></div>
                                 <div class="h-3 w-full rounded-full bg-green-main/20"></div>
                                 <div class="h-3 w-1/2 rounded-full bg-green-main/20"></div>
                             </template>
@@ -145,55 +199,10 @@
             </div>
         </div>
 
-        <div>
-            <label class="text-sm font-medium">Ringkasan</label>
-            <p class="text-xs font-light mb-1">
-                Berisi maksimal 500 karakter punchline untuk menarik perhatian pembaca
-            </p>
-            <Textarea v-model="dataDto.excerpt" />
-        </div>
-
-        <div>
-            <label class="text-sm font-medium">Kategori</label>
-            <select v-model="dataDto.categoryId" class="select select-bordered w-full mt-1">
-                <option :value="null">-- Tanpa Kategori --</option>
-                <option v-for="cat in categories" :key="cat.id" :value="cat.id">
-                    {{ cat.name }}
-                </option>
-            </select>
-        </div>
-
-        <div>
-            <TagInput v-model="eventTags" label="Tags" hint="Tambahkan tags untuk mengkategorikan event ini"
-                placeholder="Ketik untuk menambah tags..." :max-tags="10" />
-        </div>
-
-        <div>
-            <SpeakerInput v-model="eventSpeakers" label="Pemateri"
-                hint="Pemateri kajian pada kegiatan ini. Pilih yang sudah ada atau ketik nama untuk membuat baru."
-                placeholder="Ketik nama pemateri..." />
-        </div>
-
-        <!-- location, address, start_at, end_at -->
-        <Input v-model="dataDto.location" label="Lokasi" />
-        <Textarea v-model="dataDto.address" label="Alamat" />
-
-        <!-- {{ dataDto.start_at }} - {{ dataDto.end_at }} -->
-        <div class="flex flex-col gap-2">
-            <div class="flex gap-1 items-center">
-                <div class="w-10">Start</div>
-                <DateTimePicker label="Start" v-model="dataDto.start_at" />
-            </div>
-            <div class="flex gap-1 items-center">
-                <div class="w-10">End</div>
-                <DateTimePicker label="End" v-model="dataDto.end_at" />
-            </div>
-        </div>
-
-        <!-- Event Registration Configuration -->
-        <div class="border-t border-gray-200 pt-6">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-gray-900">Event Registration</h3>
+        <!-- Event Registration -->
+        <div class="border-t border-green-main/10 pt-6">
+            <div class="flex items-center justify-between mb-4 gap-3 flex-wrap">
+                <h3 class="font-cinzel font-bold text-lg text-green-main">Event Registration</h3>
                 <ButtonLink v-if="event?.id && registrationConfig?.isEnabled"
                     :to="`/cp/my-events/${event.id}/registrations`" class="btn btn-sm btn-outline btn-primary">
                     <LucideUsers class="h-4 w-4 mr-1" />
@@ -205,76 +214,43 @@
                 :currentRegistrations="currentRegistrations" @update:config="updateRegistrationConfig" />
         </div>
 
-        <div v-if="dataDto.content?.content">
-            <TiptapEditor v-model="dataDto.content.content" />
-        </div>
-
-        <div class="flex flex-wrap justify-end gap-1">
-            <Button class="max-sm:btn-sm mr-4" @click="show_preview = true">Preview</Button>
-            <Button class="max-sm:btn-sm" @click="confirm_cancel = true">Cancel</Button>
+        <!-- Bottom actions (so you can save without scrolling back up) -->
+        <div class="flex flex-wrap items-center justify-end gap-1.5 border-t border-green-main/10 pt-4">
+            <Button class="btn-sm btn-ghost" @click="confirm_cancel = true">Cancel</Button>
+            <Button class="btn-sm btn-outline-green" @click="show_preview = true">Preview</Button>
+            <span class="w-px h-6 bg-green-main/15 mx-1 max-sm:hidden"></span>
+            <Button class="btn-sm btn-black" @click="status = 'DRAFT'; validate()">Draft</Button>
+            <Button class="btn-sm btn-black" @click="status = null; validate()">Simpan</Button>
             <ClientOnly>
-                <Button class="max-sm:btn-sm btn-green" v-if="canApprove" @click="status = 'APPROVED'; validate()">
-                    Simpan & Approve
+                <Button class="btn-sm btn-green" v-if="canApprove" @click="status = 'APPROVED'; validate()">
+                    Simpan &amp; Approve
                 </Button>
-                <Button class="max-sm:btn-sm btn-green" v-else-if="canPublish"
-                    @click="status = 'PUBLISHED'; validate()">
-                    Simpan & Publish
+                <Button class="btn-sm btn-green" v-else-if="canPublish" @click="status = 'PUBLISHED'; validate()">
+                    Simpan &amp; Publish
                 </Button>
-                <Button class="max-sm:btn-sm btn-green" v-else @click="status = 'ON_REVIEW'; validate()">
-                    Simpan & Ajukan Approval
+                <Button class="btn-sm btn-green" v-else @click="status = 'ON_REVIEW'; validate()">
+                    Ajukan Approval
                 </Button>
             </ClientOnly>
-            <Button class="max-sm:btn-sm btn-black" @click="status = 'DRAFT'; validate()">Simpan Draft</Button>
-            <Button class="max-sm:btn-sm btn-black" @click="status = null; validate()">Simpan</Button>
         </div>
     </div>
 
-    <LazyModal v-if="confirm_cancel" :show="confirm_cancel" @close="confirm_cancel = false">
-        Are you sure to discard?
-        <div class="modal-action">
-            <Button @click="confirm_cancel = false">Lanjutkan</Button>
-            <ButtonLink to="/cp/my-events" class="btn-green">
-                Yes
-            </ButtonLink>
+    <ConfirmModal v-if="confirm_cancel" :show="confirm_cancel" title="Batalkan perubahan?"
+        message="Perubahan yang belum disimpan akan hilang." confirm-text="Ya, keluar" cancel-text="Lanjutkan edit"
+        @close="confirm_cancel = false" @confirm="navigateTo('/cp/my-events')" />
+
+    <ConfirmModal v-if="canPublish && showConfirmPublish" :show="showConfirmPublish" title="Yakin publish event ini?"
+        confirm-text="Publish" max-width="max-w-lg" :loading="isSubmitting" @close="showConfirmPublish = false"
+        @confirm="submit">
+        <div class="text-sm mt-1 min-h-85">
+            Atur Jadwal:
+            <DateTimePicker v-model="publishedAt" />
         </div>
-    </LazyModal>
+    </ConfirmModal>
 
-    <LazyModal v-if="canPublish && showConfirmPublish" :show="showConfirmPublish" @close="showConfirmPublish = false">
-        <div class="flex flex-col gap-2">
-            <div>Yakin publish event ini?</div>
-            <div class="text-sm h-[350px]">
-                Atur Jadwal:
-                <DateTimePicker v-model="publishedAt" />
-            </div>
-        </div>
-
-        <div class="modal-action">
-            <Button @click="showConfirmPublish = false" :disabled="isSubmitting">No</Button>
-
-            <!-- publish -->
-            <Button @click="submit" :disabled="isSubmitting" class="btn-green">
-                <LucideLoader :size="20" v-show="isSubmitting" class="animate-spin" />
-                Publish
-            </Button>
-        </div>
-    </LazyModal>
-
-    <LazyModal v-if="showConfirmDraftOrReview" :show="showConfirmDraftOrReview"
-        @close="showConfirmDraftOrReview = false">
-        {{
-            status == "ON_REVIEW"
-                ? 'Yakin simpan & ajukan approval?'
-                : status != null ? `Yakin simpan sebagai ${status.toLowerCase().replace('_', ' ')}?` : 'Yakin?'
-        }}
-        <div class="modal-action">
-            <Button @click="showConfirmDraftOrReview = false" :disabled="isSubmitting">No</Button>
-
-            <Button @click="submit" :disabled="isSubmitting" class="btn-black">
-                <LucideLoader :size="20" v-show="isSubmitting" class="animate-spin" />
-                Simpan
-            </Button>
-        </div>
-    </LazyModal>
+    <ConfirmModal v-if="showConfirmDraftOrReview" :show="showConfirmDraftOrReview" :title="confirmSaveTitle"
+        confirm-text="Simpan" confirm-class="btn-black" :loading="isSubmitting"
+        @close="showConfirmDraftOrReview = false" @confirm="submit" />
 
     <LazyModal v-if="show_preview" :show="show_preview" @close="show_preview = false" max-width="max-w-4xl">
         <div class="p-4">
@@ -539,6 +515,13 @@ const validatedData = ref<Record<string, any>>({});
 
 const status = ref<ContentStatus | null>(null);
 const publishedAt = ref<string | null>(new Date().toISOString())
+const confirmSaveTitle = computed(() =>
+    status.value === 'ON_REVIEW'
+        ? 'Yakin simpan & ajukan approval?'
+        : status.value != null
+            ? `Yakin simpan sebagai ${status.value.toLowerCase().replace('_', ' ')}?`
+            : 'Yakin?'
+);
 
 const validate = () => {
     if (!slugAvailable.value) return;

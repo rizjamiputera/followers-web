@@ -185,6 +185,12 @@ section,
 }
 
 
+/* When the mobile drawer opens it must cover sticky page elements (the editor
+   toolbar z-40, the form action bar z-30) yet stay below the fixed header z-50. */
+.drawer-side {
+    z-index: 45;
+}
+
 /* TOAST */
 /* Push toasts below the fixed ~64px header and give side gutters so long
    messages never get clipped by the container's overflow. */

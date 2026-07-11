@@ -1,14 +1,13 @@
 <template>
     <div class="form-control w-full">
-        <label v-if="label" class="label">
-            <span class="label-text">{{ label }}</span>
-        </label>
+        <label v-if="label" class="text-sm font-medium mb-1.5 block">{{ label }}</label>
 
         <div class="space-y-2">
             <!-- Tag input field -->
             <div class="relative">
                 <input v-model="inputValue" @keydown="handleKeyDown" @input="handleInput" :placeholder="placeholder"
-                    class="input input-bordered w-full" :class="{ 'input-error': error }" type="text" />
+                    class="input rounded-full bg-white-main focus:outline-green-main/40 border-green-main/20 w-full"
+                    :class="{ 'input-error': error }" type="text" />
 
                 <!-- Dropdown suggestions -->
                 <div v-if="showSuggestions && inputValue.trim()"
