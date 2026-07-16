@@ -303,6 +303,8 @@ async function loadSpeakers(reset = false) {
                 limit: SPEAKER_LIMIT,
                 sortBy: 'name',
                 order: 'asc',
+                // Public page: only pemateri with published kajian.
+                hasPublished: true,
                 ...(speakerSearch.value.trim() ? { search: speakerSearch.value.trim() } : {}),
             },
         });
